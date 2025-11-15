@@ -28,7 +28,8 @@ class PenggunaController extends Controller
                     ->orWhere('asal_sekolah', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('username', 'like', "%{$search}%")
-                    ->orWhere('nomor_hp', 'like', "%{$search}%");
+                    ->orWhere('nomor_hp', 'like', "%{$search}%")
+                    ->orWhere('default_role', 'like', "%{$search}%");
             });
         }
 

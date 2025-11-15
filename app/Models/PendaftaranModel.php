@@ -113,7 +113,7 @@ class PendaftaranModel extends Model
     }
 
     /**
-     * Accessor untuk status badge
+     * Accessor untuk status_badge
      */
     public function getStatusBadgeAttribute(): string
     {

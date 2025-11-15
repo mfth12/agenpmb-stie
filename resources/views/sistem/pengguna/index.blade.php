@@ -99,10 +99,7 @@
                       </span>
                     </td>
                     <td>
-                      <span
-                        class="badge badge-pill {{ $user->status == 'active' ? 'bg-success text-success-fg' : 'bg-secondary text-secondary-fg' }}">
-                        {{ $user->status == 'active' ? 'Aktif' : 'Nonaktif' }}
-                      </span>
+                      {!! $user->status_badge !!}
                     </td>
                     <td>{{ $user->last_logged_in ? $user->last_logged_in->format('d/m/Y H:i') : 'Belum pernah' }}</td>
                     <td class="text-center" style="width: 1%;">

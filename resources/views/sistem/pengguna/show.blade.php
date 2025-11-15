@@ -41,10 +41,7 @@
                     </div>
                     <div class="col-md-6 mt-3 mt-md-0">
                       <strong>Status:</strong><br>
-                      <span
-                        class="badge badge-pill {{ $pengguna->status == 'active' ? 'bg-success text-success-fg' : 'bg-secondary text-secondary-fg' }}">
-                        {{ $pengguna->status == 'active' ? 'Aktif' : 'Nonaktif' }}
-                      </span>
+                      <span {!! $pengguna->status_badge !!} </span>
                     </div>
                   </div>
 
