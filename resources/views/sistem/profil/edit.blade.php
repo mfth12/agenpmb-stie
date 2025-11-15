@@ -200,7 +200,7 @@
             title: 'Hapus Foto Profil?',
             text: 'Foto akan dihapus secara permanen dan tidak dapat kembali!',
             icon: 'warning',
-            confirmButtonText: 'Ya, Hapus!',
+            confirmButtonText: 'Hapus',
             cancelButtonText: 'Batal'
           }).then((result) => {
             if (result.isConfirmed) {

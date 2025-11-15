@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\PenggunaStoreRequest; // Import Request
 
 class MasukController extends Controller
 {
@@ -209,52 +210,59 @@ class MasukController extends Controller
    */
   public function create(): View
   {
-    return view('sistem.daftar', [ // Gunakan nama view yang sesuai, misalnya 'sistem.daftar'
+    return view('sistem.daftar', [
       'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
     ]);
   }
 
   /**
-   * Menyimpan data pengguna baru
+   * Menyimpan data pengguna baru (Register)
    */
-  public function store(Request $request)
+  public function store(PenggunaStoreRequest $request): RedirectResponse // Gunakan PenggunaStoreRequest
   {
-    $validator = Validator::make($request->all(), [
-      'name' => ['required', 'string', 'max:255'],
-      'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-      'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-      'password' => ['required', 'confirmed', Password::min(6)], // Contoh aturan password
-      'asal_sekolah' => ['required', 'string', 'max:255'], // Tambahkan field tambahan sesuai kebutuhan
-      // Tambahkan validasi lainnya seperti nomor_hp jika diperlukan saat register
-    ]);
+    // Validasi sudah dilakukan oleh PenggunaStoreRequest
+    // Tapi kita hanya perlu menangani logika register di sini
 
-    if ($validator->fails()) {
+    // Ambil data dari request, sesuaikan dengan field di User model
+    // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
+    // Kita set role default ke 'agen' dan status default ke 'pending'
+    $data = [
+      'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
+      'asal_sekolah'  => $request->asal_sekolah,
+      'email'         => $request->email,
+      'username'      => $request->username,
+      'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
+      'nomor_hp2'     => $request->nomor_hp2,
+      'about'         => $request->about, // Jika field about ada di form register
+      'default_role'  => 'agen', // Role default untuk pendaftar
+      'status'        => 'active', // Status default untuk pendaftar, bisa diaktifkan oleh admin
+      'password'      => bcrypt($request->password)
+    ];
+
+    try {
+      $user = User::create($data);
+
+      // Assign role default 'agen'
+      $user->assignRole('agen');
+
+      // Handle avatar upload jika ada (opsional di register)
+      if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+        $user->uploadAvatar($request->file('avatar'));
+      }
+
+      // Opsional: Kirim email verifikasi
+      // $user->sendEmailVerificationNotification();
+
+      // Opsional: Login otomatis setelah register
+      // Auth::login($user);
+
+      return redirect()->route('login')->with('success', 'Akun Anda berhasil dibuat. Silakan login.');
+    } catch (\Exception $e) {
+      \Log::error('Register Error: ' . $e->getMessage());
       return redirect()->back()
-        ->withErrors($validator)
+        ->withErrors(['general' => 'Gagal mendaftar. Silakan coba lagi.'])
         ->withInput();
     }
-
-    $user = User::create([
-      'name' => $request->name,
-      'username' => $request->username,
-      'email' => $request->email,
-      'password' => bcrypt($request->password),
-      'asal_sekolah' => $request->asal_sekolah,
-      // 'nomor_hp' => $request->nomor_hp, // Jika nomor_hp diisi saat register
-      'status' => 'pending', // Atau 'active' tergantung kebijakan Anda
-      'default_role' => 'agen', // Atur role default untuk pendaftar baru
-    ]);
-
-    // Assign role 'agen' secara default
-    $user->assignRole('agen');
-
-    // Opsional: Kirim email verifikasi
-    // $user->sendEmailVerificationNotification();
-
-    // Opsional: Login otomatis setelah register
-    // Auth::login($user);
-
-    return redirect()->route('login')->with('success', 'Akun Anda berhasil dibuat. Silakan login.');
   }
 
   /**

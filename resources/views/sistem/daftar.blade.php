@@ -13,7 +13,8 @@
         </a>
       </div>
       <h3 class="text-center mb-4">Daftar Akun</h3>
-      <form class="card card-md" method="POST" action="{{ route('register.do') }}" autocomplete="off" novalidate>
+      <form class="card card-md" method="POST" action="{{ route('register.do') }}" autocomplete="off" novalidate
+        enctype="multipart/form-data">
         @csrf
         <div class="card-body">
           {{-- ALERTS --}}
@@ -48,9 +49,9 @@
 
           <div class="mb-3">
             <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-            <input type="text" name="name" value="{{ old('name') }}"
-              class="form-control @error('name') is-invalid @enderror" placeholder="Masukkan nama lengkap" required />
-            @error('name')
+            <input type="text" name="nama" value="{{ old('nama') }}" {{-- Ganti 'name' menjadi 'nama' --}}
+              class="form-control @error('nama') is-invalid @enderror" placeholder="Masukkan nama lengkap" required />
+            @error('nama')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
@@ -80,6 +81,39 @@
             @enderror
           </div>
           <div class="mb-3">
+            <label class="form-label">Nomor HP</label> {{-- Jadikan opsional jika di rules register --}}
+            <input type="text" name="nomor_hp" value="{{ old('nomor_hp') }}"
+              class="form-control @error('nomor_hp') is-invalid @enderror" placeholder="Masukkan nomor HP" />
+            @error('nomor_hp')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nomor HP 2</label> {{-- Jadikan opsional --}}
+            <input type="text" name="nomor_hp2" value="{{ old('nomor_hp2') }}"
+              class="form-control @error('nomor_hp2') is-invalid @enderror" placeholder="Masukkan nomor HP alternatif" />
+            @error('nomor_hp2')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Bio (Opsional)</label> {{-- Tambahkan field about --}}
+            <textarea name="about" class="form-control @error('about') is-invalid @enderror"
+              placeholder="Tulis bio singkat tentang Anda (maks. 500 karakter)" rows="3">{{ old('about') }}</textarea>
+            @error('about')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Foto Profil (Opsional)</label> {{-- Tambahkan field avatar --}}
+            <input type="file" name="avatar" class="form-control @error('avatar') is-invalid @enderror"
+              accept="image/*" />
+            @error('avatar')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <small class="form-hint">Format: jpeg, png, jpg, webp. Maks. 2MB.</small>
+          </div>
+          <div class="mb-3">
             <label class="form-label">Password <span class="text-danger">*</span></label>
             <div class="input-group input-group-flat">
               <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
@@ -96,9 +130,11 @@
                 autocomplete="off" required />
             </div>
           </div>
+          <input type="hidden" name="role" value="agen"/>
           <div class="mb-3">
             <label class="form-check">
-              <input type="checkbox" class="form-check-input" required />
+              <input type="checkbox" name="syarat_dan_ketentuan" class="form-check-input" required />
+              {{-- Tambahkan name --}}
               <span class="form-check-label">Saya setuju dengan <a href="#" tabindex="-1">
                   syarat dan ketentuan</a> yang berlaku.</span>
             </label>
