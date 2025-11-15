@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler-theme.min.js" async defer></script>
   @yield('container')
   <x-front.script />
+  <x-back.sweetalert />
   @yield('js_bawah')
 </body>
 

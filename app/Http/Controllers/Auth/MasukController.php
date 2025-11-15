@@ -233,7 +233,6 @@ class MasukController extends Controller
       'username'      => $request->username,
       'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
       'nomor_hp2'     => $request->nomor_hp2,
-      'about'         => $request->about, // Jika field about ada di form register
       'default_role'  => 'agen', // Role default untuk pendaftar
       'status'        => 'active', // Status default untuk pendaftar, bisa diaktifkan oleh admin
       'password'      => bcrypt($request->password)
@@ -245,20 +244,15 @@ class MasukController extends Controller
       // Assign role default 'agen'
       $user->assignRole('agen');
 
-      // Handle avatar upload jika ada (opsional di register)
-      if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-        $user->uploadAvatar($request->file('avatar'));
-      }
-
       // Opsional: Kirim email verifikasi
       // $user->sendEmailVerificationNotification();
 
       // Opsional: Login otomatis setelah register
       // Auth::login($user);
 
-      return redirect()->route('login')->with('success', 'Akun Anda berhasil dibuat. Silakan login.');
-    } catch (\Exception $e) {
-      \Log::error('Register Error: ' . $e->getMessage());
+      return redirect()->route('login')->with('success', 'Akun Anda berhasil dibuat. Silakan masuk.');
+    } catch (Exception $e) {
+      Log::error('Register Error: ' . $e->getMessage());
       return redirect()->back()
         ->withErrors(['general' => 'Gagal mendaftar. Silakan coba lagi.'])
         ->withInput();

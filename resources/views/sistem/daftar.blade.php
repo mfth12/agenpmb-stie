@@ -97,23 +97,6 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Bio (Opsional)</label> {{-- Tambahkan field about --}}
-            <textarea name="about" class="form-control @error('about') is-invalid @enderror"
-              placeholder="Tulis bio singkat tentang Anda (maks. 500 karakter)" rows="3">{{ old('about') }}</textarea>
-            @error('about')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Foto Profil (Opsional)</label> {{-- Tambahkan field avatar --}}
-            <input type="file" name="avatar" class="form-control @error('avatar') is-invalid @enderror"
-              accept="image/*" />
-            @error('avatar')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <small class="form-hint">Format: jpeg, png, jpg, webp. Maks. 2MB.</small>
-          </div>
-          <div class="mb-3">
             <label class="form-label">Password <span class="text-danger">*</span></label>
             <div class="input-group input-group-flat">
               <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
