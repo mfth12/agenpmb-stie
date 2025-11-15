@@ -16,6 +16,8 @@ Route::get('/', fn() => redirect()->route(Auth::check() ? 'dashboard.index' : 'l
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [MasukController::class, 'index'])->name('login');
     Route::post('/login', [MasukController::class, 'masuk'])->name('login.do');
+    Route::get('/register', [MasukController::class, 'create'])->name('register');
+    Route::post('/register', [MasukController::class, 'store'])->name('register.do');
 });
 
 // Rute dasbor dengan permission

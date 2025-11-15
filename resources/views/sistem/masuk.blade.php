@@ -115,11 +115,15 @@
                 @endif
 
                 {{-- Submit button --}}
-                <div class="form-footer">
+                <div class="form-footer d-flex gap-2">
+                  <a href="{{ route('register') }}" class="btn btn-default w-50">
+                    Daftar Mitra
+                  </a>
+
                   {!! html()->button(
-                          '<span><span class="button-text">Masuk</span><div class="spinner-border spinner-border-sm ms-2 d-none " role="status"></div></span>',
+                          '<span> <span class="button-text">Masuk</span> <div class="spinner-border spinner-border-sm ms-2 d-none" role="status"></div> </span>',
                           'submit',
-                      )->class('btn btn-primary d-grid w-100')->id('loginButton') !!}
+                      )->class('btn btn-primary w-50 d-flex justify-content-center align-items-center')->id('loginButton') !!}
                 </div>
 
                 {!! html()->form()->close() !!}

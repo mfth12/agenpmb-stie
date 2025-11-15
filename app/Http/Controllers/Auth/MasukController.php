@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Jobs\NotifWhatsappJob;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\AntrianNotifWhatsappModel;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
@@ -199,6 +202,59 @@ class MasukController extends Controller
     return back()->withErrors([
       'masuk' => 'Username atau password salah.',
     ]);
+  }
+
+  /**
+   * Menampilkan halaman register
+   */
+  public function create(): View
+  {
+    return view('sistem.daftar', [ // Gunakan nama view yang sesuai, misalnya 'sistem.daftar'
+      'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
+    ]);
+  }
+
+  /**
+   * Menyimpan data pengguna baru
+   */
+  public function store(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'name' => ['required', 'string', 'max:255'],
+      'username' => ['required', 'string', 'max:255', 'unique:users,username'],
+      'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+      'password' => ['required', 'confirmed', Password::min(6)], // Contoh aturan password
+      'asal_sekolah' => ['required', 'string', 'max:255'], // Tambahkan field tambahan sesuai kebutuhan
+      // Tambahkan validasi lainnya seperti nomor_hp jika diperlukan saat register
+    ]);
+
+    if ($validator->fails()) {
+      return redirect()->back()
+        ->withErrors($validator)
+        ->withInput();
+    }
+
+    $user = User::create([
+      'name' => $request->name,
+      'username' => $request->username,
+      'email' => $request->email,
+      'password' => bcrypt($request->password),
+      'asal_sekolah' => $request->asal_sekolah,
+      // 'nomor_hp' => $request->nomor_hp, // Jika nomor_hp diisi saat register
+      'status' => 'pending', // Atau 'active' tergantung kebijakan Anda
+      'default_role' => 'agen', // Atur role default untuk pendaftar baru
+    ]);
+
+    // Assign role 'agen' secara default
+    $user->assignRole('agen');
+
+    // Opsional: Kirim email verifikasi
+    // $user->sendEmailVerificationNotification();
+
+    // Opsional: Login otomatis setelah register
+    // Auth::login($user);
+
+    return redirect()->route('login')->with('success', 'Akun Anda berhasil dibuat. Silakan login.');
   }
 
   /**
