@@ -111,7 +111,7 @@ class User extends Authenticatable implements HasMedia
         return match ($this->status) {
             'active' => '<span class="badge badge-pill px-2 bg-success text-success-fg">Aktif</span>',
             'inactive' => '<span class="badge badge-pill px-2 bg-danger text-danger-fg">Tidak Aktif</span>',
-            'pending' => '<span class="badge badge-pill px-2 bg-danger text-danger-fg">Pending</span>',
+            'pending' => '<span class="badge badge-pill px-2 bg-warning text-warning-fg">Pending</span>',
             default => '<span class="badge badge-pill px-2 bg-warning text-warning-fg">Tidak Diketahui</span>',
         };
     }

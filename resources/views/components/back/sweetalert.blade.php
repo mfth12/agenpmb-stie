@@ -31,15 +31,18 @@
   </script>
 @endif
 
-@if ($errors->any())
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      let errorMessage = '';
-      @foreach ($errors->all() as $error)
-        errorMessage += '{{ $error }}\n';
-      @endforeach
+@if (!Request::is('login*'))
+  {{-- tidak boleh tampil di halaman login --}}
+  @if ($errors->any())
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let errorMessage = '';
+        @foreach ($errors->all() as $error)
+          errorMessage += '{{ $error }}\n';
+        @endforeach
 
-      showError(errorMessage.trim(), 'Terjadi Kesalahan');
-    });
-  </script>
+        showError(errorMessage.trim(), 'Terjadi Kesalahan');
+      });
+    </script>
+  @endif
 @endif

@@ -12,7 +12,7 @@
           <h1 class="mb-0">{{ konfigs('NAMA_SISTEM') }}</h1>
         </a>
       </div>
-      <h3 class="text-center mb-4">Daftar Akun</h3>
+      <h3 class="text-center mb-4">Formulir Pendaftaran</h3>
       <form class="card card-md" method="POST" action="{{ route('register.do') }}" autocomplete="off" novalidate
         enctype="multipart/form-data">
         @csrf
@@ -81,7 +81,7 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Nomor HP</label> {{-- Jadikan opsional jika di rules register --}}
+            <label class="form-label">Nomor HP <span class="text-danger">*</span></label> {{-- Jadikan opsional jika di rules register --}}
             <input type="text" name="nomor_hp" value="{{ old('nomor_hp') }}"
               class="form-control @error('nomor_hp') is-invalid @enderror" placeholder="Masukkan nomor HP" />
             @error('nomor_hp')
@@ -89,9 +89,9 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Nomor HP 2</label> {{-- Jadikan opsional --}}
+            <label class="form-label">Nomor Whatsapp</label> {{-- Jadikan opsional --}}
             <input type="text" name="nomor_hp2" value="{{ old('nomor_hp2') }}"
-              class="form-control @error('nomor_hp2') is-invalid @enderror" placeholder="Masukkan nomor HP alternatif" />
+              class="form-control @error('nomor_hp2') is-invalid @enderror" placeholder="Masukkan whatsapp aktif" />
             @error('nomor_hp2')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -117,13 +117,15 @@
           <div class="mb-3">
             <label class="form-check">
               <input type="checkbox" name="syarat_dan_ketentuan" class="form-check-input" required />
-              {{-- Tambahkan name --}}
               <span class="form-check-label">Saya setuju dengan <a href="#" tabindex="-1">
                   syarat dan ketentuan</a> yang berlaku.</span>
             </label>
+            @error('syarat_dan_ketentuan')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
           </div>
           <div class="form-footer">
-            <button type="submit" class="btn btn-primary w-100">Buat Akun Mitra</button>
+            <button type="submit" class="btn btn-primary w-100">Ajukan Pendaftaran Mitra</button>
           </div>
         </div>
       </form>

@@ -181,8 +181,13 @@ class MasukController extends Controller
     ) {
       RateLimiter::clear($throttleKey);
 
-      // Validasi ulang (antisipasi jika status berubah setelah attempt)
-      if (Auth::user()->status !== 'active') {
+      // Validasi, jika user pending
+      if (in_array(Auth::user()->status, ['pending'], true)) {
+        Auth::logout();
+        return back()->withErrors(['masuk' => 'Akun Anda belum diverifikasi TIM PMB.']);
+      }
+      // Validasi, jika tidak aktif
+      if (!in_array(Auth::user()->status, ['active', 1, '1'], true)) {
         Auth::logout();
         return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
       }
@@ -226,6 +231,12 @@ class MasukController extends Controller
     // Ambil data dari request, sesuaikan dengan field di User model
     // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
     // Kita set role default ke 'agen' dan status default ke 'pending'
+
+    // dd($request->syarat_dan_ketentuan); // null - "on"
+    if ($request->syarat_dan_ketentuan == null) {
+      return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
+    }
+
     $data = [
       'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
       'asal_sekolah'  => $request->asal_sekolah,
@@ -234,7 +245,7 @@ class MasukController extends Controller
       'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
       'nomor_hp2'     => $request->nomor_hp2,
       'default_role'  => 'agen', // Role default untuk pendaftar
-      'status'        => 'active', // Status default untuk pendaftar, bisa diaktifkan oleh admin
+      'status'        => 'pending', // Status default untuk pendaftar, bisa diaktifkan oleh admin
       'password'      => bcrypt($request->password)
     ];
 
@@ -242,7 +253,8 @@ class MasukController extends Controller
       $user = User::create($data);
 
       // Assign role default 'agen'
-      $user->assignRole('agen');
+      // $user->assignRole('agen');
+      $user->assignRole($data['default_role'] ?? 'agen');
 
       // Opsional: Kirim email verifikasi
       // $user->sendEmailVerificationNotification();
@@ -250,7 +262,7 @@ class MasukController extends Controller
       // Opsional: Login otomatis setelah register
       // Auth::login($user);
 
-      return redirect()->route('login')->with('success', 'Akun Anda berhasil dibuat. Silakan masuk.');
+      return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
     } catch (Exception $e) {
       Log::error('Register Error: ' . $e->getMessage());
       return redirect()->back()

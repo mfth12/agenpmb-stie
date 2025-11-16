@@ -16,9 +16,9 @@ class UserSeeder extends Seeder
     {
         // Pastikan role 'agen' tersedia
         $roleSuperadmin = Role::firstOrCreate(['name' => 'superadmin']);
-        $roleAgen = Role::firstOrCreate(['name' => 'agen']);
         $roleBaak = Role::firstOrCreate(['name' => 'baak']);
         $roleKeuangan = Role::firstOrCreate(['name' => 'keuangan']);
+        $roleAgen = Role::firstOrCreate(['name' => 'agen']);
 
         // Buat user spesifik untuk superadmin
         $superadminUsers = [
@@ -70,6 +70,19 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => '6282387783200',
                 'nomor_hp2'     => '6282387783200',
                 'passsword'     => 'restyayu',
+            ],
+        ];
+
+        // Buat user spesifik untuk superadmin
+        $keuanganUsers = [
+            [
+                'username'      => 'yanti73',
+                'name'          => 'Alfianti Nurrahmi',
+                'asal_sekolah'  => 'STIE Pembangunan Tanjungpinang',
+                'email'         => 'alfianti@stie-pembangunan.ac.id',
+                'nomor_hp'      => '6281372060909',
+                'nomor_hp2'     => '6281372060909',
+                'passsword'     => 'yanti73',
             ],
         ];
 
@@ -141,6 +154,19 @@ class UserSeeder extends Seeder
                 'password'      => bcrypt($userData['passsword']),
             ]);
             $user->syncRoles([$roleBaak]);
+        }
+
+        foreach ($keuanganUsers as $userData) {
+            $user = User::factory()->create([
+                'username'      => $userData['username'],
+                'name'          => $userData['name'],
+                'asal_sekolah'  => $userData['asal_sekolah'],
+                'email'         => $userData['email'],
+                'nomor_hp'      => $userData['nomor_hp'],
+                'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
+                'password'      => bcrypt($userData['passsword']),
+            ]);
+            $user->syncRoles([$roleKeuangan]);
         }
 
         foreach ($agenUsers as $userData) {
