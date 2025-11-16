@@ -113,7 +113,7 @@
                 autocomplete="off" required />
             </div>
           </div>
-          <input type="hidden" name="role" value="agen"/>
+          <input type="hidden" name="role" value="agen" />
           <div class="mb-3">
             <label class="form-check">
               <input type="checkbox" name="syarat_dan_ketentuan" class="form-check-input" required />

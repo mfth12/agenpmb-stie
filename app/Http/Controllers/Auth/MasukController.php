@@ -27,364 +27,364 @@ use App\Http\Requests\PenggunaStoreRequest; // Import Request
 
 class MasukController extends Controller
 {
-  /**
-   * Menampilkan halaman login
-   */
-  public function index(): View|RedirectResponse
-  {
-    if (Auth::check()) {
-      return redirect()->route('dashboard.index');
+    /**
+     * Menampilkan halaman login
+     */
+    public function index(): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard.index');
+        }
+
+        return view('sistem.masuk', [
+            'title' => 'Masuk ' . konfigs('NAMA_SISTEM_ALIAS'),
+        ]);
     }
 
-    return view('sistem.masuk', [
-      'title' => 'Masuk ' . konfigs('NAMA_SISTEM_ALIAS'),
-    ]);
-  }
+    /**
+     * Proses login menggunakan API SIAKAD atau lokal
+     */
+    public function masuk(LoginRequest $request): RedirectResponse
+    {
+        // Rate limit dulu berdasarkan username + IP
+        $throttleKey  = Str::transliterate(Str::lower($request->string('username')) . '|' . $request->ip());
+        $maxAttempts  = (int) env('LOGIN_MAX_ATTEMPTS', 3);
+        $decaySeconds = (int) env('LOGIN_DECAY_SECONDS', 120);
 
-  /**
-   * Proses login menggunakan API SIAKAD atau lokal
-   */
-  public function masuk(LoginRequest $request): RedirectResponse
-  {
-    // Rate limit dulu berdasarkan username + IP
-    $throttleKey  = Str::transliterate(Str::lower($request->string('username')) . '|' . $request->ip());
-    $maxAttempts  = (int) env('LOGIN_MAX_ATTEMPTS', 3);
-    $decaySeconds = (int) env('LOGIN_DECAY_SECONDS', 120);
+        if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
+            event(new Lockout($request));
+            $seconds = RateLimiter::availableIn($throttleKey);
 
-    if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
-      event(new Lockout($request));
-      $seconds = RateLimiter::availableIn($throttleKey);
+            throw ValidationException::withMessages([
+                'masuk' => 'Silakan coba lagi dalam <span id="countdown" style="margin: -10px">' . $seconds . '</span> detik.',
+            ]);
+        }
 
-      throw ValidationException::withMessages([
-        'masuk' => 'Silakan coba lagi dalam <span id="countdown" style="margin: -10px">' . $seconds . '</span> detik.',
-      ]);
+        // Ambil kredensial
+        $credentials = $request->only(['username', 'password', 'via_siakad']);
+
+        // Cek status via_siakad
+        return $credentials['via_siakad'] == 1
+            ? $this->loginViaSiakad($request, $credentials, $throttleKey, $decaySeconds)
+            : $this->loginLocal($request, $credentials, $throttleKey, $decaySeconds);
     }
 
-    // Ambil kredensial
-    $credentials = $request->only(['username', 'password', 'via_siakad']);
+    /**
+     * Login via API SIAKAD
+     */
+    protected function loginViaSiakad(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
+    {
+        // Lakukan try catch ke endpoint API SIAKAD
+        try {
+            $response = Http::timeout(10)->post(
+                rtrim(env('URL_API_SIAKAD'), '/') . '/api/v2/auth/login',
+                [
+                    'username' => $credentials['username'],
+                    'password' => $credentials['password']
+                ]
+            );
+        } catch (Exception $e) {
+            RateLimiter::hit($throttleKey, $decaySeconds);
+            return back()->withErrors(['koneksi' => 'Gagal menghubungi layanan Siakad.']);
+        }
 
-    // Cek status via_siakad
-    return $credentials['via_siakad'] == 1
-      ? $this->loginViaSiakad($request, $credentials, $throttleKey, $decaySeconds)
-      : $this->loginLocal($request, $credentials, $throttleKey, $decaySeconds);
-  }
+        $data = $response->json();
 
-  /**
-   * Login via API SIAKAD
-   */
-  protected function loginViaSiakad(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
-  {
-    // Lakukan try catch ke endpoint API SIAKAD
-    try {
-      $response = Http::timeout(10)->post(
-        rtrim(env('URL_API_SIAKAD'), '/') . '/api/v2/auth/login',
-        [
-          'username' => $credentials['username'],
-          'password' => $credentials['password']
-        ]
-      );
-    } catch (Exception $e) {
-      RateLimiter::hit($throttleKey, $decaySeconds);
-      return back()->withErrors(['koneksi' => 'Gagal menghubungi layanan Siakad.']);
+        // Verifikasi Turnstile
+        if (!$this->handleTurnstileValidation($request)) {
+            return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
+        }
+
+        // Jika login berhasil
+        if ($response->successful() && isset($data['access_token'], $data['user'])) {
+            RateLimiter::clear($throttleKey);
+
+            $access_token = $data['access_token'];
+            $userData     = $data['user'];
+
+            // Validasi, status user harus aktif
+            if (!in_array($userData['status'], ['active', 1, '1'], true)) {
+                return back()->withErrors(['masuk' => 'Akun Siakad Anda tidak aktif.']);
+            }
+
+            // Cari atau buat user di sistem
+            $user = User::updateOrCreate(
+                ['siakad_id' => $userData['id']],
+                [
+                    'siakad_id'         => $userData['id'],
+                    'username'          => $userData['username'],
+                    'password'          => null, // Jangan simpan password dari Siakad
+                    'email'             => $userData['email'] ?? null,
+                    'name'              => $userData['name'] ?? '',
+                    'nomor_hp'          => $userData['nomor_hp'] ?? '',
+                    'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
+                    'email_verified_at' => $userData['email_verified_at'] ?? null,
+                    'about'             => $userData['about'] ?? null,
+                    'default_role'      => $userData['default_role'] ?? 'agen',
+                    'theme'             => $userData['theme'] ?? 'default',
+                    'avatar'            => $userData['avatar'] ?? null,
+                    'status'            => $userData['status'] ?? 'active',
+                    'status_login'      => 'online',
+                    'isdeleted'         => $userData['isdeleted'] ?? false,
+                    'last_logged_in'    => Carbon::now(),
+                    'last_synced_at'    => Carbon::now(),
+                ]
+            );
+
+            // Untuk user lain, assign role berdasarkan default_role dari Siakad
+            $agen_role = $userData['default_role'] ?? 'mahasiswa';
+            $agen_role = is_array($agen_role) ? $agen_role : [$agen_role];
+            $user->syncRoles($agen_role);
+
+            // Simpan access_token ke session
+            Session::put('api_access_token', $access_token);
+            Session::put('api_userroles', $userData['roles'] ?? []);
+
+            Auth::login($user);
+
+            // Kirim notifikasi WhatsApp setelah login berhasil
+            $this->sendLoginNotification($user, $request, $from = 'siakad');
+
+            return redirect()->intended(route('dashboard.index'));
+        }
+
+        // Hit jika gagal login
+        RateLimiter::hit($throttleKey, $decaySeconds);
+
+        // Tampilkan error dari API
+        $errorMessage = 'Tidak dapat melakukan otentikasi';
+        if (!empty($data['message'])) {
+            $errorMessage = is_array($data['message'])
+                ? implode('. ', array_map(fn($msg) => implode(' ', (array) $msg), $data['message']))
+                : $data['message'];
+        }
+
+        return back()->withErrors(['masuk' => $errorMessage . '.']);
     }
 
-    $data = $response->json();
+    /**
+     * Login lokal ke database user
+     */
+    protected function loginLocal(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
+    {
+        // Verifikasi Turnstile untuk login lokal juga
+        if (!$this->handleTurnstileValidation($request)) {
+            return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
+        }
 
-    // Verifikasi Turnstile
-    if (!$this->handleTurnstileValidation($request)) {
-      return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
+        // Coba login dengan kredensial lokal
+        if (
+            Auth::attempt([
+                'username' => $credentials['username'],
+                'password' => $credentials['password'],
+            ], $request->boolean('remember'))
+        ) {
+            RateLimiter::clear($throttleKey);
+
+            // Validasi, jika user pending
+            if (in_array(Auth::user()->status, ['pending'], true)) {
+                Auth::logout();
+                return back()->withErrors(['masuk' => 'Akun Anda belum diverifikasi TIM PMB.']);
+            }
+            // Validasi, jika tidak aktif
+            if (!in_array(Auth::user()->status, ['active', 1, '1'], true)) {
+                Auth::logout();
+                return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
+            }
+
+            // Update last logged in
+            $user = Auth::user();
+            $user->update(['last_logged_in' => Carbon::now()]);
+
+            // Kirim notifikasi WhatsApp setelah login berhasil
+            $this->sendLoginNotification($user, $request, $from = 'local');
+
+            return redirect()->intended(route('dashboard.index'));
+        }
+
+        // Hit jika gagal login
+        RateLimiter::hit($throttleKey, $decaySeconds);
+
+        return back()->withErrors([
+            'masuk' => 'Username atau password salah.',
+        ]);
     }
 
-    // Jika login berhasil
-    if ($response->successful() && isset($data['access_token'], $data['user'])) {
-      RateLimiter::clear($throttleKey);
-
-      $access_token = $data['access_token'];
-      $userData     = $data['user'];
-
-      // Validasi, status user harus aktif
-      if (!in_array($userData['status'], ['active', 1, '1'], true)) {
-        return back()->withErrors(['masuk' => 'Akun Siakad Anda tidak aktif.']);
-      }
-
-      // Cari atau buat user di sistem
-      $user = User::updateOrCreate(
-        ['siakad_id' => $userData['id']],
-        [
-          'siakad_id'         => $userData['id'],
-          'username'          => $userData['username'],
-          'password'          => null, // Jangan simpan password dari Siakad
-          'email'             => $userData['email'] ?? null,
-          'name'              => $userData['name'] ?? '',
-          'nomor_hp'          => $userData['nomor_hp'] ?? '',
-          'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
-          'email_verified_at' => $userData['email_verified_at'] ?? null,
-          'about'             => $userData['about'] ?? null,
-          'default_role'      => $userData['default_role'] ?? 'agen',
-          'theme'             => $userData['theme'] ?? 'default',
-          'avatar'            => $userData['avatar'] ?? null,
-          'status'            => $userData['status'] ?? 'active',
-          'status_login'      => 'online',
-          'isdeleted'         => $userData['isdeleted'] ?? false,
-          'last_logged_in'    => Carbon::now(),
-          'last_synced_at'    => Carbon::now(),
-        ]
-      );
-
-      // Untuk user lain, assign role berdasarkan default_role dari Siakad
-      $agen_role = $userData['default_role'] ?? 'mahasiswa';
-      $agen_role = is_array($agen_role) ? $agen_role : [$agen_role];
-      $user->syncRoles($agen_role);
-
-      // Simpan access_token ke session
-      Session::put('api_access_token', $access_token);
-      Session::put('api_userroles', $userData['roles'] ?? []);
-
-      Auth::login($user);
-
-      // Kirim notifikasi WhatsApp setelah login berhasil
-      $this->sendLoginNotification($user, $request, $from = 'siakad');
-
-      return redirect()->intended(route('dashboard.index'));
+    /**
+     * Menampilkan halaman register
+     */
+    public function create(): View
+    {
+        return view('sistem.daftar', [
+            'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
+        ]);
     }
 
-    // Hit jika gagal login
-    RateLimiter::hit($throttleKey, $decaySeconds);
+    /**
+     * Menyimpan data pengguna baru (Register)
+     */
+    public function store(PenggunaStoreRequest $request): RedirectResponse // Gunakan PenggunaStoreRequest
+    {
+        // Validasi sudah dilakukan oleh PenggunaStoreRequest
+        // Tapi kita hanya perlu menangani logika register di sini
 
-    // Tampilkan error dari API
-    $errorMessage = 'Tidak dapat melakukan otentikasi';
-    if (!empty($data['message'])) {
-      $errorMessage = is_array($data['message'])
-        ? implode('. ', array_map(fn($msg) => implode(' ', (array) $msg), $data['message']))
-        : $data['message'];
+        // Ambil data dari request, sesuaikan dengan field di User model
+        // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
+        // Kita set role default ke 'agen' dan status default ke 'pending'
+
+        // dd($request->syarat_dan_ketentuan); // null - "on"
+        if ($request->syarat_dan_ketentuan == null) {
+            return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
+        }
+
+        $data = [
+            'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
+            'asal_sekolah'  => $request->asal_sekolah,
+            'email'         => $request->email,
+            'username'      => $request->username,
+            'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
+            'nomor_hp2'     => $request->nomor_hp2,
+            'default_role'  => 'agen', // Role default untuk pendaftar
+            'status'        => 'pending', // Status default untuk pendaftar, bisa diaktifkan oleh admin
+            'password'      => bcrypt($request->password)
+        ];
+
+        try {
+            $user = User::create($data);
+
+            // Assign role default 'agen'
+            // $user->assignRole('agen');
+            $user->assignRole($data['default_role'] ?? 'agen');
+
+            // Opsional: Kirim email verifikasi
+            // $user->sendEmailVerificationNotification();
+
+            // Opsional: Login otomatis setelah register
+            // Auth::login($user);
+
+            return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
+        } catch (Exception $e) {
+            Log::error('Register Error: ' . $e->getMessage());
+            return redirect()->back()
+                ->withErrors(['general' => 'Gagal mendaftar. Silakan coba lagi.'])
+                ->withInput();
+        }
     }
 
-    return back()->withErrors(['masuk' => $errorMessage . '.']);
-  }
+    /**
+     * Menambahkan notifikasi whatsapp ke daftar antrian
+     */
+    protected function notifikasiWhatsapp($user, $pesan)
+    {
+        $nomor_wa = $user->nomor_hp ?? $user->nomor_hp2;
+        // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
+        if ($user->nomor_hp == $user->nomor_hp2) {
+            $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2
+        }
+        $antrian = AntrianNotifWhatsappModel::create([
+            'user_id'   => $user->user_id,
+            'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
+            'target'    => $nomor_wa,
+            'tipe'      => 'text',
+            'isi_pesan' => $pesan,
+            'status'    => 0,
+        ]);
 
-  /**
-   * Login lokal ke database user
-   */
-  protected function loginLocal(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
-  {
-    // Verifikasi Turnstile untuk login lokal juga
-    if (!$this->handleTurnstileValidation($request)) {
-      return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
+        // dispatch ke queue whatsapp
+        NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
+        // log whatsapp
+        Log::channel('whatsapp')->info('Notif whatsapp (login) berhasil masuk antrean', [
+            'user_id'     => $user->user_id,
+            'to'          => $nomor_wa, // Log nomor yang digunakan
+            'antrian_id'  => $antrian->antrian_id,
+        ]);
     }
 
-    // Coba login dengan kredensial lokal
-    if (
-      Auth::attempt([
-        'username' => $credentials['username'],
-        'password' => $credentials['password'],
-      ], $request->boolean('remember'))
-    ) {
-      RateLimiter::clear($throttleKey);
+    /**
+     * Proses logout
+     */
+    public function keluar(): RedirectResponse
+    {
+        // Update status login user
+        if (Auth::check()) {
+            Auth::user()->update(['status_login' => 'offline']);
+        }
 
-      // Validasi, jika user pending
-      if (in_array(Auth::user()->status, ['pending'], true)) {
+        // Hapus session
+        Session::forget(['api_access_token', 'api_userroles']);
         Auth::logout();
-        return back()->withErrors(['masuk' => 'Akun Anda belum diverifikasi TIM PMB.']);
-      }
-      // Validasi, jika tidak aktif
-      if (!in_array(Auth::user()->status, ['active', 1, '1'], true)) {
-        Auth::logout();
-        return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
-      }
 
-      // Update last logged in
-      $user = Auth::user();
-      $user->update(['last_logged_in' => Carbon::now()]);
-
-      // Kirim notifikasi WhatsApp setelah login berhasil
-      $this->sendLoginNotification($user, $request, $from = 'local');
-
-      return redirect()->intended(route('dashboard.index'));
+        return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
     }
 
-    // Hit jika gagal login
-    RateLimiter::hit($throttleKey, $decaySeconds);
+    /**
+     * Fungsi untuk memverifikasi Turnstile.
+     */
+    protected function validateTurnstile(string $response, string $ip): bool
+    {
+        $apiResponse = Http::asForm()->post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
+            [
+                'secret'   => env('TURNSTILE_SECRET_KEY'),
+                'response' => $response,
+                'remoteip' => $ip,
+            ]
+        );
 
-    return back()->withErrors([
-      'masuk' => 'Username atau password salah.',
-    ]);
-  }
-
-  /**
-   * Menampilkan halaman register
-   */
-  public function create(): View
-  {
-    return view('sistem.daftar', [
-      'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
-    ]);
-  }
-
-  /**
-   * Menyimpan data pengguna baru (Register)
-   */
-  public function store(PenggunaStoreRequest $request): RedirectResponse // Gunakan PenggunaStoreRequest
-  {
-    // Validasi sudah dilakukan oleh PenggunaStoreRequest
-    // Tapi kita hanya perlu menangani logika register di sini
-
-    // Ambil data dari request, sesuaikan dengan field di User model
-    // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
-    // Kita set role default ke 'agen' dan status default ke 'pending'
-
-    // dd($request->syarat_dan_ketentuan); // null - "on"
-    if ($request->syarat_dan_ketentuan == null) {
-      return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
+        return $apiResponse->json('success', false);
     }
-
-    $data = [
-      'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
-      'asal_sekolah'  => $request->asal_sekolah,
-      'email'         => $request->email,
-      'username'      => $request->username,
-      'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
-      'nomor_hp2'     => $request->nomor_hp2,
-      'default_role'  => 'agen', // Role default untuk pendaftar
-      'status'        => 'pending', // Status default untuk pendaftar, bisa diaktifkan oleh admin
-      'password'      => bcrypt($request->password)
-    ];
-
-    try {
-      $user = User::create($data);
-
-      // Assign role default 'agen'
-      // $user->assignRole('agen');
-      $user->assignRole($data['default_role'] ?? 'agen');
-
-      // Opsional: Kirim email verifikasi
-      // $user->sendEmailVerificationNotification();
-
-      // Opsional: Login otomatis setelah register
-      // Auth::login($user);
-
-      return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
-    } catch (Exception $e) {
-      Log::error('Register Error: ' . $e->getMessage());
-      return redirect()->back()
-        ->withErrors(['general' => 'Gagal mendaftar. Silakan coba lagi.'])
-        ->withInput();
-    }
-  }
-
-  /**
-   * Menambahkan notifikasi whatsapp ke daftar antrian
-   */
-  protected function notifikasiWhatsapp($user, $pesan)
-  {
-    $nomor_wa = $user->nomor_hp ?? $user->nomor_hp2;
-    // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
-    if ($user->nomor_hp == $user->nomor_hp2) {
-      $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2
-    }
-    $antrian = AntrianNotifWhatsappModel::create([
-      'user_id'   => $user->user_id,
-      'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
-      'target'    => $nomor_wa,
-      'tipe'      => 'text',
-      'isi_pesan' => $pesan,
-      'status'    => 0,
-    ]);
-
-    // dispatch ke queue whatsapp
-    NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
-    // log whatsapp
-    Log::channel('whatsapp')->info('Notif whatsapp (login) berhasil masuk antrean', [
-      'user_id'     => $user->user_id,
-      'to'          => $nomor_wa, // Log nomor yang digunakan
-      'antrian_id'  => $antrian->antrian_id,
-    ]);
-  }
-
-  /**
-   * Proses logout
-   */
-  public function keluar(): RedirectResponse
-  {
-    // Update status login user
-    if (Auth::check()) {
-      Auth::user()->update(['status_login' => 'offline']);
-    }
-
-    // Hapus session
-    Session::forget(['api_access_token', 'api_userroles']);
-    Auth::logout();
-
-    return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
-  }
-
-  /**
-   * Fungsi untuk memverifikasi Turnstile.
-   */
-  protected function validateTurnstile(string $response, string $ip): bool
-  {
-    $apiResponse = Http::asForm()->post(
-      'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
-      [
-        'secret'   => env('TURNSTILE_SECRET_KEY'),
-        'response' => $response,
-        'remoteip' => $ip,
-      ]
-    );
-
-    return $apiResponse->json('success', false);
-  }
 
   // --- FUNGSI PEMBANTU BARU UNTUK MENGURANGI DUPLIKASI ---
 
-  /**
-   * Handle Turnstile validation logic.
-   * Returns true if validation passes, false otherwise.
-   */
-  private function handleTurnstileValidation(LoginRequest $request)
-  {
-    if (!env('USING_TURNSTILE', true)) {
-      return true; // Bypass if Turnstile is disabled
+    /**
+     * Handle Turnstile validation logic.
+     * Returns true if validation passes, false otherwise.
+     */
+    private function handleTurnstileValidation(LoginRequest $request)
+    {
+        if (!env('USING_TURNSTILE', true)) {
+            return true; // Bypass if Turnstile is disabled
+        }
+
+        $turnstileResponse = $request->input('cf-turnstile-response');
+        if (!$turnstileResponse) {
+            return false; // Tidak ada respons turnstile
+        }
+
+        return $this->validateTurnstile($turnstileResponse, $request->ip());
     }
 
-    $turnstileResponse = $request->input('cf-turnstile-response');
-    if (!$turnstileResponse) {
-      return false; // Tidak ada respons turnstile
+    /**
+     * Send login notification via WhatsApp with cache guard.
+     */
+    private function sendLoginNotification($user, $request, $from): void
+    {
+        $sessionLifetime = (int) env('SESSION_LIFETIME', 120); // menit
+        $ip = $request->ip(); // Ambil IP user
+        $cacheKey = 'last_whatsapp_notif_login_' . $user->user_id . '_' . $ip; // Gunakan $user->user_id bukan $user->user_id
+
+        // Jika cache ada, langsung SKIP pengiriman notifikasi
+        if (Cache::has($cacheKey)) {
+            return; // Keluar dari fungsi jika sudah pernah dikirim dalam periode ini
+        }
+
+        try {
+            // Pesan WhatsApp
+            $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+            $pesan = "Selamat " . $greeting . ", {$user->name}.\n"
+                . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *Portal Mitra PMB* pada:\n"
+                . "{$waktu}\n" . "\n"
+                . "Jika aktivitas ini mencurigakan, segera lakukan langkah pengamanan pada Akun Anda.";
+            $this->notifikasiWhatsapp($user, $pesan);
+        } catch (\Throwable $e) {
+            Log::channel('whatsapp')->warning('Gagal masuk antrean notif whatsapp (login)', [
+                'err'     => $e->getMessage(),
+                'user_id' => $user->user_id ?? null
+            ]);
+        }
+
+        // Simpan flag cache per user per IP, agar tidak kirim lagi dalam masa SESSION_LIFETIME
+        Cache::put($cacheKey, true, now()->addMinutes($sessionLifetime));
     }
-
-    return $this->validateTurnstile($turnstileResponse, $request->ip());
-  }
-
-  /**
-   * Send login notification via WhatsApp with cache guard.
-   */
-  private function sendLoginNotification($user, $request, $from): void
-  {
-    $sessionLifetime = (int) env('SESSION_LIFETIME', 120); // menit
-    $ip = $request->ip(); // Ambil IP user
-    $cacheKey = 'last_whatsapp_notif_login_' . $user->user_id . '_' . $ip; // Gunakan $user->user_id bukan $user->user_id
-
-    // Jika cache ada, langsung SKIP pengiriman notifikasi
-    if (Cache::has($cacheKey)) {
-      return; // Keluar dari fungsi jika sudah pernah dikirim dalam periode ini
-    }
-
-    try {
-      // Pesan WhatsApp
-      $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-      $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
-      $pesan = "Selamat " . $greeting . ", {$user->name}.\n"
-        . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *Portal Mitra PMB* pada:\n"
-        . "{$waktu}\n" . "\n"
-        . "Jika aktivitas ini mencurigakan, segera lakukan langkah pengamanan pada Akun Anda.";
-      $this->notifikasiWhatsapp($user, $pesan);
-    } catch (\Throwable $e) {
-      Log::channel('whatsapp')->warning('Gagal masuk antrean notif whatsapp (login)', [
-        'err'     => $e->getMessage(),
-        'user_id' => $user->user_id ?? null
-      ]);
-    }
-
-    // Simpan flag cache per user per IP, agar tidak kirim lagi dalam masa SESSION_LIFETIME
-    Cache::put($cacheKey, true, now()->addMinutes($sessionLifetime));
-  }
 }

@@ -59,21 +59,21 @@ class PendaftaranController extends Controller
             ->addColumn('calon_mahasiswa', function ($row) {
                 $html = '<div class="d-flex align-items-center">
                         <div class="avatar avatar-sm me-3 bg-blue-lt">
-                          <span class="avatar-text">' . substr($row->nama_lengkap, 0, 2) . '</span>
+                            <span class="avatar-text">' . substr($row->nama_lengkap, 0, 2) . '</span>
                         </div>
                         <div>
-                          <div class="font-weight-medium">
-                            <a href="' . route('pendaftaran.show', $row) . '" class="text-reset link-hover-underline">
-                              ' . $row->nama_lengkap . '
+                            <div class="font-weight-medium">
+                                <a href="' . route('pendaftaran.show', $row) . '" class="text-reset link-hover-underline">
+                                ' . $row->nama_lengkap . '
                             </a>
-                          </div>
-                          <div class="text-muted small">
+                        </div>
+                        <div class="text-muted small">
                             <i class="ti ti-mail me-1"></i>' . $row->email . '
-                          </div>';
+                        </div>';
                 if ($row->id_calon_mahasiswa) {
                     $html .= '<div class="text-muted small">
                             <i class="ti ti-id me-1"></i>' . $row->id_calon_mahasiswa . '
-                          </div>';
+                        </div>';
                 }
                 $html .= '</div></div>';
                 return $html;
@@ -102,37 +102,37 @@ class PendaftaranController extends Controller
             ->addColumn('aksi', function ($row) {
                 $html = '<div class="btn-list justify-content-center">
                         <a href="' . route('pendaftaran.show', $row) . '" class="btn btn-sm btn-default" title="Detail"
-                          data-bs-toggle="tooltip" data-bs-placement="top">
-                          <i class="ti ti-eye fs-3 me-1"></i>
-                          Detail
+                            data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="ti ti-eye fs-3 me-1"></i>
+                            Detail
                         </a>';
 
                 // Edit Button
                 if (auth()->user()->can('pendaftaran_edit') && $row->status === 'pending') {
                     $html .= '<a href="' . route('pendaftaran.edit', $row) . '" class="btn btn-sm btn-default"
-                              title="Edit" data-bs-toggle="tooltip" data-bs-placement="top">
-                              <i class="ti ti-edit fs-3"></i>
-                          </a>';
+                                title="Edit" data-bs-toggle="tooltip" data-bs-placement="top">
+                                <i class="ti ti-edit fs-3"></i>
+                            </a>';
                 }
 
                 // Credential Button
                 if ($row->password_text && $row->username_siakad) {
                     $html .= '<a href="#"
-                            onclick="showCredentials(\'' . addslashes($row->username_siakad) . '\', \'' . addslashes($row->password_text) . '\')"
-                            class="btn btn-sm btn-default text-success d-none d-sm-inline-block" data-bs-toggle="modal"
-                            data-bs-target="#credentials-modal" title="Kredensial" data-bs-toggle="tooltip"
-                            data-bs-placement="top">
-                            <i class="ti ti-key fs-3"></i>
-                          </a>';
+                                onclick="showCredentials(\'' . addslashes($row->username_siakad) . '\', \'' . addslashes($row->password_text) . '\')"
+                                class="btn btn-sm btn-default text-success d-none d-sm-inline-block" data-bs-toggle="modal"
+                                data-bs-target="#credentials-modal" title="Kredensial" data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                                <i class="ti ti-key fs-3"></i>
+                            </a>';
                 }
 
                 // Delete Button
                 if (auth()->user()->can('pendaftaran_delete')) {
                     $html .= '<button type="button" class="btn btn-sm btn-default text-danger delete-btn" title="Hapus"
-                            data-bs-toggle="tooltip" data-bs-placement="top" data-name="' . addslashes($row->nama_lengkap) . '"
-                            data-url="' . route('pendaftaran.destroy', $row) . '">
-                            <i class="ti ti-trash fs-3"></i>
-                          </button>';
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-name="' . addslashes($row->nama_lengkap) . '"
+                                data-url="' . route('pendaftaran.destroy', $row) . '">
+                                <i class="ti ti-trash fs-3"></i>
+                            </button>';
                 }
 
                 $html .= '</div>';
