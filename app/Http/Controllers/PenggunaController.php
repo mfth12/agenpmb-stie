@@ -66,6 +66,16 @@ class PenggunaController extends Controller
     }
 
     /**
+     * Menampilkan halaman register mitra pmb
+     */
+    public function createPublic(): View
+    {
+        return view('sistem.daftar', [
+            'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
+        ]);
+    }
+
+    /**
      * Menyimpan pengguna baru
      */
     public function store(PenggunaStoreRequest $request): RedirectResponse
@@ -96,6 +106,59 @@ class PenggunaController extends Controller
         } catch (\Exception $e) {
             return back()->withInput()
                 ->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Menyimpan pengguna baru (via register)
+     */
+    public function storePublic(PenggunaStoreRequest $request): RedirectResponse // Gunakan PenggunaStoreRequest
+    {
+        // Validasi sudah dilakukan oleh PenggunaStoreRequest
+        // Tapi kita hanya perlu menangani logika register di sini
+
+        // Ambil data dari request, sesuaikan dengan field di User model
+        // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
+        // Kita set role default ke 'agen' dan status default ke 'pending'
+
+        // Verifikasi Turnstile untuk create mitra pmb
+
+        // dd($request->syarat_dan_ketentuan); // null - "on"
+        if ($request->syarat_dan_ketentuan == null) {
+            return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
+        }
+
+        $data = [
+            'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
+            'asal_sekolah'  => $request->asal_sekolah,
+            'email'         => $request->email,
+            'username'      => $request->username,
+            'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
+            'nomor_hp2'     => $request->nomor_hp2,
+            'default_role'  => 'agen', // Role default untuk pendaftar
+            'status'        => 'pending', // Status default untuk pendaftar, bisa diaktifkan oleh admin
+            'password'      => bcrypt($request->password)
+        ];
+
+        try {
+            $user = User::create($data);
+
+            // Assign role default 'agen'
+            // $user->assignRole('agen');
+            $user->assignRole($data['default_role'] ?? 'agen');
+
+            // Opsional: Kirim email verifikasi
+            // $user->sendEmailVerificationNotification();
+
+            // Opsional: Login otomatis setelah register
+            // Auth::login($user);
+
+            return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
+        } catch (Exception $e) {
+            Log::error('Register Error: ' . $e->getMessage());
+            return redirect()->back()
+                ->withErrors(['general' => 'Gagal mendaftar. Silakan coba lagi.'])
+                ->withInput();
         }
     }
 

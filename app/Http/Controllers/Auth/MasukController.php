@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Jobs\NotifWhatsappJob;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Log;
@@ -19,11 +18,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\AntrianNotifWhatsappModel;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
-use App\Http\Requests\PenggunaStoreRequest; // Import Request
 
 class MasukController extends Controller
 {
@@ -208,67 +204,6 @@ class MasukController extends Controller
         return back()->withErrors([
             'masuk' => 'Username atau password salah.',
         ]);
-    }
-
-    /**
-     * Menampilkan halaman register
-     */
-    public function create(): View
-    {
-        return view('sistem.daftar', [
-            'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
-        ]);
-    }
-
-    /**
-     * Menyimpan data pengguna baru (Register)
-     */
-    public function store(PenggunaStoreRequest $request): RedirectResponse // Gunakan PenggunaStoreRequest
-    {
-        // Validasi sudah dilakukan oleh PenggunaStoreRequest
-        // Tapi kita hanya perlu menangani logika register di sini
-
-        // Ambil data dari request, sesuaikan dengan field di User model
-        // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
-        // Kita set role default ke 'agen' dan status default ke 'pending'
-
-        // dd($request->syarat_dan_ketentuan); // null - "on"
-        if ($request->syarat_dan_ketentuan == null) {
-            return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
-        }
-
-        $data = [
-            'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
-            'asal_sekolah'  => $request->asal_sekolah,
-            'email'         => $request->email,
-            'username'      => $request->username,
-            'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
-            'nomor_hp2'     => $request->nomor_hp2,
-            'default_role'  => 'agen', // Role default untuk pendaftar
-            'status'        => 'pending', // Status default untuk pendaftar, bisa diaktifkan oleh admin
-            'password'      => bcrypt($request->password)
-        ];
-
-        try {
-            $user = User::create($data);
-
-            // Assign role default 'agen'
-            // $user->assignRole('agen');
-            $user->assignRole($data['default_role'] ?? 'agen');
-
-            // Opsional: Kirim email verifikasi
-            // $user->sendEmailVerificationNotification();
-
-            // Opsional: Login otomatis setelah register
-            // Auth::login($user);
-
-            return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
-        } catch (Exception $e) {
-            Log::error('Register Error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withErrors(['general' => 'Gagal mendaftar. Silakan coba lagi.'])
-                ->withInput();
-        }
     }
 
     /**
