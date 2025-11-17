@@ -12,7 +12,7 @@
           <h1 class="mb-0">{{ konfigs('NAMA_SISTEM') }}</h1>
         </a>
       </div>
-      <h3 class="text-center mb-4">Formulir Pendaftaran</h3>
+      <h3 class="text-center mb-4">Daftar Akun</h3>
       <form class="card card-md" method="POST" action="{{ route('register.do') }}" autocomplete="off" novalidate
         enctype="multipart/form-data">
         @csrf
@@ -34,14 +34,13 @@
             </div>
           @endif
 
-          @if (session('success'))
-            <div
-              class="alert alert-hilang alert-success text-success alert-dismissible d-flex align-items-center animate__animated animate__shakeX"
+          @if (session('info'))
+            <div class="alert alert-hilang alert-info text-info alert-dismissible d-flex align-items-center"
               role="alert">
               <div class="alert-icon">
-                <i class="ti ti-check fs-2 text-success"></i>
+                <i class="ti ti-info-circle fs-2 text-info"></i>
               </div>
-              {{ session('success') }}
+              {{ session('info') }}
               <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             </div>
           @endif
@@ -114,6 +113,16 @@
             </div>
           </div>
           <input type="hidden" name="role" value="agen" />
+          <!-- START: Turnstile Widget -->
+          @if (env('USING_TURNSTILE', false))
+            <div class="mb-3">
+              <div id="cf-turnstile-widget-register" class="cf-turnstile" style="min-width: 100px;"
+                data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-size="flexible" data-refresh-expired="auto"
+                data-callback="javascriptCallbackRegister" data-theme="light"
+                data-language="{{ env('TURNSTILE_LANGUAGE', 'en-US') }}"></div>
+            </div>
+          @endif
+          <!-- END: Turnstile Widget -->
           <div class="mb-3">
             <label class="form-check">
               <input type="checkbox" name="syarat_dan_ketentuan" class="form-check-input" required />
@@ -125,7 +134,7 @@
             @enderror
           </div>
           <div class="form-footer">
-            <button type="submit" class="btn btn-primary w-100">Ajukan Pendaftaran Mitra</button>
+            <button type="submit" class="btn btn-primary w-100">Daftar Akun Mitra</button>
           </div>
         </div>
       </form>
