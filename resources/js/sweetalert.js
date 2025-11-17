@@ -113,8 +113,8 @@ window.showDeleteConfirmation = function (callback, itemName = 'data') {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Hapus',
+        cancelButtonColor: '#3085d6',
         cancelButtonText: 'Batal',
         // Sertakan opsi global di sini juga jika ingin di-override
         allowOutsideClick: true,
