@@ -209,6 +209,7 @@ class PenggunaController extends Controller
                 'nomor_hp2'     => $request->nomor_hp2,
                 'default_role'  => $request->role,
                 'status'        => $request->status,
+                'about'        => $request->about,
             ];
 
             // Jika password diisi, update password

@@ -147,6 +147,33 @@
                     </div>
                   </div>
                 </div>
+
+                {{-- START: Turnstile Widget --}}
+                <div class="row">
+                  <div class="col-md-12">
+                    @if (env('USING_TURNSTILE', false))
+                      <div class="mb-3" style="display: block; flex-flow: row;">
+                        <label class="form-label">Verifikasi Keamanan <span class="text-danger">*</span></label>
+                        @if ($errors->has('cf-turnstile-response'))
+                          <div
+                            class="alert alert-danger text-danger alert-dismissible d-flex align-items-center animate__animated animate__shakeX"
+                            role="alert">
+                            <div class="alert-icon">
+                              <i class="ti ti-cloud-x fs-2 text-danger"></i>
+                            </div>
+                            {!! $errors->first('cf-turnstile-response') !!}
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                          </div>
+                        @endif
+                        <div id="cf-turnstile-widget" class="cf-turnstile" style="min-width: 100px;"
+                          data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-size="flexible"
+                          data-refresh-expired="auto" data-callback="javascriptCallbackRegister" data-theme="light"
+                          data-language="{{ env('TURNSTILE_LANGUAGE', 'en-US') }}"></div>
+                      </div>
+                    @endif
+                  </div>
+                </div>
+                {{-- END: Turnstile Widget --}}
             </div>
 
             <div class="card-footer">
@@ -166,4 +193,37 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('js_bawah')
+  {{-- KOMPONEN INKLUD --}}
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const widget = document.getElementById("cf-turnstile-widget");
+
+      function applyTheme() {
+        let theme = localStorage.getItem("tabler-theme") || "light";
+        console.log("Current theme:", theme);
+
+        // Terapkan ke Turnstile (jika ada di halaman register)
+        if (widget) {
+          widget.setAttribute("data-theme", theme);
+        }
+      }
+
+      // Jalankan pertama kali
+      applyTheme();
+
+      // Pantau perubahan tema secara dinamis (misal dari switcher Tabler)
+      const observer = new MutationObserver(() => {
+        applyTheme();
+      });
+
+      // Amati perubahan attribute data-bs-theme di <html> (Tabler ganti tema di sana)
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-bs-theme']
+      });
+    });
+  </script>
 @endsection

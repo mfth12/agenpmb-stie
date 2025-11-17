@@ -103,7 +103,7 @@
             @enderror
           </div>
           <input type="hidden" name="role" value="agen" />
-          <!-- START: Turnstile Widget -->
+          {{-- START: Turnstile Widget --}}
           @if (env('USING_TURNSTILE', false))
             <div class="mb-3" style="display: block; flex-flow: row;">
               <label class="form-label">Verifikasi Keamanan <span class="text-danger">*</span></label>
@@ -113,7 +113,7 @@
                 data-language="{{ env('TURNSTILE_LANGUAGE', 'en-US') }}"></div>
             </div>
           @endif
-          <!-- END: Turnstile Widget -->
+          {{-- END: Turnstile Widget --}}
           <div class="mb-3">
             <label class="form-check">
               <input type="checkbox" name="syarat_dan_ketentuan" class="form-check-input" required />
