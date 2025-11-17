@@ -252,24 +252,8 @@ class MasukController extends Controller
         return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
     }
 
-    /**
-     * Fungsi untuk memverifikasi Turnstile.
-     */
-    protected function validateTurnstile(string $response, string $ip): bool
-    {
-        $apiResponse = Http::asForm()->post(
-            'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
-            [
-                'secret'   => env('TURNSTILE_SECRET_KEY'),
-                'response' => $response,
-                'remoteip' => $ip,
-            ]
-        );
-
-        return $apiResponse->json('success', false);
-    }
-
-  // --- FUNGSI PEMBANTU BARU UNTUK MENGURANGI DUPLIKASI ---
+/////// --- FUNGSI PEMBANTU BARU UNTUK MENGURANGI DUPLIKASI --->
+/////// --- FUNGSI PEMBANTU BARU UNTUK MENGURANGI DUPLIKASI --->
 
     /**
      * Handle Turnstile validation logic.
@@ -287,6 +271,23 @@ class MasukController extends Controller
         }
 
         return $this->validateTurnstile($turnstileResponse, $request->ip());
+    }
+
+    /**
+     * Fungsi untuk memverifikasi Turnstile.
+     */
+    protected function validateTurnstile(string $response, string $ip): bool
+    {
+        $apiResponse = Http::asForm()->post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
+            [
+                'secret'   => env('TURNSTILE_SECRET_KEY'),
+                'response' => $response,
+                'remoteip' => $ip,
+            ]
+        );
+
+        return $apiResponse->json('success', false);
     }
 
     /**
