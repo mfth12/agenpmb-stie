@@ -25,22 +25,9 @@
               <div class="alert-icon">
                 <i class="ti ti-ban fs-2 text-danger"></i>
               </div>
-              <ul class="mb-0 ps-3">
-                @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-                @endforeach
-              </ul>
-              <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-            </div>
-          @endif
-
-          @if (session('info'))
-            <div class="alert alert-hilang alert-info text-info alert-dismissible d-flex align-items-center"
-              role="alert">
-              <div class="alert-icon">
-                <i class="ti ti-info-circle fs-2 text-info"></i>
-              </div>
-              {{ session('info') }}
+              @foreach ($errors->all() as $error)
+                {{ $error }} <br>
+              @endforeach
               <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             </div>
           @endif
@@ -111,12 +98,16 @@
               <input type="password" name="password_confirmation" class="form-control" placeholder="Ulangi Password"
                 autocomplete="off" required />
             </div>
+            @error('password_confirmation')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
           </div>
           <input type="hidden" name="role" value="agen" />
           <!-- START: Turnstile Widget -->
           @if (env('USING_TURNSTILE', false))
-            <div class="mb-3">
-              <div id="cf-turnstile-widget-register" class="cf-turnstile" style="min-width: 100px;"
+            <div class="mb-3" style="display: block; flex-flow: row;">
+              <label class="form-label">Verifikasi Keamanan <span class="text-danger">*</span></label>
+              <div id="cf-turnstile-widget" class="cf-turnstile" style="min-width: 100px;"
                 data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-size="flexible" data-refresh-expired="auto"
                 data-callback="javascriptCallbackRegister" data-theme="light"
                 data-language="{{ env('TURNSTILE_LANGUAGE', 'en-US') }}"></div>
@@ -134,7 +125,11 @@
             @enderror
           </div>
           <div class="form-footer">
-            <button type="submit" class="btn btn-primary w-100">Daftar Akun Mitra</button>
+            <span>
+              <button type="submit" id="daftarButton" class="btn btn-primary w-100">Daftar Akun Mitra
+                <div class="spinner-border spinner-border-sm ms-2 d-none" role="status"></div>
+              </button>
+            </span>
           </div>
         </div>
       </form>
@@ -160,7 +155,7 @@
   @vite(['resources/assets/vendor/libs/@form-validation/auto-focus.js'])
   {{-- TAMBAHAN JS UNTUK PAGE MASUK --}}
   @vite(['resources/js/pages/konfig-tampilan.js'])
-  @vite(['resources/js/pages/masuk.js'])
+  @vite(['resources/js/pages/daftar.js'])
   {{-- KOMPONEN INKLUD --}}
   @include('components.back.konfig-tampilan', ['floating' => true])
   <script>

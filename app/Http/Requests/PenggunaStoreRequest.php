@@ -25,6 +25,7 @@ class PenggunaStoreRequest extends FormRequest
             'status' => 'sometimes|string|in:active,inactive',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Max 2MB
             'about' => 'nullable|string|max:500', // TAMBAHAN: Field about
+            'cf-turnstile-response' => 'required', // TAMBAHAN: Field about
         ];
     }
 
@@ -45,6 +46,7 @@ class PenggunaStoreRequest extends FormRequest
             'avatar.image' => 'File harus berupa gambar.',
             'avatar.mimes' => 'Format gambar harus jpeg, png, jpg, atau webp.',
             'avatar.max' => 'Ukuran gambar maksimal 2MB.',
+            'cf-turnstile-response.required' => 'Verifikasi keamanan gagal.',
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\PenggunaStoreRequest;
 use App\Http\Requests\PenggunaUpdateRequest;
@@ -121,11 +122,15 @@ class PenggunaController extends Controller
         // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
         // Kita set role default ke 'agen' dan status default ke 'pending'
 
-        // Verifikasi Turnstile untuk create mitra pmb
-
         // dd($request->syarat_dan_ketentuan); // null - "on"
         if ($request->syarat_dan_ketentuan == null) {
-            return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
+            return back()->withInput()->withErrors(['info' => 'Anda belum menyetujui syarat dan ketentuan yang berlaku.']);
+        }
+
+        // Verifikasi Turnstile untuk create mitra pmb
+        if (!$this->handleTurnstileValidation($request)) {
+            // return back()->withInput()->with('turnstile_notvalid', 'Verifikasi keamanan gagal');
+            return back()->withInput()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
         }
 
         $data = [
@@ -287,5 +292,40 @@ class PenggunaController extends Controller
         } catch (Exception $e) {
             return back()->with('error', 'Gagal reset password: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Handle Turnstile validation logic.
+     * Returns true if validation passes, false otherwise.
+     */
+    private function handleTurnstileValidation(PenggunaStoreRequest $request)
+    {
+        if (!env('USING_TURNSTILE', true)) {
+            return true; // Bypass if Turnstile is disabled
+        }
+
+        $turnstileResponse = $request->input('cf-turnstile-response');
+        if (!$turnstileResponse) {
+            return false; // Tidak ada respons turnstile
+        }
+
+        return $this->validateTurnstile($turnstileResponse, $request->ip());
+    }
+
+    /**
+     * Fungsi untuk memverifikasi Turnstile.
+     */
+    protected function validateTurnstile(string $response, string $ip): bool
+    {
+        $apiResponse = Http::asForm()->post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
+            [
+                'secret'   => env('TURNSTILE_SECRET_KEY'),
+                'response' => $response,
+                'remoteip' => $ip,
+            ]
+        );
+
+        return $apiResponse->json('success', false);
     }
 }

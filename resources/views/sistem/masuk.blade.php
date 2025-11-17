@@ -106,6 +106,7 @@
                 {{-- Clouflare turnstile script --}}
                 @if (env('USING_TURNSTILE', false))
                   <div class="mt-4" style="display: block; flex-flow: row;">
+                    <label class="form-label mb-0">Username</label>
                     <div id="cf-turnstile-widget" class="cf-turnstile" style="min-width: 100px;"
                       data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-size="flexible" data-refresh-expired="auto"
                       data-callback="javascriptCallback" data-theme="light"
