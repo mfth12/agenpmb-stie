@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DasborController;
 use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\Auth\MasukController;
 use App\Http\Controllers\PendaftaranController;
@@ -16,8 +15,8 @@ Route::get('/', fn() => redirect()->route(Auth::check() ? 'dashboard.index' : 'l
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [MasukController::class, 'index'])->name('login');
     Route::post('/login', [MasukController::class, 'masuk'])->name('login.do');
-    Route::get('/register', [MasukController::class, 'create'])->name('register');
-    Route::post('/register', [MasukController::class, 'store'])->name('register.do');
+    Route::get('/register', [PenggunaController::class, 'createPublic'])->name('register');
+    Route::post('/register', [PenggunaController::class, 'storePublic'])->name('register.do');
 });
 
 // Rute dasbor dengan permission
