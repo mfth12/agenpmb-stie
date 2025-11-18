@@ -94,7 +94,7 @@ class PendaftaranModel extends Model
     }
 
     /**
-     * Scope untuk pendaftaran yang diimpor
+     * Scope untuk pendaftaran yang terimpor
      */
     public function scopeImported($query)
     {
@@ -121,7 +121,7 @@ class PendaftaranModel extends Model
             'success' => '<span class="badge badge-pill px-2 bg-success text-success-fg">Berhasil</span>',
             'failed' => '<span class="badge badge-pill px-2 bg-danger text-danger-fg">Gagal</span>',
             'synced' => '<span class="badge badge-pill px-2 bg-info text-info-fg">Tersinkron</span>',
-            'imported' => '<span class="badge badge-pill badge-outline px-2 bg-light text-light-fg">Diimpor</span>',
+            'imported' => '<span class="badge badge-pill badge-outline px-2 bg-light text-light-fg">Terimpor</span>',
             default => '<span class="badge badge-pill px-2 bg-warning text-warning-fg">Pending</span>',
         };
     }
