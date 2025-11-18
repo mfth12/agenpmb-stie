@@ -23,13 +23,25 @@ class UserSeeder extends Seeder
         // Buat user spesifik untuk superadmin
         $superadminUsers = [
             [
+                'user_id'       => 3201,
+                'username'      => 'adminbaak',
+                'name'          => 'Superadmin BAAK',
+                'asal_sekolah'  => 'STIE Pembangunan Tanjungpinang',
+                'email'         => 'baak@stie-pembangunan.ac.id',
+                'nomor_hp'      => '085264886677',
+                'nomor_hp2'     => '085264886677',
+                'passsword'     => '$2y$12$wakaDb5/1M21HnxooVmhx.CzkUsbpdO/N4dOHSJnZ/x5HMHFA8moK',
+            ],
+            [
+                'user_id'       => 3225,
+                // 'siakad_id'     => 3,
                 'username'      => 'mfth12',
                 'name'          => 'Superadmin Miftah',
                 'asal_sekolah'  => 'STIE Pembangunan Tanjungpinang',
                 'email'         => 'mfth12@google.com',
                 'nomor_hp'      => '6281331847725',
                 'nomor_hp2'     => '6281331847725',
-                'passsword'     => '123123',
+                'passsword'     => '$2y$12$4NC3sIaMEQdL27DEgbsRdOQSThdKw1eonmJweFfX8XLhUvRdJqIP.',
             ],
         ];
 
@@ -89,6 +101,29 @@ class UserSeeder extends Seeder
         // Buat user spesifik untuk agen
         $agenUsers = [
             [
+                'user_id'       => 3227,
+                'username'      => 'anto1974',
+                'name'          => 'H. Sarianto, S.Ag',
+                'asal_sekolah'  => 'SMK Negeri 1 Tanjungpinang',
+                'email'         => 'sarianto7474@gmail.com',
+                'nomor_hp'      => '08126197533',
+                'nomor_hp2'     => '08126197533',
+                'passsword'     => '$2y$12$FVnr/lVjd27Y6psYZn2QROk5Llu8JyzWw4P0m6xup0IRIRZgPmSsy',
+                // 'passsword'     => 'anto1974',
+            ],
+            [
+                'user_id'       => 3228,
+                'username'      => 'gameover',
+                'name'          => 'Mahar Anggoro',
+                'asal_sekolah'  => 'SMA Pelita Nusantara Tanjungpinang',
+                'email'         => 'goro1990.ag@gmail.com',
+                'nomor_hp'      => '085272313800',
+                'nomor_hp2'     => '085272313800',
+                'passsword'     => '$2y$12$CyaJ4ayh0zNRm0OB7IqkgeZna78vqlNHxLHXRN.knhoyRlgOodtEK',
+                // 'passsword'     => 'gameover',
+            ],
+            [
+                'user_id'       => 3207,
                 'username'      => 'hartono91',
                 'name'          => 'Hartono',
                 'asal_sekolah'  => 'SMKN 2 Tanjungpinang',
@@ -96,9 +131,11 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => '08127757411',
                 'nomor_hp2'     => '08127757411',
                 // 'passsword'     => '$2y$12$cFmKPiJrgf3EME.s11wesOpUjwwVnOHTCRhA.mBty6xX58xibxpca',
-                'passsword'     => 'hartono91',
+                'passsword'     => '$2y$12$8ZmmVthNHwITOFa32kRclubPoMLT7jEZKg96EwU1zgFvbJmpRbX/C',
+                // 'passsword'     => 'hartono91',
             ],
             [
+                'user_id'       => 3208,
                 'username'      => 'ucueni',
                 'name'          => 'Armaini Mardalena',
                 'asal_sekolah'  => 'SMA Negeri 4 Tanjungpinang',
@@ -106,9 +143,11 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => '081350101036',
                 'nomor_hp2'     => '081350101036',
                 // 'passsword'     => '$2y$12$SDTjERQMmyNGPrJP2braL.J54Lnqlb5MqumSPTVPlOnvJgNrilqMC',
-                'passsword'     => 'ucueni',
+                'passsword'     => '$2y$12$MWKvejhL1TtHfOF3Kh4XVuJFIvZlXD4GXyB1SDRxmp/DTSlImyKlC',
+                // 'passsword'     => 'ucueni',
             ],
             [
+                'user_id'       => 3209,
                 'username'      => 'skatratpi',
                 'name'          => 'Mutia Khairunnisya, A.Md.KL',
                 'asal_sekolah'  => 'SMK Maitreyawira Tanjungpinang',
@@ -116,9 +155,11 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => '082386085226',
                 'nomor_hp2'     => '082386085226',
                 // 'passsword'     => '$2y$12$RJ2UWCAh9juB/IEFTVJZJe6Iza.rqtHRwa80sFcgAiXnmtcDdxCm.',
-                'passsword'     => 'skatratpi',
+                'passsword'     => '$2y$12$uK2Uk.Inq99BUJmGGL0UoukJ2E7Q2o5TCnRPOJDL2EbIvmmUcSXee',
+                // 'passsword'     => 'skatratpi',
             ],
             [
+                'user_id'       => 3210,
                 'username'      => 'ratna123456',
                 'name'          => 'Ratna Wulandari',
                 'asal_sekolah'  => 'SMAS Maitreyawira Tanjungpinang',
@@ -126,19 +167,49 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => '085364993104',
                 'nomor_hp2'     => '085364993104',
                 // 'passsword'     => '$2y$12$ayNw216k0IAnOP.SBjEUheDAWl7ZxnSSjVq3j6cx/gfddTz3Bhlee',
-                'passsword'     => 'ratna123456',
+                'passsword'     => '$2y$12$NrFjp.SFU3SlBQgKQfiWQelDkfVLOCF4ll1dYMxdeCjwkCV341SRC',
+                // 'passsword'     => 'ratna123456',
+            ],
+            [
+                'user_id'       => 3211,
+                'username'      => 'rahmani1',
+                'name'          => 'Rahmani Nur Bayanti',
+                'asal_sekolah'  => 'SMA Negeri 1 Tanjungpinang',
+                'email'         => 'rahmaninurbayanti@gmail.com',
+                'nomor_hp'      => '083809867801',
+                'nomor_hp2'     => '083809867801',
+                'passsword'     => '$2y$12$70NbBUtgtHR7BTvckA6rXeBuHR.6VD463C3BOeGPOYVlN6Vyym4.i',
+                // 'passsword'     => 'rahmani1',
             ],
         ];
 
-        foreach ($superadminUsers as $userData) {
+
+        foreach ($agenUsers as $userData) {
             $user = User::factory()->create([
+                'user_id'       => $userData['user_id'],
                 'username'      => $userData['username'],
                 'name'          => $userData['name'],
                 'asal_sekolah'  => $userData['asal_sekolah'],
                 'email'         => $userData['email'],
                 'nomor_hp'      => $userData['nomor_hp'],
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
-                'password'      => bcrypt($userData['passsword']),
+                // 'password'      => bcrypt($userData['passsword']),
+                'password'      => $userData['passsword'],
+            ]);
+            $user->syncRoles([$roleAgen]);
+        }
+
+        foreach ($superadminUsers as $userData) {
+            $user = User::factory()->create([
+                'user_id'       => $userData['user_id'],
+                'username'      => $userData['username'],
+                'name'          => $userData['name'],
+                'asal_sekolah'  => $userData['asal_sekolah'],
+                'email'         => $userData['email'],
+                'nomor_hp'      => $userData['nomor_hp'],
+                'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
+                // 'password'      => bcrypt($userData['passsword']),
+                'password'      => $userData['passsword'],
             ]);
             $user->syncRoles([$roleSuperadmin]);
         }
@@ -152,6 +223,7 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => $userData['nomor_hp'],
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 'password'      => bcrypt($userData['passsword']),
+                // 'password'      => $userData['passsword'],
             ]);
             $user->syncRoles([$roleBaak]);
         }
@@ -165,22 +237,11 @@ class UserSeeder extends Seeder
                 'nomor_hp'      => $userData['nomor_hp'],
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 'password'      => bcrypt($userData['passsword']),
+                // 'password'      => $userData['passsword'],
             ]);
             $user->syncRoles([$roleKeuangan]);
         }
 
-        foreach ($agenUsers as $userData) {
-            $user = User::factory()->create([
-                'username'      => $userData['username'],
-                'name'          => $userData['name'],
-                'asal_sekolah'  => $userData['asal_sekolah'],
-                'email'         => $userData['email'],
-                'nomor_hp'      => $userData['nomor_hp'],
-                'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
-                'password'      => bcrypt($userData['passsword']),
-            ]);
-            $user->syncRoles([$roleAgen]);
-        }
 
         // // Buat user random menggunakan factory
         // User::factory()->count(10)->create()->each(function ($user) use ($roleAgen) {
