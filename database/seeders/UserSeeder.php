@@ -181,6 +181,17 @@ class UserSeeder extends Seeder
                 'passsword'     => '$2y$12$70NbBUtgtHR7BTvckA6rXeBuHR.6VD463C3BOeGPOYVlN6Vyym4.i',
                 // 'passsword'     => 'rahmani1',
             ],
+            [
+                'user_id'       => 3243,
+                'username'      => 'zulhairil',
+                'name'          => 'Zulhairil',
+                'asal_sekolah'  => 'SMA Negeri 7 Tanjungpinang',
+                'email'         => 'ijulbelitung5555@gmail.com',
+                'nomor_hp'      => '081270630631',
+                'nomor_hp2'     => '081270630631',
+                'passsword'     => '$2y$12$wtLHTGnjNOMMJxQBHlHURO8IuEP9vt7s/vIlz3LCo9RxddV/6veB.',
+                // 'passsword'     => 'zulhairil',
+            ],
         ];
 
 
@@ -195,6 +206,7 @@ class UserSeeder extends Seeder
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 // 'password'      => bcrypt($userData['passsword']),
                 'password'      => $userData['passsword'],
+                'default_role'  => $roleAgen->name,
             ]);
             $user->syncRoles([$roleAgen]);
         }
@@ -210,6 +222,7 @@ class UserSeeder extends Seeder
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 // 'password'      => bcrypt($userData['passsword']),
                 'password'      => $userData['passsword'],
+                'default_role'  => $roleSuperadmin->name,
             ]);
             $user->syncRoles([$roleSuperadmin]);
         }
@@ -224,6 +237,7 @@ class UserSeeder extends Seeder
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 'password'      => bcrypt($userData['passsword']),
                 // 'password'      => $userData['passsword'],
+                'default_role'  => $roleBaak->name,
             ]);
             $user->syncRoles([$roleBaak]);
         }
@@ -238,6 +252,7 @@ class UserSeeder extends Seeder
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 'password'      => bcrypt($userData['passsword']),
                 // 'password'      => $userData['passsword'],
+                'default_role'  => $roleKeuangan->name,
             ]);
             $user->syncRoles([$roleKeuangan]);
         }
