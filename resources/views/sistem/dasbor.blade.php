@@ -44,7 +44,19 @@
             <div class="card-body">
               <div class="row gy-3">
                 <div class="col-12 col-sm d-flex flex-column">
-                  <h3 class="h2">Selamat datang, {{ Str::of(auth()->user()->name)->explode(' ')->first() }} </h3>
+                  @php
+                    $greeting =
+                        now()->hour < 11
+                            ? 'Pagi'
+                            : (now()->hour < 15
+                                ? 'Siang'
+                                : (now()->hour < 18
+                                    ? 'Sore'
+                                    : 'Malam'));
+                  @endphp
+                  <h3 class="h2">Selamat {{ $greeting }},
+                    {{ Str::of(auth()->user()->name)->explode(' ')->first() }}
+                  </h3>
                   <p class="text-muted">You have 53 new messages and 2 new notifications.</p>
                   <div class="row g-5 mt-auto">
                     <div class="col-auto">
