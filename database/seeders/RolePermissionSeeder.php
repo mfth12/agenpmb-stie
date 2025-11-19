@@ -66,8 +66,8 @@ class RolePermissionSeeder extends Seeder
             'user_view',
         ]);
 
-        $agen = Role::firstOrCreate(['name' => 'agen']); // Menggunakan firstOrCreate untuk konsistensi dengan UserSeeder
-        $agen->givePermissionTo([
+        $mitra = Role::firstOrCreate(['name' => 'mitra']); // Menggunakan firstOrCreate untuk konsistensi dengan UserSeeder
+        $mitra->givePermissionTo([
             'dashboard_view',
             'pendaftaran_view',
             'pendaftaran_create',

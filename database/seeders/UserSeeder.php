@@ -14,11 +14,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pastikan role 'agen' tersedia
+        // Pastikan role 'mitra' tersedia
         $roleSuperadmin = Role::firstOrCreate(['name' => 'superadmin']);
         $roleBaak = Role::firstOrCreate(['name' => 'baak']);
         $roleKeuangan = Role::firstOrCreate(['name' => 'keuangan']);
-        $roleAgen = Role::firstOrCreate(['name' => 'agen']);
+        $roleMitra = Role::firstOrCreate(['name' => 'mitra']);
 
         // Buat user spesifik untuk superadmin
         $superadminUsers = [
@@ -98,8 +98,8 @@ class UserSeeder extends Seeder
             ],
         ];
 
-        // Buat user spesifik untuk agen
-        $agenUsers = [
+        // Buat user spesifik untuk mitra
+        $mitraUsers = [
             [
                 'user_id'       => 3227,
                 'username'      => 'anto1974',
@@ -195,7 +195,7 @@ class UserSeeder extends Seeder
         ];
 
 
-        foreach ($agenUsers as $userData) {
+        foreach ($mitraUsers as $userData) {
             $user = User::factory()->create([
                 'user_id'       => $userData['user_id'],
                 'username'      => $userData['username'],
@@ -206,9 +206,9 @@ class UserSeeder extends Seeder
                 'nomor_hp2'     => $userData['nomor_hp2'] ?? $userData['nomor_hp'],
                 // 'password'      => bcrypt($userData['passsword']),
                 'password'      => $userData['passsword'],
-                'default_role'  => $roleAgen->name,
+                'default_role'  => $roleMitra->name,
             ]);
-            $user->syncRoles([$roleAgen]);
+            $user->syncRoles([$roleMitra]);
         }
 
         foreach ($superadminUsers as $userData) {
@@ -259,8 +259,8 @@ class UserSeeder extends Seeder
 
 
         // // Buat user random menggunakan factory
-        // User::factory()->count(10)->create()->each(function ($user) use ($roleAgen) {
-        //     $user->syncRoles([$roleAgen]);
+        // User::factory()->count(10)->create()->each(function ($user) use ($roleMitra) {
+        //     $user->syncRoles([$roleMitra]);
         // });
 
         // User::factory()->count(2)->withRole('keuangan')->create()->each(function ($user) use ($roleKeuangan) {
@@ -268,18 +268,18 @@ class UserSeeder extends Seeder
         // });
 
         // // Buat beberapa user dengan status online
-        // User::factory()->count(2)->online()->create()->each(function ($user) use ($roleAgen) {
-        //     $user->syncRoles([$roleAgen]);
+        // User::factory()->count(2)->online()->create()->each(function ($user) use ($roleMitra) {
+        //     $user->syncRoles([$roleMitra]);
         // });
 
         // // Buat beberapa user dengan siakad_id
-        // User::factory()->count(3)->withSiakad()->create()->each(function ($user) use ($roleAgen) {
-        //     $user->syncRoles([$roleAgen]);
+        // User::factory()->count(3)->withSiakad()->create()->each(function ($user) use ($roleMitra) {
+        //     $user->syncRoles([$roleMitra]);
         // });
 
         // // Buat user dengan data lengkap
-        // User::factory()->count(2)->complete()->create()->each(function ($user) use ($roleAgen) {
-        //     $user->syncRoles([$roleAgen]);
+        // User::factory()->count(2)->complete()->create()->each(function ($user) use ($roleMitra) {
+        //     $user->syncRoles([$roleMitra]);
         // });
     }
 }

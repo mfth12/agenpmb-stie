@@ -80,7 +80,7 @@ class SiakadService
   }
 
   /**
-   * Get all calon mahasiswa by tahun and referensi (agen) dari PMB SIAKAD2
+   * Get all calon mahasiswa by tahun and referensi (mitra) dari PMB SIAKAD2
    */
   public function getCalonMahasiswaAll(string $tahun): array
   {
@@ -106,7 +106,7 @@ class SiakadService
         'message' => $responseData['message'] ?? 'Gagal mengambil All data dari PMB SIAKAD2'
       ];
     } catch (Exception $e) {
-      Log::error('SiakadService getCalonMahasiswaByAgen error: ' . $e->getMessage());
+      Log::error('SiakadService getCalonMahasiswaByMitra error: ' . $e->getMessage());
       return [
         'success' => false,
         'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'
@@ -115,13 +115,13 @@ class SiakadService
   }
 
   /**
-   * Get all calon mahasiswa by tahun and referensi (agen) dari PMB SIAKAD2
+   * Get all calon mahasiswa by tahun and referensi (mitra) dari PMB SIAKAD2
    */
-  public function getCalonMahasiswaByAgen(string $tahun, string $referensi): array
+  public function getCalonMahasiswaByMitra(string $tahun, string $referensi): array
   {
     try {
       $response = Http::timeout($this->timeout)
-        ->post($this->baseUrl . '/api/v2/calon-mahasiswa/agen', [
+        ->post($this->baseUrl . '/api/v2/calon-mahasiswa/mitra', [
           'tahun' => $tahun,
           'sumber' => 'A', // Sesuai spek
           'referensi' => $referensi, // ID Mitra
@@ -142,7 +142,7 @@ class SiakadService
         'message' => $responseData['message'] ?? 'Gagal mengambil data dari PMB SIAKAD2'
       ];
     } catch (Exception $e) {
-      Log::error('SiakadService getCalonMahasiswaByAgen error: ' . $e->getMessage());
+      Log::error('SiakadService getCalonMahasiswaByMitra error: ' . $e->getMessage());
       return [
         'success' => false,
         'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'

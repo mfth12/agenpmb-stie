@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pendaftaran', function (Blueprint $table) {
             $table->bigIncrements('pendaftaran_id');
             $table->foreignId('user_id')->nullable()->constrained('users', 'user_id')->onDelete('cascade');
-            $table->foreignId('agen_id')->constrained('users', 'user_id')->onDelete('cascade');
+            $table->foreignId('mitra_id')->constrained('users', 'user_id')->onDelete('cascade');
 
             // Data dari PMB SIAKAD2
             $table->string('id_calon_mahasiswa')->unique();
@@ -46,7 +46,7 @@ return new class extends Migration
 
             // Indexes
             $table->index('user_id');
-            $table->index('agen_id');
+            $table->index('mitra_id');
             $table->index('id_calon_mahasiswa');
             $table->index('status');
         });

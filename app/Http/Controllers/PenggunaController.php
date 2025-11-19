@@ -176,7 +176,7 @@ class PenggunaController extends Controller
             'username' => $request->username,
             'nomor_hp' => $request->nomor_hp,
             'nomor_hp2' => $request->nomor_hp2,
-            'default_role' => 'agen', // Role default untuk pendaftar
+            'default_role' => 'mitra', // Role default untuk pendaftar
             'status' => 'pending', // Status default untuk pendaftar
             'password' => bcrypt($request->password)
         ];
@@ -184,9 +184,9 @@ class PenggunaController extends Controller
         try {
             $user = User::create($data);
 
-            // Assign role default 'agen'
-            // $user->assignRole('agen');
-            $user->assignRole($data['default_role'] ?? 'agen');
+            // Assign role default 'mitra'
+            // $user->assignRole('mitra');
+            $user->assignRole($data['default_role'] ?? 'mitra');
 
             // Opsional: Kirim email verifikasi
             // $user->sendEmailVerificationNotification();

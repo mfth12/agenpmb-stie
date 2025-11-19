@@ -157,7 +157,7 @@
         {{-- KOLOM KANAN --}}
         <div class="col-md-4 mb-4">
           {{-- CARD: Data Mitra --}}
-          @if ($pendaftaran->agen)
+          @if ($pendaftaran->mitra)
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
@@ -168,11 +168,11 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm me-3 bg-orange-lt">
-                    <span class="avatar-text">{{ substr($pendaftaran->agen->name, 0, 2) }}</span>
+                    <span class="avatar-text">{{ substr($pendaftaran->mitra->name, 0, 2) }}</span>
                   </div>
                   <div>
-                    <div class="fw-semibold">{{ $pendaftaran->agen->name }}</div>
-                    <div class="text-muted small">{{ $pendaftaran->agen->email }}</div>
+                    <div class="fw-semibold">{{ $pendaftaran->mitra->name }}</div>
+                    <div class="text-muted small">{{ $pendaftaran->mitra->email }}</div>
                   </div>
                 </div>
               </div>

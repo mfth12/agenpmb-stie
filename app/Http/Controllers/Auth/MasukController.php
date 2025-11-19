@@ -116,7 +116,7 @@ class MasukController extends Controller
                     'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
                     'email_verified_at' => $userData['email_verified_at'] ?? null,
                     'about'             => $userData['about'] ?? null,
-                    'default_role'      => $userData['default_role'] ?? 'agen',
+                    'default_role'      => $userData['default_role'] ?? 'mitra',
                     'theme'             => $userData['theme'] ?? 'default',
                     'avatar'            => $userData['avatar'] ?? null,
                     'status'            => $userData['status'] ?? 'active',
@@ -128,9 +128,9 @@ class MasukController extends Controller
             );
 
             // Untuk user lain, assign role berdasarkan default_role dari Siakad
-            $agen_role = $userData['default_role'] ?? 'mahasiswa';
-            $agen_role = is_array($agen_role) ? $agen_role : [$agen_role];
-            $user->syncRoles($agen_role);
+            $mitra_role = $userData['default_role'] ?? 'mahasiswa';
+            $mitra_role = is_array($mitra_role) ? $mitra_role : [$mitra_role];
+            $user->syncRoles($mitra_role);
 
             // Simpan access_token ke session
             Session::put('api_access_token', $access_token);

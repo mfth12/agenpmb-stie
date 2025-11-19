@@ -134,7 +134,7 @@
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
-          <input type="hidden" name="role" value="agen" />
+          <input type="hidden" name="role" value="mitra" />
           {{-- START: Turnstile Widget --}}
           @if (env('USING_TURNSTILE', false))
             <div class="mb-3" style="display: block; flex-flow: row;">

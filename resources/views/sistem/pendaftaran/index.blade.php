@@ -6,7 +6,7 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Manajemen Pendaftaran</h2>
-          <div class="page-pretitle">Gerbang pendaftaran calon mahasiswa baru melalui agen PMB</div>
+          <div class="page-pretitle">Gerbang pendaftaran calon mahasiswa baru melalui mitra PMB</div>
         </div>
         <div class="col-4 col-md-auto ms-auto d-print-none">
           @can('pendaftaran_create')
@@ -426,8 +426,8 @@
             name: 'status'
           },
           {
-            data: 'agen_id',
-            name: 'agen_id'
+            data: 'mitra_id',
+            name: 'mitra_id'
           },
           {
             data: 'aksi',
@@ -629,7 +629,7 @@
       resultsDiv.empty();
 
       if (data.length === 0) {
-        resultsDiv.html('<p class="text-muted">Tidak ada data ditemukan untuk tahun dan agen ini.</p>');
+        resultsDiv.html('<p class="text-muted">Tidak ada data ditemukan untuk tahun dan mitra ini.</p>');
         return;
       }
 
@@ -657,7 +657,7 @@
             break;
           case 'hanya_di_lokal':
             statusClass = 'bg-secondary text-secondary-fg px-2';
-            statusText = 'HANYA DI AGEN';
+            statusText = 'HANYA DI MITRA';
             // Tidak ada tombol sinkron untuk data lokal saja
             break;
           default:

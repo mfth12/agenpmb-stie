@@ -15,7 +15,7 @@ class PendaftaranModel extends Model
 
     protected $fillable = [
         'user_id',
-        'agen_id',
+        'mitra_id',
         'id_calon_mahasiswa',
         'username_siakad',
         'password_text', // penambahan plain pswd
@@ -53,11 +53,11 @@ class PendaftaranModel extends Model
     }
 
     /**
-     * Relasi ke agen
+     * Relasi ke mitra
      */
-    public function agen(): BelongsTo
+    public function mitra(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'agen_id', 'user_id');
+        return $this->belongsTo(User::class, 'mitra_id', 'user_id');
     }
 
     /**

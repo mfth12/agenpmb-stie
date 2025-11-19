@@ -30,11 +30,11 @@ class PendaftaranController extends Controller
      */
     public function data(Request $request): JsonResponse
     {
-        $query = PendaftaranModel::with(['user', 'agen']);
+        $query = PendaftaranModel::with(['user', 'mitra']);
 
         // Filter berdasarkan role user
-        if (auth()->user()->hasRole('agen')) {
-            $query->where('agen_id', auth()->id());
+        if (auth()->user()->hasRole('mitra')) {
+            $query->where('mitra_id', auth()->id());
         }
 
         // Filter berdasarkan pencarian
@@ -93,10 +93,10 @@ class PendaftaranController extends Controller
             ->addColumn('status_badge', function ($row) {
                 return $row->status_badge;
             })
-            ->addColumn('agen_id', function ($row) {
-                $asal = Str::limit($row->agen->asal_sekolah, 15, '...');
-                $agen = Str::limit($row->agen->name, 15, '...');
-                return '<div class="font-weight-medium">' . e($agen) . '</div>
+            ->addColumn('mitra_id', function ($row) {
+                $asal = Str::limit($row->mitra->asal_sekolah, 15, '...');
+                $mitra = Str::limit($row->mitra->name, 15, '...');
+                return '<div class="font-weight-medium">' . e($mitra) . '</div>
             <div class="text-muted small">' . e($asal) . '</div>';
             })
             ->addColumn('aksi', function ($row) {
@@ -138,7 +138,7 @@ class PendaftaranController extends Controller
                 $html .= '</div>';
                 return $html;
             })
-            ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'biaya', 'status_badge', 'agen_id', 'aksi']) // Kolom yang berisi HTML
+            ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'biaya', 'status_badge', 'mitra_id', 'aksi']) // Kolom yang berisi HTML
             ->make(true);
     }
 
@@ -147,11 +147,11 @@ class PendaftaranController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = PendaftaranModel::with(['user', 'agen']);
+        $query = PendaftaranModel::with(['user', 'mitra']);
 
         // Filter berdasarkan role user
-        if (auth()->user()->hasRole('agen')) {
-            $query->where('agen_id', auth()->id());
+        if (auth()->user()->hasRole('mitra')) {
+            $query->where('mitra_id', auth()->id());
         }
 
         // Filter berdasarkan pencarian
@@ -233,9 +233,9 @@ class PendaftaranController extends Controller
                 'hp' => $request->nomor_hp,
                 'hp2' => $request->nomor_hp2,
                 'password' => $request->password,
-                'agen_id' => auth()->user()->username,
-                'agen_nama' => auth()->user()->name,
-                'agen_asalsma' => auth()->user()->asal_sekolah,
+                'mitra_id' => auth()->user()->username,
+                'mitra_nama' => auth()->user()->name,
+                'mitra_asalsma' => auth()->user()->asal_sekolah,
             ];
 
             // Kirim ke PMB SIAKAD2
@@ -245,7 +245,7 @@ class PendaftaranController extends Controller
                 // Simpan sebagai pendaftaran gagal - TAMBAHKAN password_text
                 $pendaftaran = PendaftaranModel::create([
                     'user_id' => null, // Belum ada user
-                    'agen_id' => auth()->id(),
+                    'mitra_id' => auth()->id(),
                     'id_calon_mahasiswa' => '',
                     'username_siakad' => '',
                     'no_transaksi' => '',
@@ -272,7 +272,7 @@ class PendaftaranController extends Controller
             // Simpan sebagai pendaftaran berhasil - TAMBAHKAN password_text
             $pendaftaran = PendaftaranModel::create([
                 'user_id' => null, // Opsional: bisa dibuat user lokal nanti untuk mhs ybs jika diperlukan
-                'agen_id' => auth()->id(),
+                'mitra_id' => auth()->id(),
                 'id_calon_mahasiswa' => $response['data']['id_calon_mahasiswa'],
                 'username_siakad' => $response['data']['username'],
                 'no_transaksi' => $response['data']['no_transaksi'],
@@ -307,7 +307,7 @@ class PendaftaranController extends Controller
     public function show(PendaftaranModel $pendaftaran): View
     {
         // Authorization check
-        if (auth()->user()->hasRole('agen') && $pendaftaran->agen_id != auth()->id()) {
+        if (auth()->user()->hasRole('mitra') && $pendaftaran->mitra_id != auth()->id()) {
             abort(403);
         }
 
@@ -323,7 +323,7 @@ class PendaftaranController extends Controller
     public function edit(PendaftaranModel $pendaftaran): View
     {
         // Authorization check
-        if (auth()->user()->hasRole('agen') && $pendaftaran->agen_id != auth()->id()) {
+        if (auth()->user()->hasRole('mitra') && $pendaftaran->mitra_id != auth()->id()) {
             abort(403);
         }
 
@@ -350,7 +350,7 @@ class PendaftaranController extends Controller
     public function update(PendaftaranUpdateRequest $request, PendaftaranModel $pendaftaran): RedirectResponse
     {
         // Authorization check
-        if (auth()->user()->hasRole('agen') && $pendaftaran->agen_id != auth()->id()) {
+        if (auth()->user()->hasRole('mitra') && $pendaftaran->mitra_id != auth()->id()) {
             abort(403);
         }
 
@@ -380,7 +380,7 @@ class PendaftaranController extends Controller
         try {
             $user = auth()->user();
             $tahun = $request->input('tahun'); // Ambil tahun dari request
-            $agenId = $user->username; // Gunakan username sebagai referensi agen
+            $mitraId = $user->username; // Gunakan username sebagai referensi mitra
 
             if (!$tahun) {
                 return response()->json([
@@ -389,9 +389,9 @@ class PendaftaranController extends Controller
                 ], 400);
             }
 
-            // 1. Ambil data terbaru dari PMB SIAKAD2 untuk agen ini
-            if ($user->hasRole('agen')) {
-                $apiResponse = $this->siakadService->getCalonMahasiswaByAgen($tahun, $agenId);
+            // 1. Ambil data terbaru dari PMB SIAKAD2 untuk mitra ini
+            if ($user->hasRole('mitra')) {
+                $apiResponse = $this->siakadService->getCalonMahasiswaByMitra($tahun, $mitraId);
             } elseif ($user->hasRole('superadmin')) {
                 $apiResponse = $this->siakadService->getCalonMahasiswaAll($tahun);
             }
@@ -405,15 +405,15 @@ class PendaftaranController extends Controller
 
             $apiData = collect($apiResponse['data'] ?? []);
 
-            if ($user->hasRole('agen')) {
-                // 2. Ambil data lokal dari tabel pendaftaran untuk agen ini dan tahun yang sama
-                $localData = PendaftaranModel::where('agen_id', $user->user_id)
+            if ($user->hasRole('mitra')) {
+                // 2. Ambil data lokal dari tabel pendaftaran untuk mitra ini dan tahun yang sama
+                $localData = PendaftaranModel::where('mitra_id', $user->user_id)
                     ->where('tahun', $tahun)
                     // ->orderBy('created_at', 'desc')
                     ->get()
                     ->keyBy('id_calon_mahasiswa'); // Index by ID calon mahasiswa untuk pencarian cepat
             } else {
-                // 2. Ambil data lokal dari tabel pendaftaran. Jika bukan agen (misalnya admin), cari saja tanpa batasan agen
+                // 2. Ambil data lokal dari tabel pendaftaran. Jika bukan mitra (misalnya admin), cari saja tanpa batasan mitra
                 $localData = PendaftaranModel::where('tahun', $tahun)
                     // ->orderBy('created_at', 'desc')
                     ->get()
@@ -542,15 +542,15 @@ class PendaftaranController extends Controller
     public function syncOne(Request $request, string $id_calon_mahasiswa): JsonResponse
     {
         try {
-            // Authorization check: Pastikan user adalah agen
+            // Authorization check: Pastikan user adalah mitra
             $user = auth()->user();
-            if ($user->hasRole('agen')) {
-                // Jika role adalah agen, pastikan pendaftaran milik mereka
+            if ($user->hasRole('mitra')) {
+                // Jika role adalah mitra, pastikan pendaftaran milik mereka
                 $pendaftaran = PendaftaranModel::where('id_calon_mahasiswa', $id_calon_mahasiswa)
-                    ->where('agen_id', $user->user_id) // Pastikan milik agen ini
+                    ->where('mitra_id', $user->user_id) // Pastikan milik mitra ini
                     ->first();
             } else {
-                // Jika bukan agen (misalnya admin), cari saja tanpa batasan agen
+                // Jika bukan mitra (misalnya admin), cari saja tanpa batasan mitra
                 $pendaftaran = PendaftaranModel::where('id_calon_mahasiswa', $id_calon_mahasiswa)->first();
             }
 
@@ -616,14 +616,14 @@ class PendaftaranController extends Controller
     public function syncNew(Request $request, string $id_calon_mahasiswa): JsonResponse
     {
         try {
-            // Authorization check: Pastikan user adalah agen
+            // Authorization check: Pastikan user adalah mitra
             $user = auth()->user();
-            if ($user->hasRole('agen')) {
-                // Untuk menambahkan data baru, kita hanya perlu memastikan user login sebagai agen
+            if ($user->hasRole('mitra')) {
+                // Untuk menambahkan data baru, kita hanya perlu memastikan user login sebagai mitra
                 // Kita tidak mencari data lokal dulu karena memang belum ada
             } else {
-                // Jika bukan agen, mungkin bisa ditolak atau diberi akses sesuai kebijakan
-                // Untuk saat ini, kita tetap lanjutkan untuk admin jika bukan agen
+                // Jika bukan mitra, mungkin bisa ditolak atau diberi akses sesuai kebijakan
+                // Untuk saat ini, kita tetap lanjutkan untuk admin jika bukan mitra
             }
 
             // Cek apakah data dengan ID ini sudah ada di tabel lokal (mencegah duplikat jika proses sinkronisasi diulang)
@@ -651,7 +651,7 @@ class PendaftaranController extends Controller
             // Catatan: Ini hanya contoh mapping. Anda mungkin perlu menyesuaikan field-fieldnya.
             $pendaftaran = PendaftaranModel::create([
                 'user_id' => null, // Karena ini hanya dari API, mungkin tidak ada user lokal
-                'agen_id' => $user->user_id, // Asumsikan data baru ini ditambahkan oleh agen yang sedang login
+                'mitra_id' => $user->user_id, // Asumsikan data baru ini ditambahkan oleh mitra yang sedang login
                 'id_calon_mahasiswa' => $apiData['id_calon_mahasiswa'],
                 'username_siakad' => $apiData['user']['username'] ?? null, // Ambil dari data user di API
                 'password_text' => null, // Tidak menyimpan password plain dari API
@@ -709,7 +709,7 @@ class PendaftaranController extends Controller
     public function destroy(PendaftaranModel $pendaftaran): RedirectResponse
     {
         // Authorization check
-        if (auth()->user()->hasRole('agen') && $pendaftaran->agen_id != auth()->id()) {
+        if (auth()->user()->hasRole('mitra') && $pendaftaran->mitra_id != auth()->id()) {
             abort(403);
         }
 

@@ -40,7 +40,7 @@ class UserFactory extends Factory
 
         return [
             'siakad_id'         => null,
-            'username'          => 'agen' . $this->faker->unique()->numberBetween(100, 999),
+            'username'          => 'mitra' . $this->faker->unique()->numberBetween(100, 999),
             'password'          => bcrypt('123123'), // Default password
             'name'              => $nama,
             'asal_sekolah'      => $this->faker->randomElement($sekolah),
@@ -49,7 +49,7 @@ class UserFactory extends Factory
             'nomor_hp2'         => $this->faker->optional()->numerify('08##########'),
             'email_verified_at' => Carbon::now(),
             'about'             => $this->faker->optional()->sentence(),
-            'default_role'      => 'agen',
+            'default_role'      => 'mitra',
             'theme'             => 'default',
             'avatar'            => null,
             'status'            => 'active',

@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Run the database seeds for sistem agen-pmb.
+     * Run the database seeds for sistem mitra-pmb.
      * 
      * @return void
      */
