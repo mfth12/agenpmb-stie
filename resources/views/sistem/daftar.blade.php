@@ -35,7 +35,7 @@
 
           <div class="mb-3">
             <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-            <input type="text" name="nama" value="{{ old('nama') }}" {{-- Ganti 'name' menjadi 'nama' --}}
+            <input type="text" name="nama" value="{{ old('nama') }}"
               class="form-control @error('nama') is-invalid @enderror" placeholder="Masukkan nama lengkap" required />
             @error('nama')
               <div class="invalid-feedback">{{ $message }}</div>
@@ -58,24 +58,56 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Sekolah/Instansi Asal <span class="text-danger">*</span></label>
-            <input type="text" name="asal_sekolah" value="{{ old('asal_sekolah') }}"
-              class="form-control @error('asal_sekolah') is-invalid @enderror"
-              placeholder="Masukkan nama sekolah atau instansi asal" required />
-            @error('asal_sekolah')
+            <label class="form-label">Afiliasi <span class="text-danger">*</span></label>
+            <select name="afiliasi" id="afiliasi-select" class="form-select @error('afiliasi') is-invalid @enderror"
+              required>
+              <option value="">Pilih Afiliasi</option>
+              @foreach ($afiliasis_root as $afiliasi)
+                <option value="{{ $afiliasi->afiliasi_id }}"
+                  {{ old('afiliasi') == $afiliasi->afiliasi_id ? 'selected' : '' }}>
+                  {{ $afiliasi->nama }}
+                </option>
+              @endforeach
+            </select>
+            @error('afiliasi')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
+
+          <!-- Dynamic Field Container -->
+          <div id="dynamic-afiliasi-fields" class="d-none">
+            <!-- Jenis Civitas -->
+            <div id="jenis-civitas-container" class="mb-3 d-none">
+              <label class="form-label">Jenis Civitas <span class="text-danger">*</span></label>
+              <select name="afiliasi_child_civitas" id="jenis-civitas-select" class="form-select">
+                <option value="">Pilih Jenis Civitas</option>
+                <!-- Options will be populated by JS -->
+              </select>
+            </div>
+
+            <!-- Sekolah/Instansi Asal (untuk Mitra) -->
+            <div id="asal-sekolah-container" class="mb-3 d-none">
+              <label class="form-label">Sekolah/Instansi Asal <span class="text-danger">*</span></label>
+              <input type="text" name="asal_sekolah" value="{{ old('asal_sekolah') }}"
+                class="form-control @error('asal_sekolah') is-invalid @enderror"
+                placeholder="Masukkan nama sekolah atau instansi asal" />
+              @error('asal_sekolah')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
+          <!-- End Dynamic Field Container -->
+
           <div class="mb-3">
-            <label class="form-label">Nomor HP <span class="text-danger">*</span></label> {{-- Jadikan opsional jika di rules register --}}
+            <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
             <input type="text" name="nomor_hp" value="{{ old('nomor_hp') }}"
-              class="form-control @error('nomor_hp') is-invalid @enderror" placeholder="Masukkan nomor HP" />
+              class="form-control @error('nomor_hp') is-invalid @enderror" placeholder="Masukkan nomor HP" required />
             @error('nomor_hp')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Nomor Whatsapp</label> {{-- Jadikan opsional --}}
+            <label class="form-label">Nomor Whatsapp</label>
             <input type="text" name="nomor_hp2" value="{{ old('nomor_hp2') }}"
               class="form-control @error('nomor_hp2') is-invalid @enderror" placeholder="Masukkan whatsapp aktif" />
             @error('nomor_hp2')
@@ -158,21 +190,110 @@
   @vite(['resources/js/pages/daftar.js'])
   {{-- KOMPONEN INKLUD --}}
   @include('components.back.konfig-tampilan', ['floating' => true])
+
+  <!-- Load Cloudflare Turnstile Script -->
+  @if (env('USING_TURNSTILE', false))
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  @endif
+
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const widget = document.getElementById("cf-turnstile-widget");
       const img = document.getElementById("login-illustration");
 
+      // Ambil data afiliasi dari server (anda perlu mengirimnya dari controller)
+      // Contoh: let afiliasiData = !a!json($afiliasi_children); // Harus di-pass dari controller
+      // Kita gunakan fetch untuk mendapatkan data child dari server secara dinamis
+      const afiliasiSelect = document.getElementById('afiliasi-select');
+      const dynamicFieldsContainer = document.getElementById('dynamic-afiliasi-fields');
+      const jenisCivitasContainer = document.getElementById('jenis-civitas-container');
+      const jenisCivitasSelect = document.getElementById('jenis-civitas-select');
+      const asalSekolahContainer = document.getElementById('asal-sekolah-container');
+
+      // Fetch child afiliasi berdasarkan parent_id
+      async function fetchChildAfiliasi(parentId) {
+        try {
+          const response = await fetch(`/afiliasi/children/${parentId}`);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          return data.afiliasis || []; // Asumsikan response memiliki struktur { afiliasis: [...] }
+        } catch (error) {
+          console.error('Error fetching child afiliasi:', error);
+          return [];
+        }
+      }
+
+      // Handler untuk perubahan select afiliasi
+      afiliasiSelect.addEventListener('change', async function() {
+        const selectedValue = this.value;
+        dynamicFieldsContainer.classList.add('d-none'); // Sembunyikan dulu
+        jenisCivitasContainer.classList.add('d-none'); // Sembunyikan
+        asalSekolahContainer.classList.add('d-none'); // Sembunyikan
+
+        if (selectedValue === '2') { // Jika Civitas dipilih
+          dynamicFieldsContainer.classList.remove('d-none');
+          jenisCivitasContainer.classList.remove('d-none');
+
+          // Kosongkan option dulu
+          jenisCivitasSelect.innerHTML = '<option value="">Pilih Jenis Civitas</option>';
+          // Fetch dan populate options
+          const children = await fetchChildAfiliasi(selectedValue);
+          children.forEach(child => {
+            const option = document.createElement('option');
+            option.value = child.afiliasi_id;
+            option.textContent = child.nama;
+            jenisCivitasSelect.appendChild(option);
+          });
+        } else if (selectedValue === '3') { // Jika Mitra dipilih
+          dynamicFieldsContainer.classList.remove('d-none');
+          asalSekolahContainer.classList.remove('d-none');
+        }
+        // Jika Alumni (1) atau kosong, biarkan container disembunyikan
+      });
+
+      // Handler untuk submit form, pastikan nilai yang benar dikirim
+      document.querySelector('form').addEventListener('submit', function(e) {
+        const selectedAfiliasi = afiliasiSelect.value;
+        const jenisCivitasValue = jenisCivitasSelect.value;
+        const asalSekolahValue = document.querySelector('input[name="asal_sekolah"]').value;
+
+        let finalAfiliasiId = selectedAfiliasi;
+
+        // Jika afiliasi utama adalah Civitas dan jenis civitas dipilih
+        if (selectedAfiliasi === '2' && jenisCivitasValue) {
+          finalAfiliasiId = jenisCivitasValue; // Gunakan ID child
+        }
+        // Jika afiliasi utama adalah Mitra, gunakan ID Mitra (3) dan isi asal_sekolah
+        // Jika afiliasi utama adalah Alumni (1), gunakan ID Alumni (1)
+        // Jika kosong, biarkan null
+
+        // Tambahkan input hidden untuk afiliasi yang benar
+        let afiliasiInput = document.querySelector('input[name="afiliasi"]');
+        if (!afiliasiInput) {
+          afiliasiInput = document.createElement('input');
+          afiliasiInput.type = 'hidden';
+          afiliasiInput.name = 'afiliasi';
+          document.querySelector('form').appendChild(afiliasiInput);
+        }
+        afiliasiInput.value = finalAfiliasiId;
+
+        // Jika afiliasi bukan Mitra, hapus nilai asal_sekolah agar tidak disimpan
+        if (selectedAfiliasi !== '3') {
+          document.querySelector('input[name="asal_sekolah"]').value = '';
+        }
+      });
+
       function applyTheme() {
         let theme = localStorage.getItem("tabler-theme") || "light";
         console.log("Current theme:", theme);
 
-        // Terapkan ke Turnstile (jika ada di halaman register)
         if (widget) {
           widget.setAttribute("data-theme", theme);
         }
 
-        // Terapkan ke ilustrasi login (jika ada di halaman register)
         if (img) {
           if (theme === "dark") {
             img.src = "{{ asset('img/login-illustration-dark.png') }}";
@@ -182,15 +303,12 @@
         }
       }
 
-      // Jalankan pertama kali
       applyTheme();
 
-      // Pantau perubahan tema secara dinamis (misal dari switcher Tabler)
       const observer = new MutationObserver(() => {
         applyTheme();
       });
 
-      // Amati perubahan attribute data-bs-theme di <html> (Tabler ganti tema di sana)
       observer.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['data-bs-theme']

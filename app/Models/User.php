@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\UserAfiliasi;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -67,6 +68,7 @@ class User extends Authenticatable implements HasMedia
         'nomor_hp',
         'nomor_hp2',
         'asal_sekolah',
+        'afiliasi', // Tambahan
         'email_verified_at',
         'about',
         'default_role',
@@ -101,6 +103,15 @@ class User extends Authenticatable implements HasMedia
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke tabel user_afiliasis
+     * Seorang user bisa memiliki satu afiliasi
+     */
+    public function afiliasi()
+    {
+        return $this->belongsTo(UserAfiliasi::class, 'afiliasi', 'afiliasi_id');
     }
 
     /**

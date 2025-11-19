@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('user_id')->from(3201);           //added
-            $table->string('siakad_id', 64)->unique()->nullable();                                    //synced
+            $table->string('siakad_id', 64)->unique()->nullable();                        //synced
             $table->string('username');                             //added
-            $table->string('password')->nullable();                                     //notused
+            $table->string('password')->nullable();                                       //used for local user
             $table->string('name');                                                       //synced
             $table->string('asal_sekolah', 64)->nullable();         //added
             $table->string('email')->unique();                                            //synced

@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\User;
 use Illuminate\View\View;
+use App\Models\UserAfiliasi;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\PenggunaStoreRequest;
@@ -71,8 +74,11 @@ class PenggunaController extends Controller
      */
     public function createPublic(): View
     {
+        $afiliasis_root = UserAfiliasi::root()->get(); // Ambil afiliasi root
+
         return view('sistem.daftar', [
             'title' => 'Daftar ' . konfigs('NAMA_SISTEM_ALIAS'),
+            'afiliasis_root' => $afiliasis_root, // Kirim ke view
         ]);
     }
 
@@ -113,36 +119,66 @@ class PenggunaController extends Controller
     /**
      * Menyimpan pengguna baru (via register)
      */
-    public function storePublic(PenggunaStoreRequest $request): RedirectResponse // Gunakan PenggunaStoreRequest
+    public function storePublic(PenggunaStoreRequest $request): RedirectResponse
     {
         // Validasi sudah dilakukan oleh PenggunaStoreRequest
-        // Tapi kita hanya perlu menangani logika register di sini
-
-        // Ambil data dari request, sesuaikan dengan field di User model
-        // Kita gunakan 'nama' dari request dan mapping ke 'name' di model
-        // Kita set role default ke 'agen' dan status default ke 'pending'
-
-        // dd($request->syarat_dan_ketentuan); // null - "on"
-        if ($request->syarat_dan_ketentuan == null) {
-            return back()->withInput()->withErrors(['info' => 'Anda belum menyetujui syarat dan ketentuan yang berlaku.']);
-        }
 
         // Verifikasi Turnstile untuk create mitra pmb
-        if (!$this->handleTurnstileValidation($request)) {
-            // return back()->withInput()->with('turnstile_notvalid', 'Verifikasi keamanan gagal');
-            return back()->withInput()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
+        if (env('USING_TURNSTILE', false)) {
+            $turnstileResponse = $request->input('cf-turnstile-response');
+            if (!$turnstileResponse) {
+                return back()->withInput()->with('error', 'Verifikasi keamanan wajib dilakukan.');
+            }
+
+            $turnstileValidationResult = $this->validateTurnstile($turnstileResponse, $request->ip());
+
+            if (!$turnstileValidationResult) {
+                return back()->withInput()->with('error', 'Verifikasi keamanan gagal. Silakan coba lagi.');
+            }
         }
 
+        if ($request->syarat_dan_ketentuan == null) {
+            return back()->withInput()->with('error', 'Anda belum menyetujui syarat dan ketentuan yang berlaku.');
+        }
+
+        // --- LOGIKA AFILIASI ---
+        $afiliasiId = $request->afiliasi; // Bisa null, 1 (Alumni), 2 (Civitas), 3 (Mitra), atau ID child dari Civitas
+        $asalSekolah = $request->asal_sekolah; // Bisa null atau string
+
+        // Validasi logis tambahan
+        $afiliasiModel = null;
+        if ($afiliasiId) {
+            $afiliasiModel = \App\Models\UserAfiliasi::find($afiliasiId);
+            if (!$afiliasiModel) {
+                return back()->withInput()->with('error', 'Afiliasi tidak valid.');
+            }
+        }
+
+        // Jika afiliasi adalah Mitra (ID 3) atau Child dari Mitra, asal_sekolah wajib
+        $isMitra = $afiliasiModel && ($afiliasiModel->afiliasi_id == 3 || $afiliasiModel->parent_id == 3);
+        if ($isMitra && empty($asalSekolah)) {
+            return back()->withInput()->with('error', 'Nama Sekolah/Instansi Asal wajib diisi untuk afiliasi Mitra.');
+        }
+
+        // Jika afiliasi adalah Alumni (ID 1), mungkin asal_sekolah opsional atau wajib, sesuaikan kebijakan
+        // Untuk contoh, kita anggap opsional untuk Alumni
+        // Jika afiliasi adalah Civitas (ID 2) atau childnya (dosen, staff, lainnya), mungkin asal_sekolah opsional atau diganti dengan info lain
+        // Untuk contoh, kita anggap opsional untuk Civitas
+        // Jika tidak ada afiliasi, asal_sekolah opsional
+
+        // --- END LOGIKA AFILIASI ---
+
         $data = [
-            'name'          => $request->nama, // Sesuaikan dengan nama field di form dan request
-            'asal_sekolah'  => $request->asal_sekolah,
-            'email'         => $request->email,
-            'username'      => $request->username,
-            'nomor_hp'      => $request->nomor_hp, // Bisa null jika opsional di rules register
-            'nomor_hp2'     => $request->nomor_hp2,
-            'default_role'  => 'agen', // Role default untuk pendaftar
-            'status'        => 'pending', // Status default untuk pendaftar, bisa diaktifkan oleh admin
-            'password'      => bcrypt($request->password)
+            'name' => $request->nama,
+            'asal_sekolah' => $asalSekolah, // Gunakan nilai yang telah divalidasi
+            'afiliasi' => $afiliasiId, // Gunakan nilai ID afiliasi
+            'email' => $request->email,
+            'username' => $request->username,
+            'nomor_hp' => $request->nomor_hp,
+            'nomor_hp2' => $request->nomor_hp2,
+            'default_role' => 'agen', // Role default untuk pendaftar
+            'status' => 'pending', // Status default untuk pendaftar
+            'password' => bcrypt($request->password)
         ];
 
         try {
@@ -328,5 +364,15 @@ class PenggunaController extends Controller
         );
 
         return $apiResponse->json('success', false);
+    }
+
+    public function getChildren($parentId): JsonResponse
+    {
+        $children = UserAfiliasi::childrenOf($parentId)->get();
+
+        return response()->json([
+            'success' => true,
+            'afiliasis' => $children
+        ]);
     }
 }

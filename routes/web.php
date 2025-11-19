@@ -17,6 +17,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login', [MasukController::class, 'masuk'])->name('login.do');
     Route::get('/register', [PenggunaController::class, 'createPublic'])->name('register');
     Route::post('/register', [PenggunaController::class, 'storePublic'])->name('register.do');
+    Route::get('/afiliasi/children/{parentId}', [PenggunaController::class, 'getChildren']);
 });
 
 // Rute dasbor dengan permission
