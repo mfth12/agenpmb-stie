@@ -61,7 +61,7 @@
               <thead>
                 <tr>
                   <th>Nama</th>
-                  <th>Asal Sekolah</th>
+                  <th>Asal Instansi / Sekolah</th>
                   <th>Email</th>
                   <th>Username</th>
                   <th>Role</th>

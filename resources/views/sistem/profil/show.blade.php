@@ -36,7 +36,7 @@
                 <div class="col-md-8">
                   <div class="row">
                     <div class="col-md-6 mt-3 mt-md-0">
-                      <strong>Asal Sekolah:</strong><br>
+                      <strong>Asal Instansi/Sekolah:</strong><br>
                       {{ $user->asal_sekolah }}
                     </div>
                     <div class="col-md-6 mt-3 mt-md-0">

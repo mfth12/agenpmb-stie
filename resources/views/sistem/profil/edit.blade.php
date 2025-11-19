@@ -35,7 +35,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Asal Sekolah <span class="text-danger">*</span></label>
+                      <label class="form-label">Asal Instansi/Sekolah <span class="text-danger">*</span></label>
                       <input type="text" name="asal_sekolah"
                         class="form-control @error('asal_sekolah') is-invalid @enderror"
                         value="{{ old('asal_sekolah', $user->asal_sekolah) }}" required>
