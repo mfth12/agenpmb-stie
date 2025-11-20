@@ -157,7 +157,7 @@ class PenggunaController extends Controller
         // Jika afiliasi adalah Mitra (ID 3) atau Child dari Mitra, asal_sekolah wajib
         $isMitra = $afiliasiModel && ($afiliasiModel->afiliasi_id == 3 || $afiliasiModel->parent_id == 3);
         if ($isMitra && empty($asalSekolah)) {
-            return back()->withInput()->with('error', 'Nama Sekolah/Instansi Asal wajib diisi untuk afiliasi Mitra.');
+            return back()->withInput()->with('error', 'Nama Instansi/Sekolah Asal wajib diisi untuk afiliasi Mitra.');
         }
 
         // Jika afiliasi adalah Alumni (ID 1), mungkin asal_sekolah opsional atau wajib, sesuaikan kebijakan

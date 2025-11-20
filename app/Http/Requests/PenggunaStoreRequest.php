@@ -42,6 +42,7 @@ class PenggunaStoreRequest extends FormRequest
             // Contoh aturan kondisional (meski lebih rumit):
             // $rules['asal_sekolah'][] = Rule::requiredIf(fn() => $this->afiliasi == 3); // Wajib jika Mitra
             // Kita sederhanakan, asal_sekolah opsional, dan validasi spesifik di controller
+            $rules['status'] = 'required|string|in:active,inactive';
         } else {
             // Aturan untuk admin (PenggunaController)
             $rules['asal_sekolah'] = 'required|string|max:255'; // Jadikan wajib untuk admin

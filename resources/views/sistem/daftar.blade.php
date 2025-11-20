@@ -58,10 +58,10 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Afiliasi <span class="text-danger">*</span></label>
+            <label class="form-label">Jenis Mitra <span class="text-danger">*</span></label>
             <select name="afiliasi" id="afiliasi-select" class="form-select @error('afiliasi') is-invalid @enderror"
               required>
-              <option value="">Pilih Afiliasi</option>
+              <option value="">Pilih Jenis</option>
               @foreach ($afiliasis_root as $afiliasi)
                 <option value="{{ $afiliasi->afiliasi_id }}"
                   {{ old('afiliasi') == $afiliasi->afiliasi_id ? 'selected' : '' }}>
@@ -85,12 +85,12 @@
               </select>
             </div>
 
-            <!-- Sekolah/Instansi Asal (untuk Mitra) -->
+            <!-- Instansi/Sekolah Asal (untuk Mitra) -->
             <div id="asal-sekolah-container" class="mb-3 d-none">
-              <label class="form-label">Sekolah/Instansi Asal <span class="text-danger">*</span></label>
+              <label class="form-label">Instansi/Sekolah Asal <span class="text-danger">*</span></label>
               <input type="text" name="asal_sekolah" value="{{ old('asal_sekolah') }}"
                 class="form-control @error('asal_sekolah') is-invalid @enderror"
-                placeholder="Masukkan nama sekolah atau instansi asal" />
+                placeholder="Masukkan nama instansi / sekolah asal" />
               @error('asal_sekolah')
                 <div class="invalid-feedback">{{ $message }}</div>
               @enderror
