@@ -4,6 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 <title>{{ $title }}</title>
+@vite(['resources/css/app.css'])
 @vite(['resources/css/pwaforwp-main.css'])
 @vite(['resources/js/sweetalert.js'])
 
