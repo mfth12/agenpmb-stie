@@ -265,8 +265,8 @@ class PendaftaranController extends Controller
                     'response_data' => $response,
                 ]);
 
-                return back()->withInput()
-                    ->with('error', 'Pendaftaran gagal: ' . ($response['message'] ?? 'Terjadi kesalahan'));
+                // return back()->withInput()->with('error', 'Pendaftaran gagal: ' . ($response['message'] ?? 'Terjadi kesalahan'));
+                return redirect()->route('pendaftaran.index')->with('error', 'Proses pendaftaran gagal: ' . ($response['message'] ?? 'Terjadi kesalahan fatal'));
             }
 
             // Simpan sebagai pendaftaran berhasil - TAMBAHKAN password_text
@@ -646,12 +646,13 @@ class PendaftaranController extends Controller
             }
 
             $apiData = $apiResponse['data'];
+            $synctouser = User::where('username', $apiData['referensi'])->first(); // Index by ID calon mahasiswa untuk pencarian cepat
 
             // Buat record baru di tabel pendaftaran berdasarkan data dari API
             // Catatan: Ini hanya contoh mapping. Anda mungkin perlu menyesuaikan field-fieldnya.
             $pendaftaran = PendaftaranModel::create([
                 'user_id' => null, // Karena ini hanya dari API, mungkin tidak ada user lokal
-                'mitra_id' => $user->user_id, // Asumsikan data baru ini ditambahkan oleh mitra yang sedang login
+                'mitra_id' => $synctouser->user_id, // Asumsikan data baru ini ditambahkan oleh mitra yang sedang login
                 'id_calon_mahasiswa' => $apiData['id_calon_mahasiswa'],
                 'username_siakad' => $apiData['user']['username'] ?? null, // Ambil dari data user di API
                 'password_text' => null, // Tidak menyimpan password plain dari API
