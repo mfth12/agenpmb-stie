@@ -108,6 +108,8 @@
                           <a href="{{ route('pengguna.edit', $user) }}" class="btn btn-sm btn-default" title="Edit">
                             Edit
                           </a>
+                        @else
+                          -
                         @endcan
                         @can('user_delete')
                           @if (!$user->hasRole('superadmin') && $user->user_id != auth()->id())
