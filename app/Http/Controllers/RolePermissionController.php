@@ -49,8 +49,11 @@ class RolePermissionController extends Controller
     public function storeRole(RoleStoreRequest $request): RedirectResponse
     {
         $role = Role::create(['name' => $request->name]);
-        if ($request->has('permissions')) {
-            $role->syncPermissions($request->permissions);
+        if ($request->has('permissions') && !empty($request->permissions)) {
+            // Ambil model Permission berdasarkan ID yang dipilih
+            $selectedPermissions = Permission::whereIn('id', $request->permissions)->get();
+            // Gunakan model Permission untuk sync
+            $role->syncPermissions($selectedPermissions);
         }
 
         return redirect()->route('role_permission.index_role')
@@ -79,10 +82,14 @@ class RolePermissionController extends Controller
     public function updateRole(RoleUpdateRequest $request, Role $role): RedirectResponse
     {
         $role->update(['name' => $request->name]);
-        if ($request->has('permissions')) {
-            $role->syncPermissions($request->permissions);
+        if ($request->has('permissions') && !empty($request->permissions)) {
+            // Ambil model Permission berdasarkan ID yang dipilih
+            $selectedPermissions = Permission::whereIn('id', $request->permissions)->get();
+            // Gunakan model Permission untuk sync
+            $role->syncPermissions($selectedPermissions);
         } else {
-            $role->syncPermissions([]); // Hapus semua permission jika tidak ada yang dipilih
+            // Jika tidak ada permission yang dipilih, hapus semua
+            $role->syncPermissions([]);
         }
 
         return redirect()->route('role_permission.index_role')
