@@ -669,7 +669,7 @@ class PendaftaranController extends Controller
                 'nomor_hp' => $apiData['user']['nomor_hp'] ?? null, // Ambil dari data user di API
                 'nomor_hp2' => $apiData['user']['nomor_hp2'] ?? null, // Ambil dari data user di API
                 'status' => 'imported', // Gunakan fungsi mapping
-                'keterangan' => $apiData['sumber_lain'] ?? 'Data baru dari SIAKAD2 via sinkronisasi',
+                'keterangan' => 'Data baru dari SIAKAD2 via sinkronisasi',
                 'response_data' => $apiData, // Simpan seluruh data dari API
                 'synced_at' => now(),
             ]);
