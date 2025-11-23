@@ -98,7 +98,7 @@
                   <button type="button" class="btn btn-primary ms-md-2 mt-2 mt-md-0 approve-btn"
                     data-url="{{ route('pengguna.approve', $pengguna) }}" data-name="{{ $pengguna->name }}">
                     <i class="ti ti-check fs-2 me-1"></i>
-                    Setujui
+                    Keputusan
                   </button>
                 @endif
                 @can('user_edit')
@@ -129,33 +129,50 @@
         button.addEventListener('click', function() {
           const userName = this.getAttribute('data-name');
           const url = this.getAttribute('data-url');
+          // Kita butuh URL khusus untuk update status, bukan hanya approve
+          // Misalnya route('pengguna.update-status', $pengguna)
+          // Untuk saat ini, kita asumsikan satu route untuk approve, dan satu untuk tolak
+          // Kita buat URL baru untuk tolak
+          const rejectUrl = url.replace('/approve', '/reject'); // Ganti '/approve' dengan '/reject' di URL
 
-          // Gunakan Swal.fire langsung untuk konfirmasi approve
+          // Gunakan Swal.fire untuk konfirmasi tindakan
           Swal.fire({
-            title: 'Konfirmasi Persetujuan',
-            text: `Apakah Anda yakin ingin menyetujui pengguna (${userName})?`,
-            icon: 'question', // Icon untuk pertanyaan
+            title: 'Apa tindakan Anda?',
+            text: `Berikan keputusan untuk calon pengguna (${userName})`,
+            icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            showDenyButton: true, // Tambahkan deny button untuk "Tolak"
             confirmButtonText: 'Setuju',
-            cancelButtonText: 'Batal'
+            denyButtonText: 'Tolak',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#3085d6',
+            denyButtonColor: '#d33',
+            reverseButtons: false // Urutan: Batal, Tolak, Setujui
           }).then((result) => {
             if (result.isConfirmed) {
-              // Submit form secara dinamis
-              const form = document.createElement('form');
-              form.method = 'POST';
-              form.action = url;
-              form.innerHTML = `
-                @csrf
-                @method('PUT')
-              `;
-              document.body.appendChild(form);
-              form.submit();
+              submitStatusChange(url, 'active', userName);
+            } else if (result.isDenied) {
+              submitStatusChange(rejectUrl, 'inactive', userName); // Ganti ke URL reject
             }
+            // Jika result.dismiss === Swal.DismissReason.cancel, tidak ada aksi
           });
         });
       });
+
+      // Fungsi helper untuk submit perubahan status
+      function submitStatusChange(actionUrl, newStatus, userName) {
+        // Buat form dinamis
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = actionUrl;
+        form.innerHTML = `
+          @csrf
+          @method('PUT')
+          <input type="hidden" name="status" value="${newStatus}">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+      }
     });
   </script>
 @endsection

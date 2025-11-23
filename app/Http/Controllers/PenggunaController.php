@@ -279,8 +279,7 @@ class PenggunaController extends Controller
     public function approve(User $pengguna): RedirectResponse
     {
         // Authorization check
-        // Misalnya hanya superadmin dan baak yang bisa approve
-        if (!auth()->user()->can('user_view')) { // Ganti 'user_view' dengan permission yang sesuai jika berbeda
+        if (!auth()->user()->can('user_view')) {
             abort(403, 'Unauthorized');
         }
 
@@ -293,7 +292,33 @@ class PenggunaController extends Controller
             $pengguna->update(['status' => 'active']);
 
             return redirect()->route('pengguna.index')
-                ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil disetujui (status diubah menjadi active).');
+                ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil disetujui (status menjadi aktif).');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menyetujui pengguna: ' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Reject user by setting status to 'inactive'.
+     */
+    public function reject(User $pengguna): RedirectResponse
+    {
+        // Authorization check
+        if (!auth()->user()->can('user_view')) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Validasi: hanya pengguna dengan status 'pending' yang bisa disetujui
+        if ($pengguna->status !== 'pending') {
+            return back()->with('error', 'Hanya pengguna dengan status pending yang bisa disetujui.');
+        }
+
+        try {
+            $pengguna->update(['status' => 'inactive']);
+
+            return redirect()->route('pengguna.index')
+                ->with('success', 'Penolakan atas nama pengguna (' . $pengguna->name . ') telah berhasil.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyetujui pengguna: ' . $e->getMessage());
         }
