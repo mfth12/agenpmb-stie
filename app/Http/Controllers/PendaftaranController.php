@@ -170,7 +170,8 @@ class PendaftaranController extends Controller
             $query->where('status', $request->status);
         }
 
-        $pendaftaran = $query->latest()->paginate(15);
+        // $pendaftaran = $query->latest()->paginate(15);
+        $pendaftaran = $query->orderByDesc('created_at')->get();
 
         return view('sistem.pendaftaran.index', [
             'title' => 'Manajemen Pendaftaran',

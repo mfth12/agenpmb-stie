@@ -41,7 +41,7 @@
                   </span>
                 </div>
                 <div class="col">
-                  <div class="h2 mb-0">{{ $pendaftaran->total() }}</div>
+                  <div class="h2 mb-0">{{ $pendaftaran->count() }}</div>
                   <div class="text-secondary">Pendaftar</div>
                 </div>
               </div>
@@ -58,7 +58,7 @@
                   </span>
                 </div>
                 <div class="col">
-                  <div class="h2 mb-0">{{ $pendaftaran->where('status', 'success')->count() }}</div>
+                  <div class="h2 mb-0">{{ $pendaftaran->whereIn('status', ['success'])->count() }}</div>
                   <div class="text-secondary">Berhasil</div>
                 </div>
               </div>
