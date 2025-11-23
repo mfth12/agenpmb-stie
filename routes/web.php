@@ -77,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
             ->middleware(['role:superadmin']);
     });
 
-    // Manajemen Role & Permission Routes - hanya untuk superadmin
+    // Manajemen Roles & Permissions Routes - hanya untuk superadmin
     Route::prefix('role-permission')->middleware(['role:superadmin'])->group(function () {
         Route::get('/', [RolePermissionController::class, 'indexRole'])->name('role_permission.index'); // Default ke index role
 

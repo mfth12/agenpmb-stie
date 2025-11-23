@@ -5,7 +5,7 @@
     <div class="container-xl">
       <div class="row g-2 align-items-center">
         <div class="col">
-          <h2 class="page-title">Manajemen Role</h2>
+          <h2 class="page-title">Manajemen Roles</h2>
           <div class="page-pretitle">Pengaturan role dan hak akses untuk sistem Mitra PMB</div>
         </div>
         <div class="col-auto ms-auto d-print-none">

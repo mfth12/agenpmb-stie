@@ -63,7 +63,7 @@
               {{-- PENGATURAN SISTEM --}}
               @canany(['user_view', 'konfigurasi_manage', 'role_view'])
                 <li
-                  class="nav-item dropdown {{ request()->routeIs('pengguna.*') || request()->routeIs('konfigurasi.*') ? 'active' : '' }}">
+                  class="nav-item dropdown {{ request()->routeIs('pengguna.*') || request()->routeIs('konfigurasi.*') || request()->routeIs('role*') ? 'active' : '' }}">
                   <a class="nav-link dropdown-toggle" href="#navbar-pengaturan" data-bs-toggle="dropdown"
                     data-bs-auto-close="outside" role="button" aria-expanded="false">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -94,10 +94,25 @@
                         {{-- Menu Roles & Permissions --}}
                         @can('role_manage')
                           {{-- Asumsikan ada permission role_view --}}
-                          <a class="dropdown-item {{ request()->routeIs('roles.*') ? 'active' : '' }}"
-                            href="{{ route('role_permission.index') }}">
-                            Roles & Permissions
-                          </a>
+                          <div class="dropend">
+                            {{-- <a class="dropdown-item {{ request()->routeIs('role*') ? 'active' : '' }}"
+                              href="{{ route('role_permission.index') }}">
+                              Role & Permission
+                            </a> --}}
+                            <a class="dropdown-item dropdown-toggle {{ request()->routeIs('role*') ? 'active' : '' }}"
+                              href="{{ route('role_permission.index') }}" data-bs-toggle="dropdown"
+                              data-bs-auto-close="outside" role="button" aria-expanded="false">
+                              Role & Permission
+                            </a>
+                            <div class="dropdown-menu">
+                              <a href="{{ route('role_permission.index_role') }}"
+                                class="dropdown-item {{ request()->routeIs('role_permission.index_role') ? 'active' : '' }}">
+                                Roles</a>
+                              <a href="{{ route('role_permission.index_permission') }}"
+                                class="dropdown-item {{ request()->routeIs('role_permission.index_permission') ? 'active' : '' }}">
+                                Permissions</a>
+                            </div>
+                          </div>
                         @endcan
                       </div>
                     </div>

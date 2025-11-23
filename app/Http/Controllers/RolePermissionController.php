@@ -25,7 +25,7 @@ class RolePermissionController extends Controller
         $roles = Role::with('permissions')->paginate(10);
 
         return view('sistem.role_permission.index_role', [
-            'title' => 'Manajemen Role',
+            'title' => 'Manajemen Roles',
             'roles' => $roles,
         ]);
     }
@@ -123,7 +123,7 @@ class RolePermissionController extends Controller
         $permissions = Permission::paginate(20);
 
         return view('sistem.role_permission.index_permission', [
-            'title' => 'Manajemen Permission',
+            'title' => 'Manajemen Permissions',
             'permissions' => $permissions,
         ]);
     }
