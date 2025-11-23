@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('permission:user_edit');
         Route::put('/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update')
             ->middleware('permission:user_edit');
+        Route::put('/{pengguna}/approve', [PenggunaController::class, 'approve'])->name('pengguna.approve')
+            ->middleware('permission:user_edit'); // Gunakan permission yang sesuai, misalnya user_edit
         Route::delete('/{pengguna}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy')
             ->middleware('permission:user_delete');
         Route::post('/{pengguna}/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset-password')

@@ -93,7 +93,16 @@
 
             <div class="card-footer">
               <div class="d-flex flex-column-reverse flex-md-row-reverse bd-highlight">
+                {{-- Tombol Approve --}}
+                @if ($pengguna->status === 'pending')
+                  <button type="button" class="btn btn-primary ms-md-2 mt-2 mt-md-0 approve-btn"
+                    data-url="{{ route('pengguna.approve', $pengguna) }}" data-name="{{ $pengguna->name }}">
+                    <i class="ti ti-check fs-2 me-1"></i>
+                    Setujui
+                  </button>
+                @endif
                 @can('user_edit')
+                  {{-- Tombol Edit --}}
                   <a href="{{ route('pengguna.edit', $pengguna) }}" class="btn btn-default ms-md-2 mt-2 mt-md-0">
                     <i class="ti ti-edit fs-2 me-1"></i>
                     Edit Pengguna
@@ -110,4 +119,43 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('js_bawah')
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handler untuk tombol approve
+      document.querySelectorAll('.approve-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const userName = this.getAttribute('data-name');
+          const url = this.getAttribute('data-url');
+
+          // Gunakan Swal.fire langsung untuk konfirmasi approve
+          Swal.fire({
+            title: 'Konfirmasi Persetujuan',
+            text: `Apakah Anda yakin ingin menyetujui pengguna (${userName})?`,
+            icon: 'question', // Icon untuk pertanyaan
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Setuju',
+            cancelButtonText: 'Batal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Submit form secara dinamis
+              const form = document.createElement('form');
+              form.method = 'POST';
+              form.action = url;
+              form.innerHTML = `
+                @csrf
+                @method('PUT')
+              `;
+              document.body.appendChild(form);
+              form.submit();
+            }
+          });
+        });
+      });
+    });
+  </script>
 @endsection

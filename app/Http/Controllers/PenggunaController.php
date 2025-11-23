@@ -274,6 +274,32 @@ class PenggunaController extends Controller
     }
 
     /**
+     * Approve user by setting status to 'active'.
+     */
+    public function approve(User $pengguna): RedirectResponse
+    {
+        // Authorization check
+        // Misalnya hanya superadmin dan baak yang bisa approve
+        if (!auth()->user()->can('user_view')) { // Ganti 'user_view' dengan permission yang sesuai jika berbeda
+            abort(403, 'Unauthorized');
+        }
+
+        // Validasi: hanya pengguna dengan status 'pending' yang bisa disetujui
+        if ($pengguna->status !== 'pending') {
+            return back()->with('error', 'Hanya pengguna dengan status pending yang bisa disetujui.');
+        }
+
+        try {
+            $pengguna->update(['status' => 'active']);
+
+            return redirect()->route('pengguna.index')
+                ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil disetujui (status diubah menjadi active).');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menyetujui pengguna: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Hapus avatar pengguna
      */
     public function deleteAvatar(User $pengguna): RedirectResponse
