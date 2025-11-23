@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class KonfigurasiUpdateRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class KonfigurasiUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        // Sesuaikan dengan kebijakan otorisasi Anda
+        return auth()->user()->hasRole('superadmin');
     }
 
     /**
@@ -21,8 +23,32 @@ class KonfigurasiUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Ambil ID konfigurasi dari route model binding
+        $konfigurasiId = $this->route('konfigurasi')->id;
+
         return [
-            //
+            'config_group' => 'required|string|max:255',
+            'config_key' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('konfigurasis', 'config_key')->ignore($konfigurasiId), // Pastikan key unik, kecuali untuk record ini
+            ],
+            'config_value' => 'nullable|string',
+            'value_1' => 'nullable|string|max:255',
+            'value_2' => 'nullable|string|max:255',
+            'value_3' => 'nullable|string|max:255',
+            'value_4' => 'nullable|string|max:255',
+            'value_5' => 'nullable|string|max:255',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'config_group.required' => 'Grup konfigurasi wajib diisi.',
+            'config_key.required' => 'Kunci konfigurasi wajib diisi.',
+            'config_key.unique' => 'Kunci konfigurasi sudah digunakan.',
         ];
     }
 }

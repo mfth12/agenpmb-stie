@@ -61,7 +61,7 @@
 
 
               {{-- PENGATURAN SISTEM --}}
-              @canany(['user_view', 'system_manage', 'role_view'])
+              @canany(['user_view', 'konfigurasi_manage', 'role_view'])
                 <li
                   class="nav-item dropdown {{ request()->routeIs('pengguna.*') || request()->routeIs('konfigurasi.*') ? 'active' : '' }}">
                   <a class="nav-link dropdown-toggle" href="#navbar-pengaturan" data-bs-toggle="dropdown"
@@ -83,8 +83,8 @@
                         @endcan
 
                         {{-- Menu Konfigurasi Sistem --}}
-                        @can('system_manage')
-                          {{-- Asumsikan ada permission system_manage --}}
+                        @can('konfigurasi_manage')
+                          {{-- Asumsikan ada permission konfigurasi_manage --}}
                           <a class="dropdown-item {{ request()->routeIs('konfigurasi.*') ? 'active' : '' }}"
                             href="{{ route('konfigurasi.index') }}">
                             Konfigurasi Sistem

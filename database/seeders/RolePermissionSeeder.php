@@ -15,6 +15,12 @@ class RolePermissionSeeder extends Seeder
 
         // Create permissions
         $permissions = [
+            // Superadmin Previllage
+            'konfigurasi_manage',
+            'akademik_manage',
+            'role_manage',
+            'permission_manage',
+
             // User Management
             'user_view',
             'user_create',
@@ -27,19 +33,9 @@ class RolePermissionSeeder extends Seeder
             'pendaftaran_edit',
             'pendaftaran_delete',
 
-            // // Student Approval
-            // 'approval_view',
-            // 'approval_approve',
-            // 'approval_reject',
-            // 'approval_verify',
-
             // Financial
             'keuangan_view',
             'keuangan_manage',
-
-            // // Academic
-            // 'akademik_view',
-            // 'akademik_manage',
 
             // Dashboard
             'dashboard_view',
@@ -60,9 +56,6 @@ class RolePermissionSeeder extends Seeder
             'pendaftaran_create',
             'pendaftaran_edit',
             'pendaftaran_delete',
-            // 'approval_view',
-            // 'approval_approve',
-            // 'approval_reject',
             'user_view',
         ]);
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\DasborController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\Auth\MasukController;
+use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\PendaftaranController;
 
 // Rute "/" universal, tidak pakai middleware
@@ -58,6 +59,32 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('permission:user_edit');
         Route::delete('/{pengguna}/avatar', [PenggunaController::class, 'deleteAvatar'])->name('pengguna.avatar.delete')
             ->middleware('permission:user_edit');
+    });
+
+    // Manajemen Konfigurasi Routes - hanya untuk superadmin
+    Route::prefix('konfigurasi')->middleware(['role:superadmin'])->group(function () {
+        Route::get('/', [KonfigurasiController::class, 'index'])->name('konfigurasi.index');
+        Route::get('/create', [KonfigurasiController::class, 'create'])->name('konfigurasi.create')
+            ->middleware(['role:superadmin']);
+        Route::post('/', [KonfigurasiController::class, 'store'])->name('konfigurasi.store')
+            ->middleware(['role:superadmin']);
+        Route::get('/{konfigurasi}/edit', [KonfigurasiController::class, 'edit'])->name('konfigurasi.edit')
+            ->middleware(['role:superadmin']);
+        Route::put('/{konfigurasi}', [KonfigurasiController::class, 'update'])->name('konfigurasi.update')
+            ->middleware(['role:superadmin']);
+        Route::delete('/{konfigurasi}', [KonfigurasiController::class, 'destroy'])->name('konfigurasi.destroy')
+            ->middleware(['role:superadmin']);
+        // Route::get('/', [KonfigurasiController::class, 'index'])->name('konfigurasi.index');
+        // Route::get('/create', [KonfigurasiController::class, 'create'])->name('konfigurasi.create')
+        //     ->middleware('permission:config_create');
+        // Route::post('/', [KonfigurasiController::class, 'store'])->name('konfigurasi.store')
+        //     ->middleware('permission:config_create');
+        // Route::get('/{konfigurasi}/edit', [KonfigurasiController::class, 'edit'])->name('konfigurasi.edit')
+        //     ->middleware('permission:config_edit');
+        // Route::put('/{konfigurasi}', [KonfigurasiController::class, 'update'])->name('konfigurasi.update')
+        //     ->middleware('permission:config_edit');
+        // Route::delete('/{konfigurasi}', [KonfigurasiController::class, 'destroy'])->name('konfigurasi.destroy')
+        //     ->middleware('permission:config_delete');
     });
 
     // Pendaftaran Routes - bisa diakses oleh multiple roles
