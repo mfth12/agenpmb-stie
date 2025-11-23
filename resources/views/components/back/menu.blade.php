@@ -92,10 +92,10 @@
                         @endcan
 
                         {{-- Menu Roles & Permissions --}}
-                        @can('role_view')
+                        @can('role_manage')
                           {{-- Asumsikan ada permission role_view --}}
                           <a class="dropdown-item {{ request()->routeIs('roles.*') ? 'active' : '' }}"
-                            href="{{ route('roles.index') }}">
+                            href="{{ route('role_permission.index') }}">
                             Roles & Permissions
                           </a>
                         @endcan

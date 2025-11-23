@@ -3,26 +3,35 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RoleStoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return auth()->user()->hasRole('superadmin');
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name'), // Nama role harus unik
+            ],
+            'permissions' => 'array', // Harus array jika diisi
+            'permissions.*' => 'exists:permissions,id', // Setiap ID permission harus valid
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Nama role wajib diisi.',
+            'name.unique' => 'Nama role sudah digunakan.',
+            'permissions.*.exists' => 'Salah satu permission yang dipilih tidak valid.',
         ];
     }
 }

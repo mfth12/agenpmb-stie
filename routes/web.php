@@ -8,6 +8,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\Auth\MasukController;
 use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\PendaftaranController;
+use App\Http\Controllers\RolePermissionController;
 
 // Rute "/" universal, tidak pakai middleware
 Route::get('/', fn() => redirect()->route(Auth::check() ? 'dashboard.index' : 'login'));
@@ -74,17 +75,27 @@ Route::middleware(['auth'])->group(function () {
             ->middleware(['role:superadmin']);
         Route::delete('/{konfigurasi}', [KonfigurasiController::class, 'destroy'])->name('konfigurasi.destroy')
             ->middleware(['role:superadmin']);
-        // Route::get('/', [KonfigurasiController::class, 'index'])->name('konfigurasi.index');
-        // Route::get('/create', [KonfigurasiController::class, 'create'])->name('konfigurasi.create')
-        //     ->middleware('permission:config_create');
-        // Route::post('/', [KonfigurasiController::class, 'store'])->name('konfigurasi.store')
-        //     ->middleware('permission:config_create');
-        // Route::get('/{konfigurasi}/edit', [KonfigurasiController::class, 'edit'])->name('konfigurasi.edit')
-        //     ->middleware('permission:config_edit');
-        // Route::put('/{konfigurasi}', [KonfigurasiController::class, 'update'])->name('konfigurasi.update')
-        //     ->middleware('permission:config_edit');
-        // Route::delete('/{konfigurasi}', [KonfigurasiController::class, 'destroy'])->name('konfigurasi.destroy')
-        //     ->middleware('permission:config_delete');
+    });
+
+    // Manajemen Role & Permission Routes - hanya untuk superadmin
+    Route::prefix('role-permission')->middleware(['role:superadmin'])->group(function () {
+        Route::get('/', [RolePermissionController::class, 'indexRole'])->name('role_permission.index'); // Default ke index role
+
+        // Role Routes
+        Route::get('/role', [RolePermissionController::class, 'indexRole'])->name('role_permission.index_role');
+        Route::get('/role/create', [RolePermissionController::class, 'createRole'])->name('role_permission.create_role');
+        Route::post('/role', [RolePermissionController::class, 'storeRole'])->name('role_permission.store_role');
+        Route::get('/role/{role}/edit', [RolePermissionController::class, 'editRole'])->name('role_permission.edit_role');
+        Route::put('/role/{role}', [RolePermissionController::class, 'updateRole'])->name('role_permission.update_role');
+        Route::delete('/role/{role}', [RolePermissionController::class, 'destroyRole'])->name('role_permission.destroy_role');
+
+        // Permission Routes
+        Route::get('/permission', [RolePermissionController::class, 'indexPermission'])->name('role_permission.index_permission');
+        Route::get('/permission/create', [RolePermissionController::class, 'createPermission'])->name('role_permission.create_permission');
+        Route::post('/permission', [RolePermissionController::class, 'storePermission'])->name('role_permission.store_permission');
+        Route::get('/permission/{permission}/edit', [RolePermissionController::class, 'editPermission'])->name('role_permission.edit_permission');
+        Route::put('/permission/{permission}', [RolePermissionController::class, 'updatePermission'])->name('role_permission.update_permission');
+        Route::delete('/permission/{permission}', [RolePermissionController::class, 'destroyPermission'])->name('role_permission.destroy_permission');
     });
 
     // Pendaftaran Routes - bisa diakses oleh multiple roles

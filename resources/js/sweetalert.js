@@ -109,7 +109,7 @@ window.showConfirm = function (config) {
 window.showDeleteConfirmation = function (callback, itemName = 'data') {
     return defaultSwalConfig.fire({ // Gunakan mixin
         title: 'Apakah Anda yakin?',
-        text: `Anda akan menghapus ${itemName}. Data yang terhapus tidak dapat dikembalikan!`,
+        text: `Anda akan menghapus (${itemName}). Data yang terhapus tidak dapat dikembalikan!`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
