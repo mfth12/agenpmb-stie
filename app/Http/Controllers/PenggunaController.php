@@ -22,18 +22,21 @@ class PenggunaController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = User::query();
+        // Gunakan query builder untuk join
+        $query = User::select('users.*', 'user_afiliasis.nama as afiliasi_nama') // Ambil kolom dari users dan nama afiliasi
+            ->leftJoin('user_afiliasis', 'users.afiliasi', '=', 'user_afiliasis.afiliasi_id'); // LEFT JOIN
 
         // Filter berdasarkan pencarian
         if ($request->has('cari') && $request->cari != '') {
             $search = $request->cari;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('asal_sekolah', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('username', 'like', "%{$search}%")
-                    ->orWhere('nomor_hp', 'like', "%{$search}%")
-                    ->orWhere('default_role', 'like', "%{$search}%");
+                $q->where('users.name', 'like', "%{$search}%")
+                    ->orWhere('users.asal_sekolah', 'like', "%{$search}%")
+                    ->orWhere('users.email', 'like', "%{$search}%")
+                    ->orWhere('users.username', 'like', "%{$search}%")
+                    ->orWhere('users.nomor_hp', 'like', "%{$search}%")
+                    ->orWhere('users.default_role', 'like', "%{$search}%")
+                    ->orWhere('user_afiliasis.nama', 'like', "%{$search}%"); // Tambahkan filter ke nama afiliasi
             });
         }
 
@@ -44,10 +47,13 @@ class PenggunaController extends Controller
 
         // Filter berdasarkan status
         if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            $query->where('users.status', $request->status);
         }
 
-        $pengguna = $query->latest()->paginate(10);
+        // Sekarang $query sudah termasuk data afiliasi (jika ada)
+        // Gunakan with() untuk relasi lain yang diakses di view untuk mencegah N+1
+        $pengguna = $query->with(['media', 'roles']) // Tambahkan ini untuk mencegah N+1 pada media dan roles
+            ->latest('users.created_at')->paginate(10);
         $roles = Role::all();
 
         return view('sistem.pengguna.index', [

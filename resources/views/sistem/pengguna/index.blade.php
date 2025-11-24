@@ -90,7 +90,7 @@
                         @endif
                       </div>
                     </td>
-                    <td>{{ $user->asal_sekolah }}</td>
+                    <td>{{ $user->asal_sekolah ?? $user->afiliasi_nama }}</td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->username }}</td>
                     <td>

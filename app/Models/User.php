@@ -8,6 +8,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -109,7 +110,7 @@ class User extends Authenticatable implements HasMedia
      * Relasi ke tabel user_afiliasis
      * Seorang user bisa memiliki satu afiliasi
      */
-    public function afiliasi()
+    public function afiliasi(): BelongsTo
     {
         return $this->belongsTo(UserAfiliasi::class, 'afiliasi', 'afiliasi_id');
     }
