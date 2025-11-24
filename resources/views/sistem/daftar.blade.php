@@ -12,7 +12,7 @@
           <h1 class="mb-0">{{ konfigs('NAMA_SISTEM') }}</h1>
         </a>
       </div>
-      <h3 class="text-center mb-4">Daftar Akun</h3>
+      <h3 class="text-center mb-4">Formulir Daftar</h3>
       <form class="card card-md" method="POST" action="{{ route('register.do') }}" autocomplete="off" novalidate
         enctype="multipart/form-data">
         @csrf
