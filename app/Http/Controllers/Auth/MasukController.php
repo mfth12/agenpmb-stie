@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use Exception;
+use Throwable;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
@@ -313,7 +314,7 @@ class MasukController extends Controller
                 . "{$waktu}\n" . "\n"
                 . "Jika aktivitas ini mencurigakan, segera lakukan langkah pengamanan pada Akun Anda.";
             $this->notifikasiWhatsapp($user, $pesan);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::channel('whatsapp')->warning('Gagal masuk antrean notif whatsapp (login)', [
                 'err'     => $e->getMessage(),
                 'user_id' => $user->user_id ?? null
