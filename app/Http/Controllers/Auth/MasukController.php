@@ -297,7 +297,7 @@ class MasukController extends Controller
     {
         $sessionLifetime = (int) env('SESSION_LIFETIME', 120); // menit
         $ip = $request->ip(); // Ambil IP user
-        $cacheKey = 'last_whatsapp_notif_login_' . $user->user_id . '_' . $ip; // Gunakan $user->user_id bukan $user->user_id
+        $cacheKey = 'notif_wa_login_' . $user->user_id . '_' . $ip; // Gunakan $user->user_id bukan $user->user_id
 
         // Jika cache ada, langsung SKIP pengiriman notifikasi
         if (Cache::has($cacheKey)) {

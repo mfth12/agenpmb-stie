@@ -46,8 +46,8 @@ class UserAfiliasiSeeder extends Seeder
                 'created_at' => Carbon::now()
             ],
             [
-                'nama' => 'Mitra',
-                'keterangan' => 'Afiliasi untuk mitra eksternal',
+                'nama' => 'Mitra Sekolah',
+                'keterangan' => 'Afiliasi untuk mitra sekolah',
                 'parent_id' => null,
                 'created_at' => Carbon::now()
             ],
