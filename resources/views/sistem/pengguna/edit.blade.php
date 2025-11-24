@@ -38,7 +38,7 @@
                       <label class="form-label">Asal Instansi/Sekolah <span class="text-danger">*</span></label>
                       <input type="text" name="asal_sekolah"
                         class="form-control @error('asal_sekolah') is-invalid @enderror"
-                        value="{{ old('asal_sekolah', $pengguna->asal_sekolah) }}" required>
+                        value="{{ old('asal_sekolah', $pengguna->asal_sekolah) }}">
                       @error('asal_sekolah')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -133,7 +133,7 @@
                       <label class="form-label">Role <span class="text-danger">*</span></label>
                       <select name="role" class="form-select @error('role') is-invalid @enderror" required
                         {{ $pengguna->hasRole('superadmin') ? 'disabled' : '' }}>
-                        <option value="">Pilih Role</option>
+                        <option value="">- Pilih Role -</option>
                         @foreach ($roles as $role)
                           <option value="{{ $role->name }}"
                             {{ old('role', $pengguna->getRoleNames()->first()) == $role->name ? 'selected' : '' }}>
@@ -154,8 +154,11 @@
                     <div class="mb-3">
                       <label class="form-label">Status <span class="text-danger">*</span></label>
                       <select name="status" class="form-select">
+                        <option value="">- Pilih Status-</option>
                         <option value="active" {{ old('status', $pengguna->status) == 'active' ? 'selected' : '' }}>
                           Aktif</option>
+                        <option value="pending" {{ old('status', $pengguna->status) == 'pending' ? 'selected' : '' }}>
+                          Pending</option>
                         <option value="inactive" {{ old('status', $pengguna->status) == 'inactive' ? 'selected' : '' }}>
                           Nonaktif</option>
                       </select>

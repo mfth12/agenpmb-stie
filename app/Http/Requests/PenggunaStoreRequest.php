@@ -53,7 +53,7 @@ class PenggunaStoreRequest extends FormRequest
                 Rule::exists('roles', 'name')->whereNot('name', 'superadmin')
             ];
             $rules['password'] .= '|confirmed';
-            $rules['status'] = 'required|string|in:active,inactive';
+            $rules['status'] = 'required|string|in:active,inactive,pending';
         }
 
         return $rules;

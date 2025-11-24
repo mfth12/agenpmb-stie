@@ -34,7 +34,7 @@ class PenggunaUpdateRequest extends FormRequest
             'nomor_hp2' => 'nullable|string|max:20',
             'role' => 'required|string|exists:roles,name',
             'password' => 'sometimes|nullable|min:6|confirmed',
-            'status' => 'required|string|in:active,inactive',
+            'status' => 'required|string|in:active,inactive,pending',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'about' => 'nullable|string|max:500', // TAMBAHAN: Field about
         ];
@@ -54,6 +54,7 @@ class PenggunaUpdateRequest extends FormRequest
             'password.min' => 'Password minimal 6 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak sesuai.',
             'status.required' => 'Status wajib dipilih.',
+            'status.in' => 'Status tidak valid.',
             'avatar.image' => 'File harus berupa gambar.',
             'avatar.mimes' => 'Format gambar harus jpeg, png, jpg, atau webp.',
             'avatar.max' => 'Ukuran gambar maksimal 2MB.',

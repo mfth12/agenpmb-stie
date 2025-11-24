@@ -61,10 +61,9 @@
             <label class="form-label">Jenis Mitra <span class="text-danger">*</span></label>
             <select name="afiliasi" id="afiliasi-select" class="form-select @error('afiliasi') is-invalid @enderror"
               required>
-              <option value="">Pilih Jenis</option>
+              <option value="" selected>Pilih Jenis</option>
               @foreach ($afiliasis_root as $afiliasi)
-                <option value="{{ $afiliasi->afiliasi_id }}"
-                  {{ old('afiliasi') == $afiliasi->afiliasi_id ? 'selected' : '' }}>
+                <option value="{{ $afiliasi->afiliasi_id }}">
                   {{ $afiliasi->nama }}
                 </option>
               @endforeach
@@ -256,6 +255,7 @@
 
       // Handler untuk submit form, pastikan nilai yang benar dikirim
       document.querySelector('form').addEventListener('submit', function(e) {
+        // <-- Ambil dari select dengan id 'afiliasi-select' (yg sekarang namanya 'afiliasi_parent')
         const selectedAfiliasi = afiliasiSelect.value;
         const jenisCivitasValue = jenisCivitasSelect.value;
         const asalSekolahValue = document.querySelector('input[name="asal_sekolah"]').value;
@@ -264,24 +264,28 @@
 
         // Jika afiliasi utama adalah Civitas dan jenis civitas dipilih
         if (selectedAfiliasi === '2' && jenisCivitasValue) {
-          finalAfiliasiId = jenisCivitasValue; // Gunakan ID child
+          finalAfiliasiId = jenisCivitasValue;
         }
         // Jika afiliasi utama adalah Mitra, gunakan ID Mitra (3) dan isi asal_sekolah
         // Jika afiliasi utama adalah Alumni (1), gunakan ID Alumni (1)
         // Jika kosong, biarkan null
 
         // Tambahkan input hidden untuk afiliasi yang benar
-        let afiliasiInput = document.querySelector('input[name="afiliasi"]');
-        if (!afiliasiInput) {
+        let afiliasiInput = document.querySelector('input[name="afiliasi"]'); // <-- Cari input hidden
+        if (!afiliasiInput) { // <-- Jika input hidden belum ada
           afiliasiInput = document.createElement('input');
           afiliasiInput.type = 'hidden';
-          afiliasiInput.name = 'afiliasi';
-          document.querySelector('form').appendChild(afiliasiInput);
+          afiliasiInput.name = 'afiliasi'; // <-- Nama input hidden TEPAT 'afiliasi'
+          document.querySelector('form').appendChild(afiliasiInput); // <-- Tambahkan ke form
         }
-        afiliasiInput.value = finalAfiliasiId;
+        afiliasiInput.value = finalAfiliasiId; // <-- Set nilai ke ID YANG BENAR (e.g., '5') -> INI BENAR
 
         // Jika afiliasi bukan Mitra, hapus nilai asal_sekolah agar tidak disimpan
-        if (selectedAfiliasi !== '3') {
+        // Pastikan 'selectedAfiliasi' merujuk ke ID asli yang dipilih di parent, bukan finalAfiliasiId
+        // Gunakan nilai dari select sebelum di-overwrite oleh hidden input untuk pengecekan ini
+        const originalSelectedParentId = document.getElementById('afiliasi-select')
+          .value; // Ambil dari select asli
+        if (originalSelectedParentId !== '3') { // Gunakan nilai asli dari select
           document.querySelector('input[name="asal_sekolah"]').value = '';
         }
       });

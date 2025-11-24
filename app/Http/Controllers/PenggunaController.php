@@ -149,6 +149,7 @@ class PenggunaController extends Controller
 
         // --- LOGIKA AFILIASI ---
         $afiliasiId = $request->afiliasi; // Bisa null, 1 (Alumni), 2 (Civitas), 3 (Mitra), atau ID child dari Civitas
+        $afiliasiChildId = $request->afiliasi_child_civitas; // ini adalah nilai child
         $asalSekolah = $request->asal_sekolah; // Bisa null atau string
 
         // Validasi logis tambahan
@@ -157,6 +158,18 @@ class PenggunaController extends Controller
             $afiliasiModel = \App\Models\UserAfiliasi::find($afiliasiId);
             if (!$afiliasiModel) {
                 return back()->withInput()->with('error', 'Afiliasi tidak valid.');
+            }
+        }
+
+        if ($request->afiliasi == null) {
+            return back()->withInput()->with('error', 'Silakan dicek kembali Jenis Mitra');
+        }
+
+        $afiliasiChildModel = null;
+        if ($afiliasiChildId) {
+            $afiliasiChildModel = \App\Models\UserAfiliasi::find($afiliasiChildId);
+            if (!$afiliasiChildModel) {
+                return back()->withInput()->with('error', 'Afiliasi child tidak valid.');
             }
         }
 
@@ -177,7 +190,7 @@ class PenggunaController extends Controller
         $data = [
             'name' => $request->nama,
             'asal_sekolah' => $asalSekolah, // Gunakan nilai yang telah divalidasi
-            'afiliasi' => $afiliasiId, // Gunakan nilai ID afiliasi
+            'afiliasi' => $afiliasiChildId ?? $afiliasiId, // Gunakan nilai ID afiliasi
             'email' => $request->email,
             'username' => $request->username,
             'nomor_hp' => $request->nomor_hp,
