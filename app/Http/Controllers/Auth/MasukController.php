@@ -212,7 +212,7 @@ class MasukController extends Controller
      */
     protected function notifikasiWhatsapp($user, $pesan)
     {
-        $nomor_wa = $user->nomor_hp ?? $user->nomor_hp2;
+        $nomor_wa = $user->nomor_hp2 ?? $user->nomor_hp;
         // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
         if ($user->nomor_hp == $user->nomor_hp2) {
             $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2

@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Throwable;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
 use App\Models\UserAfiliasi;
 use Illuminate\Http\Request;
+use App\Jobs\NotifWhatsappJob;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
+use App\Models\AntrianNotifWhatsappModel;
 use App\Http\Requests\PenggunaStoreRequest;
 use App\Http\Requests\PenggunaUpdateRequest;
 
@@ -212,6 +217,9 @@ class PenggunaController extends Controller
 
             // Opsional: Login otomatis setelah register
             // Auth::login($user);
+
+            // Kirim notifikasi WhatsApp setelah pendaftaran akun berhasil
+            $this->sendWaNotification($user, $request, $from = 'siakad');
 
             return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
         } catch (Exception $e) {
@@ -445,4 +453,85 @@ class PenggunaController extends Controller
             'afiliasis' => $children
         ]);
     }
+
+    /**
+     * Send notification to all 'baak' role holders.
+     */
+    private function sendWaNotification($user, $request, $from): void
+    {
+        try {
+            $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+            $pesan = "🚀 Selamat " . $greeting . ", "
+                . konfigs('NAMA_SISTEM') . " memiliki pendaftar yang ingin bergabung menjadi mitra.\n"
+                . "Nama: *{$request->nama}*\n"
+                . "Waktu: *{$waktu}*\n\n"
+                . "Segera lakukan approval dengan masuk ke portal.\n"
+                . route('login'); // Gunakan route helper untuk URL login
+
+            // Ambil semua user yang memiliki role 'baak'
+            $usersBaak = User::role('baak')->get(); // Gunakan method role() dari Spatie\Permission
+
+            // Kirim notifikasi ke masing-masing user baak
+            foreach ($usersBaak as $userBaak) {
+                // Ambil nomor WA dari user baak
+                $nomorWaTujuan = $userBaak->nomor_hp2 ?? $userBaak->nomor_hp;
+
+                // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
+                if ($userBaak->nomor_hp == $userBaak->nomor_hp2) {
+                    $nomorWaTujuan = $userBaak->nomor_hp2; // Atau $userBaak->nomor_hp
+                }
+
+                // Pastikan nomor WA ada sebelum mengirim
+                if ($nomorWaTujuan) {
+                    $this->notifikasiWhatsapp($userBaak, $pesan, $nomorWaTujuan); // Kirim ke nomor tujuan
+                } else {
+                    // Log jika user baak tidak memiliki nomor WA
+                    Log::channel('whatsapp')->warning('User BAAK tidak memiliki nomor WA saat kirim notif pendaftaran mitra', [
+                        'user_id' => $userBaak->user_id,
+                        'name' => $userBaak->name,
+                    ]);
+                }
+            }
+        } catch (Throwable $e) {
+            // Log kesalahan saat mengirim notifikasi ke user BAAK
+            Log::channel('whatsapp')->warning('Gagal mengirim notif whatsapp (daftar calon mitra) ke BAAK: ' . $e->getMessage(), [
+                'err'     => $e->getMessage(),
+                'user_id_pengirim' => $user->user_id ?? null // User yang mendaftar
+            ]);
+        }
+    }
+
+    /**
+     * Menambahkan notifikasi whatsapp ke daftar antrian
+     * Diupdate untuk menerima nomor tujuan secara eksplisit
+     */
+    protected function notifikasiWhatsapp($userPenerima, $pesan, $nomorTujuan): void // Tambahkan $nomorTujuan
+    {
+        // $nomor_wa = $user->nomor_hp ?? $user->nomor_hp2; // Ganti dengan $nomorTujuan
+        // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
+        // if ($user->nomor_hp == $user->nomor_hp2) {
+        //     $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2
+        // }
+
+        $antrian = AntrianNotifWhatsappModel::create([
+            'user_id'   => $userPenerima->user_id, // Gunakan ID user yang menerima notif (baak)
+            'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
+            'target'    => $nomorTujuan, // Gunakan nomor tujuan yang diberikan
+            'tipe'      => 'text',
+            'isi_pesan' => $pesan,
+            'status'    => 0,
+        ]);
+
+        // dispatch ke queue whatsapp
+        NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
+        // log whatsapp
+        Log::channel('whatsapp')->info('Notif whatsapp (daftar calon mitra ke BAAK) berhasil masuk antrean', [
+            'user_id_penerima' => $userPenerima->user_id, // ID user yang menerima notif
+            'to'          => $nomorTujuan, // Log nomor yang digunakan
+            'antrian_id'  => $antrian->antrian_id,
+        ]);
+    }
+
+    // ... (method-method lainnya)
 }
