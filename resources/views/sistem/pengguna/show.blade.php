@@ -80,11 +80,11 @@
                   <div class="row">
                     <div class="col-md-6 mt-3">
                       <strong>Terakhir Login:</strong><br>
-                      {{ $pengguna->last_logged_in ? $pengguna->last_logged_in->format('d/m/Y H:i') : 'Belum pernah' }}
+                      {{ $pengguna->last_logged_in?->translatedFormat('d M Y H:i') ?? 'Belum pernah' }}
                     </div>
                     <div class="col-md-6 mt-3">
                       <strong>Bergabung Sejak:</strong><br>
-                      {{ $pengguna->created_at->format('d/m/Y') }}
+                      {{ $pengguna->created_at?->translatedFormat('d M Y H:i') }}
                     </div>
                   </div>
                 </div>
