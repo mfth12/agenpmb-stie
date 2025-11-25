@@ -112,7 +112,7 @@
                       <div class="mb-3">
                         <label class="form-label required">Program Studi</label>
                         <select name="prodi_id" class="form-select @error('prodi_id') is-invalid @enderror" required>
-                          <option value="">Pilih Program Studi</option>
+                          <option value="">- Pilih Program Studi -</option>
                           @foreach ($prodi as $id => $nama)
                             @if (!in_array($id, \App\Models\PendaftaranModel::daftarProdiWithNonaktif()))
                               <option value="{{ $id }}" {{ old('prodi_id') == $id ? 'selected' : '' }}>
@@ -130,7 +130,7 @@
                       <div class="mb-3">
                         <label class="form-label required">Kelas</label>
                         <select name="kelas" class="form-select @error('kelas') is-invalid @enderror" required>
-                          <option value="">Pilih Kelas</option>
+                          <option value="">- Pilih Kelas -</option>
                           @foreach ($kelasList as $id => $nama)
                             <option value="{{ $id }}" {{ old('kelas') == $id ? 'selected' : '' }}>
                               {{ $nama }}

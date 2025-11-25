@@ -287,7 +287,7 @@
             {{-- <label for="tahun-sync" class="form-label">Tahun Akademik</label> --}}
             <h3>Tahun Akademik:</h3>
             <select name="tahun" id="tahun-sync" class="form-select">
-              <option value="">Pilih Tahun</option>
+              <option value="">- Pilih Tahun -</option>
               @for ($i = date('Y') + 1; $i >= 2020; $i--)
                 <option value="{{ $i }}">{{ $i }}</option>
               @endfor
