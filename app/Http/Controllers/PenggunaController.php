@@ -120,17 +120,20 @@ class PenggunaController extends Controller
             $pengguna->syncRoles([$request->role]);
 
             // Kirim notif wa
-            $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
-            $pesan = "🚀 Selamat " . $greeting . ", {$request->nama}. "
-                . "Anda telah terdaftar sebagai " . konfigs('NAMA_SISTEM_ALIAS') . " pada " . konfigs('NAMA_PT') . ". "
-                . "Berikut adalah kredensial akun Anda:\n"
-                . "Username: *{$request->nama}*\n"
-                . "Password: *{$waktu}*\n"
-                . "Link: " . route('login');
+            if ($pengguna) {
+                // Menyiapkan pesan
+                $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+                $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+                $pesan = "🚀 Selamat " . $greeting . ", {$request->nama}. "
+                    . "Anda telah terdaftar sebagai *" . konfigs('NAMA_SISTEM_ALIAS') . "* pada " . konfigs('NAMA_PT') . ". "
+                    . "Berikut adalah kredensial akun Anda:\n"
+                    . "Username: *{$request->username}*\n"
+                    . "Password: *{$request->password}*\n"
+                    . "Link: " . route('login');
 
-            // Aksi kirim
-            $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
+                // Aksi kirim
+                $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
+            }
 
             return redirect()->route('pengguna.index')
                 ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil ditambahkan.');
@@ -323,9 +326,9 @@ class PenggunaController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Validasi: hanya pengguna dengan status 'pending' yang bisa disetujui
+        // Validasi: hanya pengguna dengan status 'pending' yang bisa diverifikasi
         if ($pengguna->status !== 'pending') {
-            return back()->with('error', 'Hanya pengguna dengan status pending yang bisa disetujui.');
+            return back()->with('error', 'Hanya pengguna dengan status pending yang bisa diverifikasi.');
         }
 
         try {
@@ -335,8 +338,8 @@ class PenggunaController extends Controller
                 // Kirim notif wa jika diapprove admin baak
                 $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
                 $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
-                $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->nama}. "
-                    . "*Akun Mitra* Anda telah disetujui pada: {$waktu}. "
+                $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
+                    . "*Akun Mitra* Anda telah diverifikasi pada: {$waktu}. "
                     . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n"
                     . "Link: " . route('login');
 
@@ -345,7 +348,7 @@ class PenggunaController extends Controller
             }
 
             return redirect()->route('pengguna.index')
-                ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil disetujui (status menjadi aktif).');
+                ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil diverifikasi (status menjadi aktif).');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyetujui pengguna: ' . $e->getMessage());
         }
@@ -362,9 +365,9 @@ class PenggunaController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Validasi: hanya pengguna dengan status 'pending' yang bisa disetujui
+        // Validasi: hanya pengguna dengan status 'pending' yang bisa diverifikasi
         if ($pengguna->status !== 'pending') {
-            return back()->with('error', 'Hanya pengguna dengan status pending yang bisa disetujui.');
+            return back()->with('error', 'Hanya pengguna dengan status pending yang bisa diverifikasi.');
         }
 
         try {

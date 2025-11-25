@@ -142,12 +142,12 @@
             icon: 'question',
             showCancelButton: true,
             showDenyButton: true, // Tambahkan deny button untuk "Tolak"
-            confirmButtonText: 'Setuju',
+            confirmButtonText: 'Verifikasi',
             denyButtonText: 'Tolak',
             cancelButtonText: 'Batal',
             confirmButtonColor: '#3085d6',
             denyButtonColor: '#d33',
-            reverseButtons: false // Urutan: Batal, Tolak, Setujui
+            reverseButtons: false // Urutan: Batal, Tolak, Verifikasi
           }).then((result) => {
             if (result.isConfirmed) {
               submitStatusChange(url, 'active', userName);

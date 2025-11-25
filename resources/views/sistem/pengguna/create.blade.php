@@ -124,7 +124,7 @@
                       <select name="status" class="form-select">
                         <option value="" selected>- Pilih Status-</option>
                         <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending
+                        <option value="pending" {{ old('status') }} disabled>Pending
                         </option>
                         <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                       </select>
