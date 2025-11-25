@@ -106,7 +106,7 @@
                     <div class="mb-3">
                       <label class="form-label">Role <span class="text-danger">*</span></label>
                       <select name="role" class="form-select @error('role') is-invalid @enderror" required>
-                        <option value="">Pilih Role</option>
+                        <option value="">- Pilih Role -</option>
                         @foreach ($roles as $role)
                           <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
                             {{ ucfirst($role->name) }}
@@ -122,7 +122,10 @@
                     <div class="mb-3">
                       <label class="form-label">Status</label>
                       <select name="status" class="form-select">
-                        <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="" selected>- Pilih Status-</option>
+                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending
+                        </option>
                         <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                       </select>
                     </div>
