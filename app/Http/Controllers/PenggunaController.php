@@ -467,7 +467,7 @@ class PenggunaController extends Controller
                 . "Nama: *{$request->nama}*\n"
                 . "Waktu: *{$waktu}*\n\n"
                 . "Segera lakukan approval dengan masuk ke portal.\n"
-                . route('login'); // Gunakan route helper untuk URL login
+                . url("/pengguna/{$user->user_id}"); // menuju route view pengguna + user_id
 
             // Ambil semua user yang memiliki role 'baak'
             $usersBaak = User::role('baak')->get(); // Gunakan method role() dari Spatie\Permission
