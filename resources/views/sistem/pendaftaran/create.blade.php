@@ -88,8 +88,8 @@
                         <tr>
                           <td><strong>Periode Daftar</strong></td>
                           <td>:
-                            {{ \Carbon\Carbon::parse($jadwal['TANGGALMULAI'])->format('d/m/Y') }} -
-                            {{ \Carbon\Carbon::parse($jadwal['TANGGALSELESAI'])->format('d/m/Y') }}
+                            {{ \Carbon\Carbon::parse($jadwal['TANGGALMULAI'])->translatedFormat('d M Y') }} -
+                            {{ \Carbon\Carbon::parse($jadwal['TANGGALSELESAI'])->translatedFormat('d M Y') }}
                           </td>
                         </tr>
                         <tr>
