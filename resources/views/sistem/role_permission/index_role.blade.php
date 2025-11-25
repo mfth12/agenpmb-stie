@@ -26,6 +26,7 @@
             <table class="table table-vcenter table-bordered table-md table-hover">
               <thead>
                 <tr>
+                  <th class="text-center">No</th>
                   <th>Nama Role</th>
                   <th>Permission Terkait</th>
                   <th class="text-center">Aksi</th>
@@ -34,14 +35,15 @@
               <tbody>
                 @forelse($roles as $role)
                   <tr>
+                    <td class="text-center">{{ $roles->firstItem() + $loop->index }}</td>
                     <td>
-                      <span class="badge bg-blue-lt">{{ $role->name }}</span>
+                      <span class="badge badge-lg bg-blue-lt">{{ $role->name }}</span>
                     </td>
                     <td>
                       @if ($role->permissions->count() > 0)
                         <div class="d-flex flex-wrap gap-1">
                           @foreach ($role->permissions as $perm)
-                            <span class="badge bg-green-lt">{{ $perm->name }}</span>
+                            <span class="badge badge-lg bg-green-lt">{{ $perm->name }}</span>
                           @endforeach
                         </div>
                       @else

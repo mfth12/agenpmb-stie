@@ -41,7 +41,7 @@
                     </div>
                     <div class="col-md-6 mt-3 mt-md-0">
                       <strong>Status:</strong><br>
-                      <span {!! $pengguna->status_badge !!} </span>
+                      {!! $pengguna->status_badge !!}
                     </div>
                   </div>
 

@@ -70,6 +70,10 @@
               <div class="ms-auto d-flex flex-wrap btn-list">
                 <form method="GET" class="row g-3">
                   <div class="col">
+                    <input type="text" name="cari" class="form-control mt-2 mt-md-0"
+                      placeholder="Cari Kunci/Grup" value="{{ request('cari') }}">
+                  </div>
+                  <div class="col">
                     <select name="group" class="form-select mt-2 mt-md-0">
                       <option value="">Semua Grup</option>
                       @foreach ($groups as $group)
@@ -78,14 +82,10 @@
                       @endforeach
                     </select>
                   </div>
-                  <div class="col">
-                    <input type="text" name="cari" class="form-control mt-2 mt-md-0"
-                      placeholder="Cari kunci/grup..." value="{{ request('cari') }}">
-                  </div>
                   <div class="col-auto">
                     <button type="submit" class="btn btn-default mt-2 mt-md-0">
-                      <i class="ti ti-search me-1"></i>
-                      Cari
+                      <i class="ti ti-filter fs-3 me-1"></i>
+                      Filter
                     </button>
                   </div>
                 </form>
@@ -110,10 +110,11 @@
                   <td class="text-muted">
                     {{ $loop->iteration + ($konfigurasis->currentPage() - 1) * $konfigurasis->perPage() }}</td>
                   <td>
-                    <span class="badge bg-blue-lt">{{ $konfigurasi->config_group }}</span>
+                    <span
+                      class="badge badge-lg font-monospace user-select-all bg-blue-lt">{{ $konfigurasi->config_group }}</span>
                   </td>
                   <td>
-                    <code>{{ $konfigurasi->config_key }}</code>
+                    <span class="badge badge-lg font-monospace user-select-all">{{ $konfigurasi->config_key }}</span>
                   </td>
                   <td>
                     @if (strlen($konfigurasi->config_value) > 50)

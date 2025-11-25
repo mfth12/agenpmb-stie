@@ -10,7 +10,7 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
           <a href="{{ route('konfigurasi.index') }}" class="btn btn-default">
-            <i class="ti ti-arrow-left fs-2 me-1"></i>
+            <i class="ti ti-arrow-back-up fs-2 me-1"></i>
             Kembali
           </a>
         </div>
