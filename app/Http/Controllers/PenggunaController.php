@@ -119,6 +119,19 @@ class PenggunaController extends Controller
             // Assign role ke pengguna
             $pengguna->syncRoles([$request->role]);
 
+            // Kirim notif wa
+            $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+            $pesan = "🚀 Selamat " . $greeting . ", {$request->nama}. "
+                . "Anda telah terdaftar sebagai " . konfigs('NAMA_SISTEM_ALIAS') . " pada " . konfigs('NAMA_PT') . ". "
+                . "Berikut adalah kredensial akun Anda:\n"
+                . "Username: *{$request->nama}*\n"
+                . "Password: *{$waktu}*\n"
+                . "Link: " . route('login');
+
+            // Aksi kirim
+            $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
+
             return redirect()->route('pengguna.index')
                 ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil ditambahkan.');
         } catch (\Exception $e) {
@@ -219,7 +232,7 @@ class PenggunaController extends Controller
             // Auth::login($user);
 
             // Kirim notifikasi WhatsApp setelah pendaftaran akun berhasil
-            $this->sendWaNotification($user, $request, $from = 'siakad');
+            $this->kirimNotifWaKeBaak($user, $request, $from = 'siakad');
 
             return redirect()->route('login')->with('info', 'Terimakasih telah mendaftar sebagai Mitra. Permohonan akun Anda akan segera diproses oleh TIM PMB.');
         } catch (Exception $e) {
@@ -316,7 +329,20 @@ class PenggunaController extends Controller
         }
 
         try {
-            $pengguna->update(['status' => 'active']);
+            $terapprove = $pengguna->update(['status' => 'active']);
+
+            if ($terapprove) {
+                // Kirim notif wa jika diapprove admin baak
+                $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+                $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+                $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->nama}. "
+                    . "*Akun Mitra* Anda telah disetujui pada: {$waktu}. "
+                    . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n"
+                    . "Link: " . route('login');
+
+                // Aksi kirim
+                $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
+            }
 
             return redirect()->route('pengguna.index')
                 ->with('success', 'Pengguna ' . $pengguna->name . ' berhasil disetujui (status menjadi aktif).');
@@ -342,7 +368,18 @@ class PenggunaController extends Controller
         }
 
         try {
-            $pengguna->update(['status' => 'inactive']);
+            $terreject = $pengguna->update(['status' => 'inactive']);
+
+            if ($terreject) {
+                // Kirim notif wa jika direject admin baak
+                $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+                $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->nama}. "
+                    . "Dengan berat hati kami ucapkan. Bahwa *Akun Mitra* yang Anda daftarkan tidak dapat kami proses lebih lanjut. "
+                    . "Jika ada hal lain yang ingin ditanyakan, silakan hubungi kontak person" . konfigs('NAMA_SISTEM_ALIAS') . ".";
+
+                // Aksi kirim
+                $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
+            }
 
             return redirect()->route('pengguna.index')
                 ->with('success', 'Penolakan atas nama pengguna (' . $pengguna->name . ') telah berhasil.');
@@ -457,7 +494,7 @@ class PenggunaController extends Controller
     /**
      * Send notification to all 'baak' role holders.
      */
-    private function sendWaNotification($user, $request, $from): void
+    private function kirimNotifWaKeBaak($user, $request, $from): void
     {
         try {
             $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
@@ -508,12 +545,6 @@ class PenggunaController extends Controller
      */
     protected function notifikasiWhatsapp($userPenerima, $pesan, $nomorTujuan): void // Tambahkan $nomorTujuan
     {
-        // $nomor_wa = $user->nomor_hp ?? $user->nomor_hp2; // Ganti dengan $nomorTujuan
-        // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
-        // if ($user->nomor_hp == $user->nomor_hp2) {
-        //     $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2
-        // }
-
         $antrian = AntrianNotifWhatsappModel::create([
             'user_id'   => $userPenerima->user_id, // Gunakan ID user yang menerima notif (baak)
             'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
@@ -526,12 +557,10 @@ class PenggunaController extends Controller
         // dispatch ke queue whatsapp
         NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
         // log whatsapp
-        Log::channel('whatsapp')->info('Notif whatsapp (daftar calon mitra ke BAAK) berhasil masuk antrean', [
-            'user_id_penerima' => $userPenerima->user_id, // ID user yang menerima notif
-            'to'          => $nomorTujuan, // Log nomor yang digunakan
-            'antrian_id'  => $antrian->antrian_id,
+        Log::channel('whatsapp')->info('Notif whatsapp (pengguna) berhasil masuk antrean', [
+            'user_id_penerima'  => $userPenerima->user_id, // ID user yang menerima notif
+            'to'                => $nomorTujuan, // Log nomor yang digunakan
+            'antrian_id'        => $antrian->antrian_id,
         ]);
     }
-
-    // ... (method-method lainnya)
 }
