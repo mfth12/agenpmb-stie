@@ -26,6 +26,7 @@
             <table class="table table-vcenter table-bordered table-md table-hover">
               <thead>
                 <tr>
+                  <th class="text-center" style="width: 1em">No</th>
                   <th>Nama Permission</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -33,7 +34,8 @@
               <tbody>
                 @forelse($permissions as $permission)
                   <tr>
-                    <td><code>{{ $permission->name }}</code></td>
+                    <td class="text-center">{{ $permissions->firstItem() + $loop->index }}</td>
+                    <td><span class="badge badge-lg font-monospace user-select-all bg-green-lt">{{ $permission->name }}</span></td>
                     <td class="text-center">
                       <div class="btn-list justify-content-center">
                         <a href="{{ route('role_permission.edit_permission', $permission) }}"
