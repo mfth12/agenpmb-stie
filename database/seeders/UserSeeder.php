@@ -28,8 +28,8 @@ class UserSeeder extends Seeder
                 'name'          => 'Superadmin BAAK',
                 'asal_sekolah'  => 'STIE Pembangunan Tanjungpinang',
                 'email'         => 'baak@stie-pembangunan.ac.id',
-                'nomor_hp'      => '085264886677',
-                'nomor_hp2'     => '085264886677',
+                'nomor_hp'      => '6285264886677',
+                'nomor_hp2'     => '6285264886677',
                 'passsword'     => '$2y$12$wakaDb5/1M21HnxooVmhx.CzkUsbpdO/N4dOHSJnZ/x5HMHFA8moK',
             ],
             [
