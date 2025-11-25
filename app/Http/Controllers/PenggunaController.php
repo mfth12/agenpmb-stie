@@ -123,7 +123,7 @@ class PenggunaController extends Controller
             if ($pengguna) {
                 // Menyiapkan pesan
                 $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-                $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+                $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
                 $pesan = "🚀 Selamat " . $greeting . ", {$request->nama}. "
                     . "Anda telah terdaftar sebagai *" . konfigs('NAMA_SISTEM_ALIAS') . "* pada " . konfigs('NAMA_PT') . ". "
                     . "Berikut adalah kredensial akun Anda:\n"
@@ -337,7 +337,7 @@ class PenggunaController extends Controller
             if ($terapprove) {
                 // Kirim notif wa jika diapprove admin baak
                 $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-                $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+                $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
                 $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
                     . "*Akun Mitra* Anda telah diverifikasi pada: {$waktu}. "
                     . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n"
@@ -501,7 +501,7 @@ class PenggunaController extends Controller
     {
         try {
             $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d F Y H:i:s');
+            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
             $pesan = "🚀 Selamat " . $greeting . ", "
                 . konfigs('NAMA_SISTEM') . " memiliki pendaftar yang ingin bergabung menjadi mitra.\n"
                 . "Nama: *{$request->nama}*\n"
