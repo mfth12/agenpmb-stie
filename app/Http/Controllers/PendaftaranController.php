@@ -62,7 +62,7 @@ class PendaftaranController extends Controller
                             <span class="avatar-text">' . substr($row->nama_lengkap, 0, 2) . '</span>
                         </div>
                         <div>
-                            <div class="font-weight-medium">
+                            <div class="fw-bold">
                                 <a href="' . route('pendaftaran.show', $row) . '" class="text-reset link-hover-underline">
                                 ' . $row->nama_lengkap . '
                             </a>
