@@ -220,14 +220,19 @@ class PendaftaranController extends Controller
 
             $jadwal = $infoPendaftaran['data']['jadwal'];
             $prodi = $infoPendaftaran['data']['prodi'][$request->prodi_id] ?? '';
-            $biayadiscount = $jadwal['BIAYA'] - 100000;
+            if ($jadwal['GELOMBANG'] == 1) {
+                // setiap gelombang pertama (1) akan mendapatkan diskon
+                $biaya_daftar = $jadwal['BIAYA'] - 100000;
+            } else {
+                $biaya_daftar = $jadwal['BIAYA'];
+            }
 
             // Data untuk dikirim ke PMB SIAKAD2
             $dataSiakad = [
                 'prodi_id' => $request->prodi_id,
                 'tahun' => $jadwal['TAHUN'],
                 'gelombang' => $jadwal['GELOMBANG'],
-                'biaya' => $biayadiscount,
+                'biaya' => $biaya_daftar,
                 'kelas' => $request->kelas,
                 'nama' => $request->nama_lengkap,
                 'email' => $request->email,
@@ -270,6 +275,12 @@ class PendaftaranController extends Controller
                 return redirect()->route('pendaftaran.index')->with('error', 'Proses pendaftaran gagal: ' . ($response['message'] ?? 'Terjadi kesalahan fatal'));
             }
 
+            if ($jadwal['GELOMBANG'] == 1) {
+                $pesan = "Diskon formulir pendaftaran berhasil diterapkan sebesar Rp 100.000.";
+            } else {
+                $pesan = ".";
+            }
+
             // Simpan sebagai pendaftaran berhasil - TAMBAHKAN password_text
             $pendaftaran = PendaftaranModel::create([
                 'user_id' => null, // Opsional: bisa dibuat user lokal nanti untuk mhs ybs jika diperlukan
@@ -289,7 +300,7 @@ class PendaftaranController extends Controller
                 'nomor_hp2' => $request->nomor_hp2,
                 'password_text' => $request->password, // SIMPAN PASSWORD PLAIN TEXT
                 'status' => 'success',
-                'keterangan' => 'Pendaftaran berhasil via ' . konfigs('NAMA_SISTEM') . '. Diskon formulir pendaftaran berhasil diterapkan sebesar Rp 100.000.',
+                'keterangan' => 'Pendaftaran berhasil via ' . konfigs('NAMA_SISTEM') . $pesan,
                 'response_data' => $response,
                 'synced_at' => now(),
             ]);

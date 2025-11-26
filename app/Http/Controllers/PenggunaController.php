@@ -560,7 +560,7 @@ class PenggunaController extends Controller
         // dispatch ke queue whatsapp
         NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
         // log whatsapp
-        Log::channel('whatsapp')->info('Notif whatsapp (pengguna) berhasil masuk antrean', [
+        Log::channel('whatsapp')->info("NotifWhatsapp (pengguna {$userPenerima->name}) berhasil masuk antrean", [
             'user_id_penerima'  => $userPenerima->user_id, // ID user yang menerima notif
             'to'                => $nomorTujuan, // Log nomor yang digunakan
             'antrian_id'        => $antrian->antrian_id,

@@ -116,6 +116,14 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
+     * Mutator untuk mengkonversi username menjadi huruf kecil sebelum disimpan
+     */
+    public function setUsernameAttribute($value)
+    {
+        $this->attributes['username'] = strtolower($value);
+    }
+
+    /**
      * Accessor untuk status_badge
      */
     public function getStatusBadgeAttribute(): string

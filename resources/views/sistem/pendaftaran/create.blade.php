@@ -96,7 +96,9 @@
                           <td><strong>Biaya</strong></td>
                           <td>:
                             <strong>Rp {{ number_format($jadwal['BIAYA'], 0, ',', '.') }}</strong>
-                            <span class="text-success">(Gratis Formulir Rp 100.000)</span>
+                            @if ($jadwal['GELOMBANG'] == 1)
+                              <span class="text-success">(Gratis Formulir Rp 100.000)</span>
+                            @endif
                           </td>
                         </tr>
                       </table>
@@ -130,7 +132,7 @@
                       <div class="mb-3">
                         <label class="form-label required">Kelas</label>
                         <select name="kelas" class="form-select @error('kelas') is-invalid @enderror" required>
-                          <option value="">- Pilih Kelas -</option>
+                          <option value="" selected>- Pilih Kelas -</option>
                           @foreach ($kelasList as $id => $nama)
                             <option value="{{ $id }}" {{ old('kelas') == $id ? 'selected' : '' }}>
                               {{ $nama }}
@@ -217,12 +219,19 @@
                     <div class="col-lg-6">
                       <div class="mb-3">
                         <label class="form-label">Total Biaya Pendaftaran</label>
-                        <div class="form-control-plaintext">
+                        <div class="form-control-plaintext pt-0">
+                          @php
+                            // setiap gelombang pertama (1) akan mendapatkan diskon
+                            $biaya_daftar = $jadwal['GELOMBANG'] == 1 ? $jadwal['BIAYA'] - 100000 : $jadwal['BIAYA'];
+                          @endphp
                           <span class="text-success fw-bold mt-0">Rp
-                            {{ number_format($jadwal['BIAYA'] - 100000, 0, ',', '.') }}
+                            {{ number_format($biaya_daftar, 0, ',', '.') }}
                           </span>
-                          <span class="text-default mt-0">(Terpotong diskon formulir Rp 100.000)
-                          </span>
+                          @if ($jadwal['GELOMBANG'] == 1)
+                            <span class="text-default mt-0">
+                              (Terpotong diskon formulir Rp 100.000)
+                            </span>
+                          @endif
                           <small class="text-muted d-block">Biaya akan dikirim ke PMB SIAKAD2</small>
                         </div>
                       </div>

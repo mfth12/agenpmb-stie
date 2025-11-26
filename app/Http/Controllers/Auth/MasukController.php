@@ -229,7 +229,7 @@ class MasukController extends Controller
         // dispatch ke queue whatsapp
         NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
         // log whatsapp
-        Log::channel('whatsapp')->info('Notif whatsapp (login) berhasil masuk antrean', [
+        Log::channel('whatsapp')->info("NotifWhatsapp (login {$user->name}) berhasil masuk antrean", [
             'user_id'     => $user->user_id,
             'to'          => $nomor_wa, // Log nomor yang digunakan
             'antrian_id'  => $antrian->antrian_id,
