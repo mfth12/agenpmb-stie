@@ -114,6 +114,13 @@
                             </div>
                           </div>
                         @endcan
+
+                        @can('view-log-sistem')
+                          <a class="dropdown-item {{ request()->routeIs('log-sistem*') ? 'active' : '' }}"
+                            href="{{ url('/log-sistem') }}">
+                            Log Sistem
+                          </a>
+                        @endcan
                       </div>
                     </div>
                   </div>

@@ -22,6 +22,7 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.9",
+        "opcodesio/log-viewer": "^3.21",
         "phpoffice/phpspreadsheet": "^5.1",
         "phpoffice/phpword": "^1.4",
         "realrashid/sweet-alert": "^7.3",
