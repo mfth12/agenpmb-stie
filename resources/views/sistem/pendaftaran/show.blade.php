@@ -25,6 +25,27 @@
       <div class="row justify-content-center">
         {{-- KOLOM KIRI --}}
         <div class="col-md-8 mb-4">
+          {{-- CARD: Keterangan --}}
+          @if ($pendaftaran->keterangan)
+            <div class="card mb-4 {{ $pendaftaran->status === 'failed' ? 'bg-danger-lt' : 'bg-info-lt' }}">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i
+                    class="ti ti-{{ $pendaftaran->status === 'failed' ? 'alert-triangle' : 'info-circle' }} fs-2 me-1"></i>
+                  <span
+                    class="{{ $pendaftaran->status === 'failed' ? 'text-danger-emphasis' : 'text-info-emphasis' }}">Keterangan</span>
+                </h3>
+                <h4 class="mb-2">
+
+                </h4>
+                <p class="text-secondary">
+                  {{ $pendaftaran->keterangan }}
+                </p>
+
+              </div>
+            </div>
+          @endif
+          
           {{-- CARD: Informasi Calon Mahasiswa --}}
           <div class="card">
             <div class="card-header">
@@ -79,26 +100,7 @@
             </div>
           </div>
 
-          {{-- CARD: Keterangan --}}
-          @if ($pendaftaran->keterangan)
-            <div class="card mt-4 {{ $pendaftaran->status === 'failed' ? 'bg-danger-lt' : 'bg-info-lt' }}">
-              <div class="card-body">
-                <h3 class="card-title">
-                  <i
-                    class="ti ti-{{ $pendaftaran->status === 'failed' ? 'alert-triangle' : 'info-circle' }} fs-2 me-1"></i>
-                  <span
-                    class="{{ $pendaftaran->status === 'failed' ? 'text-danger-emphasis' : 'text-info-emphasis' }}">Keterangan</span>
-                </h3>
-                <h4 class="mb-2">
-
-                </h4>
-                <p class="text-secondary">
-                  {{ $pendaftaran->keterangan }}
-                </p>
-
-              </div>
-            </div>
-          @endif
+          
 
           {{-- CARD: Kredensial PMB SIAKAD2 --}}
           @if ($pendaftaran->id_calon_mahasiswa)
