@@ -6,7 +6,7 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Manajemen Permissions</h2>
-          <div class="page-pretitle">Pengaturan hak akses dasar untuk sistem Mitra PMB</div>
+          <div class="page-pretitle">Pengaturan hak akses dasar untuk {{ konfigs('NAMA_SISTEM') }}</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
           <a href="{{ route('role_permission.create_permission') }}" class="btn btn-primary">

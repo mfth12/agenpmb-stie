@@ -6,7 +6,7 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Konfigurasi Sistem</h2>
-          <div class="page-pretitle">Pengaturan global untuk sistem Mitra PMB</div>
+          <div class="page-pretitle">Pengaturan global untuk {{ konfigs('NAMA_SISTEM') }}</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
           <a href="{{ route('konfigurasi.create') }}" class="btn btn-primary">

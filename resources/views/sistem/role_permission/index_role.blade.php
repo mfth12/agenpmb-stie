@@ -6,7 +6,7 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Manajemen Roles</h2>
-          <div class="page-pretitle">Pengaturan role dan hak akses untuk sistem Mitra PMB</div>
+          <div class="page-pretitle">Pengaturan role dan hak akses untuk {{ konfigs('NAMA_SISTEM') }}</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
           <a href="{{ route('role_permission.create_role') }}" class="btn btn-primary">
@@ -37,13 +37,17 @@
                   <tr>
                     <td class="text-center">{{ $roles->firstItem() + $loop->index }}</td>
                     <td>
-                      <span class="badge badge-lg bg-blue-lt">{{ $role->name }}</span>
+                      <span class="badge badge-lg font-monospace user-select-all bg-blue-lt">
+                        {{ $role->name }}
+                      </span>
                     </td>
                     <td>
                       @if ($role->permissions->count() > 0)
                         <div class="d-flex flex-wrap gap-1">
                           @foreach ($role->permissions as $perm)
-                            <span class="badge badge-lg bg-green-lt">{{ $perm->name }}</span>
+                            <span class="badge badge-lg font-monospace user-select-all bg-green-lt">
+                              {{ $perm->name }}
+                            </span>
                           @endforeach
                         </div>
                       @else

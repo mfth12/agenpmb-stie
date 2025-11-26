@@ -138,7 +138,7 @@
           // Gunakan Swal.fire untuk konfirmasi tindakan
           Swal.fire({
             title: 'Apa tindakan Anda?',
-            text: `Berikan keputusan untuk calon pengguna (${userName})`,
+            text: `Berikan keputusan untuk calon pengguna (${userName}). Dan sistem akan memberikan notifikasi whatsapp kepada yang bersangkutan.`,
             icon: 'question',
             showCancelButton: true,
             showDenyButton: true, // Tambahkan deny button untuk "Tolak"
