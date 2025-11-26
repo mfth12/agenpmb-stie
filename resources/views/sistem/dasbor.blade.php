@@ -6,14 +6,14 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Dashboard</h2>
-          <div class="page-pretitle">{{ Auth()->user()->getRoleNames()->first() }} - Overview</div>
+          <div class="page-pretitle">{{ Auth()->user()->getRoleNames()->first() }}</div>
         </div>
 
         <div class="col-auto ms-auto d-print-none">
           <div class="btn-list">
             @can('pendaftaran_create')
               <a href="{{ route('pendaftaran.index') }}" class="btn btn-primary">
-                <i class="ti ti-book-2 fs-2 me-2"></i>
+                <i class="ti ti-file-isr fs-2 me-2"></i>
                 Manajemen Pendaftaran
               </a>
             @endcan
