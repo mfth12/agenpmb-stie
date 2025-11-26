@@ -150,7 +150,7 @@
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <i class="ti ti-palette fs-2"></i>
                   </span>
-                  <span class="nav-link-title">Tampilan</span>
+                  <span class="nav-link-title">Atur Tampilan</span>
                 </a>
               </li>
             </ul>

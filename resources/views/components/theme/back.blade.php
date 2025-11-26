@@ -28,6 +28,7 @@
   <x-back.script />
   <x-back.sweetalert />
   @yield('js_bawah')
+  @include('components.back.konfig-tampilan', ['floating' => false])
 </body>
 
 </html>

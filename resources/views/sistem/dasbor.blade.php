@@ -680,5 +680,4 @@
   {{-- TAMBAHAN JS UNTUK PAGE DASBOR --}}
   @vite(['resources/js/pages/dasbor.js'])
   {{-- KOMPONEN INKLUD --}}
-  @include('components.back.konfig-tampilan', ['floating' => false])
 @endsection

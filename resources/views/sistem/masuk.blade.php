@@ -165,7 +165,6 @@
   @vite(['resources/js/pages/konfig-tampilan.js'])
   @vite(['resources/js/pages/masuk.js'])
   {{-- KOMPONEN INKLUD --}}
-  @include('components.back.konfig-tampilan', ['floating' => true])
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const widget = document.getElementById("cf-turnstile-widget");

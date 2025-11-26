@@ -377,8 +377,6 @@
   {{-- TAMBAHAN JS UNTUK PAGE DASBOR --}}
   {{-- @vite(['resources/js/pages/...']) --}}
   {{-- KOMPONEN INKLUD --}}
-  @include('components.back.konfig-tampilan', ['floating' => false])
-
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

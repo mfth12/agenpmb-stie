@@ -188,7 +188,6 @@
   @vite(['resources/js/pages/konfig-tampilan.js'])
   @vite(['resources/js/pages/daftar.js'])
   {{-- KOMPONEN INKLUD --}}
-  @include('components.back.konfig-tampilan', ['floating' => true])
 
   <!-- Load Cloudflare Turnstile Script -->
   @if (env('USING_TURNSTILE', false))
