@@ -170,6 +170,12 @@ return [
         '/var/log/httpd/*' => 'Apache',
         '/var/log/nginx/*' => 'Nginx',
 
+        // Virtualmin logs
+        '/var/log/virtualmin/*',
+        '/var/log/virtualmin/mitra.pmb.stie-pembangunan.ac.id_access_log*',
+        '/var/log/virtualmin/mitra.pmb.stie-pembangunan.ac.id_error_log*',
+        '/home/mitrapmbstie/logs/php_log*',
+
         // MacOS Apple Silicon logs
         '/opt/homebrew/var/log/nginx/*',
         '/opt/homebrew/var/log/httpd/*',
