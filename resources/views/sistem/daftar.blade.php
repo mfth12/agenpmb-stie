@@ -61,7 +61,7 @@
             <label class="form-label">Jenis Mitra <span class="text-danger">*</span></label>
             <select name="afiliasi" id="afiliasi-select" class="form-select @error('afiliasi') is-invalid @enderror"
               required>
-              <option value="" selected>Pilih Jenis</option>
+              <option value="" selected>- Pilih Jenis -</option>
               @foreach ($afiliasis_root as $afiliasi)
                 <option value="{{ $afiliasi->afiliasi_id }}">
                   {{ $afiliasi->nama }}
@@ -79,7 +79,7 @@
             <div id="jenis-civitas-container" class="mb-3 d-none">
               <label class="form-label">Jenis Civitas <span class="text-danger">*</span></label>
               <select name="afiliasi_child_civitas" id="jenis-civitas-select" class="form-select">
-                <option value="">Pilih Jenis Civitas</option>
+                <option value="">- Pilih Jenis Civitas -</option>
                 <!-- Options will be populated by JS -->
               </select>
             </div>
@@ -237,7 +237,7 @@
           jenisCivitasContainer.classList.remove('d-none');
 
           // Kosongkan option dulu
-          jenisCivitasSelect.innerHTML = '<option value="">Pilih Jenis Civitas</option>';
+          jenisCivitasSelect.innerHTML = '<option value="">- Pilih Jenis Civitas -</option>';
           // Fetch dan populate options
           const children = await fetchChildAfiliasi(selectedValue);
           children.forEach(child => {
