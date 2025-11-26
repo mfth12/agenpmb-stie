@@ -6,7 +6,7 @@
         <ul class="list-inline list-inline-dots mb-0">
           <li class="list-inline-item">
             <a href="https://github.com/stiepemb/" target="_blank" class="link-secondary" rel="noopener">
-              Made with<i class="ti ti-heart-filled mx-1"></i>IT STIE Pembangunan. {{ env('APP_VERSION') }}
+              Made with<i class="ti ti-heart-filled mx-1"></i>IT STIE Pembangunan. {{ env('APP_VERSION') ?? '' }}
             </a>
           </li>
         </ul>
@@ -16,8 +16,8 @@
         <ul class="list-inline list-inline-dots mb-0">
           <li class="list-inline-item">
             Copyright &copy; {{ now()->year }}
-            <a href="https://stie-pembangunan.ac.id/" class="link-secondary">STIE Pembangunan Tanjungpinang</a>.
-            All rights reserved
+            <a href="https://stie-pembangunan.ac.id/" class="link-secondary">{{ konfigs('NAMA_PT') ?? '' }}</a>.
+            All rights reserved.
           </li>
         </ul>
       </div>
