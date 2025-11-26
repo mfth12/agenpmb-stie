@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             [
                 'user_id'       => 3201,
                 'username'      => 'adminbaak',
-                'name'          => 'Superadmin BAAK',
+                'name'          => 'Akun BAAK',
                 'asal_sekolah'  => 'STIE Pembangunan Tanjungpinang',
                 'email'         => 'baak@stie-pembangunan.ac.id',
                 'nomor_hp'      => '6285264886677',
@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
                 'user_id'       => 3225,
                 // 'siakad_id'     => 3,
                 'username'      => 'mfth12',
-                'name'          => 'Superadmin Miftah',
+                'name'          => 'Akun Miftah',
                 'asal_sekolah'  => 'STIE Pembangunan Tanjungpinang',
                 'email'         => 'mfth12@google.com',
                 'nomor_hp'      => '6281331847725',

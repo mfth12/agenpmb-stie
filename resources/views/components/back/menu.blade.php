@@ -23,7 +23,7 @@
                   <a class="nav-link dropdown-toggle" href="#navbar-pendaftaran" data-bs-toggle="dropdown"
                     data-bs-auto-close="outside" role="button" aria-expanded="false">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
-                      <i class="ti ti-book-2 fs-2"></i>
+                      <i class="ti ti-file-isr fs-2"></i>
                     </span>
                     <span class="nav-link-title">Pendaftaran</span>
                   </a>
@@ -59,11 +59,10 @@
                 </li>
               @endcanany
 
-
               {{-- PENGATURAN SISTEM --}}
-              @canany(['user_view', 'konfigurasi_manage', 'role_view'])
+              @canany(['user_view', 'konfigurasi_manage', 'role_view', 'view-log-sistem'])
                 <li
-                  class="nav-item dropdown {{ request()->routeIs('pengguna.*') || request()->routeIs('konfigurasi.*') || request()->routeIs('role*') ? 'active' : '' }}">
+                  class="nav-item dropdown {{ request()->routeIs('pengguna.*') || request()->routeIs('konfigurasi.*') || request()->routeIs('role*') || request()->routeIs('log-sistem*') ? 'active' : '' }}">
                   <a class="nav-link dropdown-toggle" href="#navbar-pengaturan" data-bs-toggle="dropdown"
                     data-bs-auto-close="outside" role="button" aria-expanded="false">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -74,20 +73,20 @@
                   <div class="dropdown-menu">
                     <div class="dropdown-menu-columns">
                       <div class="dropdown-menu-column">
-                        {{-- Menu Manajemen Pengguna --}}
-                        @can('user_view')
-                          <a class="dropdown-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}"
-                            href="{{ route('pengguna.index') }}">
-                            Manajemen Pengguna
-                          </a>
-                        @endcan
-
                         {{-- Menu Konfigurasi Sistem --}}
                         @can('konfigurasi_manage')
                           {{-- Asumsikan ada permission konfigurasi_manage --}}
                           <a class="dropdown-item {{ request()->routeIs('konfigurasi.*') ? 'active' : '' }}"
                             href="{{ route('konfigurasi.index') }}">
                             Konfigurasi Sistem
+                          </a>
+                        @endcan
+
+                        {{-- Menu Manajemen Pengguna --}}
+                        @can('user_view')
+                          <a class="dropdown-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}"
+                            href="{{ route('pengguna.index') }}">
+                            Manajemen Pengguna
                           </a>
                         @endcan
 
