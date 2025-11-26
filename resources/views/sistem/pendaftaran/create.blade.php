@@ -229,7 +229,7 @@
                           </span>
                           @if ($jadwal['GELOMBANG'] == 1)
                             <span class="text-default mt-0">
-                              (Terpotong diskon formulir Rp 100.000)
+                              (Terpotong gratis formulir Rp 100.000)
                             </span>
                           @endif
                           <small class="text-muted d-block">Biaya akan dikirim ke PMB SIAKAD2</small>

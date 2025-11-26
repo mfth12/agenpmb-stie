@@ -6,12 +6,12 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">
-            Detail Pendaftar - {{ Str::ucfirst(Str::lower(Str::of($pendaftaran->nama_lengkap)->explode(' ')->first())) }}
+            Detail Pendaftar {{-- {{ Str::ucfirst(Str::lower(Str::of($pendaftaran->nama_lengkap)->explode(' ')->first())) }} --}}
           </h2>
-          <div class="page-pretitle">Informasi lengkap calon mahasiswa STIE</div>
+          <div class="page-pretitle">{{ $pendaftaran->nama_lengkap }}</div>
         </div>
         <div class="col-auto">
-          <a href="{{ route('pendaftaran.index') }}" class="btn btn-primary">
+          <a href="{{ route('pendaftaran.index') }}" class="btn btn-default">
             <i class="ti ti-arrow-back-up fs-2 me-1"></i>
             Kembali
           </a>
@@ -45,7 +45,7 @@
               </div>
             </div>
           @endif
-          
+
           {{-- CARD: Informasi Calon Mahasiswa --}}
           <div class="card">
             <div class="card-header">
@@ -100,7 +100,7 @@
             </div>
           </div>
 
-          
+
 
           {{-- CARD: Kredensial PMB SIAKAD2 --}}
           @if ($pendaftaran->id_calon_mahasiswa)
@@ -248,7 +248,7 @@
                     </a>
                   @endif
                 @endcan
-                <a href="{{ route('pendaftaran.index') }}" class="btn btn-default">
+                <a href="{{ route('pendaftaran.index') }}" class="btn btn-primary">
                   <i class="ti ti-arrow-back-up fs-2 me-1"></i>
                   Kembali ke Daftar
                 </a>
