@@ -180,7 +180,6 @@
                 </div>
                 <div id="chart-pendaftaran" class="mt-2 w-100 h-100"></div>
               </div>
-              {{-- <div id="chart-visitors" class="position-relative"></div> --}}
             </div>
           </div>
 
@@ -208,7 +207,7 @@
                   </div>
                 @endforeach
               </div>
-              {{-- <div id="chart-revenue-bg" class="position-relative rounded-bottom chart-sm"></div> --}}
+              <div id="chart-revenue-bg" class="position-relative rounded-bottom chart-sm"></div>
             </div>
           </div>
         @elseif ($user_role == 'baak')
@@ -267,6 +266,7 @@
                 </div>
               </div>
               <div id="chart-new-clients" class="position-relative chart-sm"></div>
+              <div id="chart-visitors" class="position-relative"></div>
             </div>
           </div>
         </div>
