@@ -37,8 +37,8 @@ return [
     ],
 
     'whatsapp' => [
-        // 'baseUrl' => konfigs('wa.endpoint', env('WA_GATEWAY_URL', 'https://wa.stie-pembangunan.ac.id')),
-        // 'session' => konfigs('wa.session', env('WA_GATEWAY_SESSION', 'notifstie87x6v8r2js')),
+        // 'url'     => env('WA_GATEWAY_URL'),
+        // 'session' => env('WA_GATEWAY_SESSION'),
     ],
 
 ];

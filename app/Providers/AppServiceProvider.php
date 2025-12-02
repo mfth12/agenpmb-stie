@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\SiakadService;
+use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Opcodes\LogViewer\Facades\LogViewer;
@@ -17,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
         // Opsional: jika ingin singleton
         $this->app->singleton(SiakadService::class, function ($app) {
             return new SiakadService();
+        });
+
+        $this->app->singleton(WhatsappService::class, function ($app) {
+            return new WhatsappService();
         });
     }
 

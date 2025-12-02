@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\HelperNotifWhatsapp;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Models\AntrianNotifWhatsappModel;
@@ -37,15 +37,15 @@ class NotifWhatsappJob implements ShouldQueue
     /**
      * Handle job function
      */
-    public function handle(): void
+    public function handle(WhatsappService $wa): void
     {
         // hanya proses jika masih pending // 0
         if ($this->antrian->status !== AntrianNotifWhatsappModel::PENDING) {
             return;
         }
 
-        // kirim ke gateway melalui bantuan helper
-        $res = HelperNotifWhatsapp::sendMessage(
+        // kirim ke gateway melalui bantuan service
+        $res = $wa->sendMessage(
             $this->antrian->target,
             $this->antrian->isi_pesan
         );
@@ -59,6 +59,7 @@ class NotifWhatsappJob implements ShouldQueue
         } else {
             // jika gagal, increment retry count
             $this->antrian->retry_count = ($this->antrian->retry_count ?? 0) + 1;
+
             // jika melebihi batas maksimal
             if ($this->antrian->retry_count >= self::MAX_RETRY) {
                 $this->antrian->status = AntrianNotifWhatsappModel::DEAD;

@@ -2,198 +2,95 @@
 
 namespace App\Services;
 
-use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 class WhatsappService
 {
-  protected $baseUrl;
-  protected $timeout;
+  /**
+   * Session WhatsApp Gateway (gunakan dari .env biar gampang diganti)
+   */
+  private $session;
 
-  public function __construct()
+  /**
+   * Base URL API WhatsApp Gateway
+   */
+  private $baseUrl;
+
+  /**
+   * Inisialisasi konfigurasi dari .env
+   */
+  private function init()
   {
-    $this->baseUrl = env('URL_SERVICE_SIAKAD');
-    $this->timeout = env('URL_SERVICE_SIAKAD_TIMEOUT');
+    $this->baseUrl = konfigs('wa.endpoint', env('WA_GATEWAY_URL', 'https://wa.stie-pembangunan.ac.id'));
+    $this->session = konfigs('wa.session', env('WA_GATEWAY_SESSION', 'notifstie87x6v8r2js'));
   }
 
   /**
-   * Get info pendaftaran dari PMB SIAKAD2
+   * Normalisasi nomor HP ke format internasional (62xxxx)
+   *
+   * @param string $number
+   * @return string
    */
-  public function getInfoPendaftaran(): array
+  private function normalizeNumber(string $number): string
   {
-    try {
-      $response = Http::timeout($this->timeout)
-        ->get($this->baseUrl . '/api/v2/getinfo');
+    $number = preg_replace('/[^0-9]/', '', $number); // hilangkan karakter non-digit
 
-      if ($response->successful()) {
-        return [
-          'success' => true,
-          'data' => $response->json()['data'] ?? []
-        ];
-      }
-
-      return [
-        'success' => false,
-        'message' => 'Gagal mengambil data dari PMB SIAKAD2'
-      ];
-    } catch (Exception $e) {
-      Log::error('SiakadService getInfoPendaftaran error: ' . $e->getMessage());
-      return [
-        'success' => false,
-        'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'
-      ];
+    if (str_starts_with($number, '0')) {
+      // ubah 08xxxx -> 628xxxx
+      $number = '62' . substr($number, 1);
+    } elseif (str_starts_with($number, '8')) {
+      // ubah 8xxxx -> 628xxxx
+      $number = '62' . $number;
     }
+
+    return $number;
   }
 
   /**
-   * Register calon mahasiswa ke PMB SIAKAD2
+   * Kirim pesan teks tunggal
+   *
+   * @param string $to   Nomor tujuan (boleh 08xxxx atau 62xxxx)
+   * @param string $text Pesan yang ingin dikirim
+   * @return array|null
    */
-  public function registerCalonMahasiswa(array $data): array
+  public function sendMessage(string $to, string $text): ?array
   {
-    try {
-      $response = Http::timeout($this->timeout)
-        ->post($this->baseUrl . '/api/v2/register', $data);
+    $this->init();
 
-      $responseData = $response->json();
+    $to = $this->normalizeNumber($to);
 
-      if ($response->successful() && ($responseData['success'] ?? false)) {
-        return [
-          'success' => true,
-          'data' => $responseData['data'] ?? [],
-          'message' => $responseData['message'] ?? 'Registrasi berhasil'
-        ];
-      }
+    $response = Http::post($this->baseUrl . '/send-message', [
+      'session' => $this->session,
+      'to'      => $to,
+      'text'    => $text,
+    ]);
 
-      return [
-        'success' => false,
-        'message' => $responseData['message'] ?? 'Registrasi gagal',
-        'errors' => $responseData['errors'] ?? []
-      ];
-    } catch (Exception $e) {
-      Log::error('SiakadService registerCalonMahasiswa error: ' . $e->getMessage());
-      return [
-        'success' => false,
-        'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'
-      ];
-    }
+    return $response->json();
   }
 
   /**
-   * Get all calon mahasiswa by tahun and referensi (mitra) dari PMB SIAKAD2
+   * Kirim pesan bulk
+   *
+   * @param array $data Array berisi ['to' => '08xxxx/62xxxx', 'text' => 'pesan']
+   * @param int   $delay Delay per pesan (ms), default 5000
+   * @return array|null
    */
-  public function getCalonMahasiswaAll(string $tahun): array
+  public function sendBulk(array $data, int $delay = 5000): ?array
   {
-    try {
-      $response = Http::timeout($this->timeout)
-        ->post($this->baseUrl . '/api/v2/calon-mahasiswa', [
-          'tahun' => $tahun,
-          'sumber' => 'A', // Sesuai spek
-        ]);
+    $this->init();
 
-      $responseData = $response->json();
+    // normalisasi semua nomor di bulk
+    $data = array_map(function ($item) {
+      $item['to'] = $this->normalizeNumber($item['to']);
+      return $item;
+    }, $data);
 
-      if ($response->successful() && ($responseData['success'] ?? false)) {
-        return [
-          'success' => true,
-          'data' => $responseData['data'] ?? [],
-          'message' => $responseData['message'] ?? 'Data All berhasil diambil'
-        ];
-      }
+    $response = Http::post($this->baseUrl . '/send-bulk-message', [
+      'session' => $this->session,
+      'data'    => $data,
+      'delay'   => $delay,
+    ]);
 
-      return [
-        'success' => false,
-        'message' => $responseData['message'] ?? 'Gagal mengambil All data dari PMB SIAKAD2'
-      ];
-    } catch (Exception $e) {
-      Log::error('SiakadService getCalonMahasiswaByMitra error: ' . $e->getMessage());
-      return [
-        'success' => false,
-        'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'
-      ];
-    }
-  }
-
-  /**
-   * Get all calon mahasiswa by tahun and referensi (mitra) dari PMB SIAKAD2
-   */
-  public function getCalonMahasiswaByMitra(string $tahun, string $referensi): array
-  {
-    try {
-      $response = Http::timeout($this->timeout)
-        ->post($this->baseUrl . '/api/v2/calon-mahasiswa/mitra', [
-          'tahun' => $tahun,
-          'sumber' => 'A', // Sesuai spek
-          'referensi' => $referensi, // ID Mitra
-        ]);
-
-      $responseData = $response->json();
-
-      if ($response->successful() && ($responseData['success'] ?? false)) {
-        return [
-          'success' => true,
-          'data' => $responseData['data'] ?? [],
-          'message' => $responseData['message'] ?? 'Data berhasil diambil'
-        ];
-      }
-
-      return [
-        'success' => false,
-        'message' => $responseData['message'] ?? 'Gagal mengambil data dari PMB SIAKAD2'
-      ];
-    } catch (Exception $e) {
-      Log::error('SiakadService getCalonMahasiswaByMitra error: ' . $e->getMessage());
-      return [
-        'success' => false,
-        'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'
-      ];
-    }
-  }
-
-  /**
-   * Get detail calon mahasiswa by ID dari PMB SIAKAD2
-   */
-  public function getDetailCalonMahasiswa(string $id): array
-  {
-    try {
-      $response = Http::timeout($this->timeout)
-        ->get($this->baseUrl . '/api/v2/calon-mahasiswa/' . $id); // Gunakan GET dan sertakan ID di URL
-
-      $responseData = $response->json();
-
-      if ($response->successful() && ($responseData['success'] ?? false)) {
-        return [
-          'success' => true,
-          'data' => $responseData['data'] ?? [], // Data detail calon mahasiswa
-          'message' => $responseData['message'] ?? 'Data berhasil diambil'
-        ];
-      }
-
-      return [
-        'success' => false,
-        'message' => $responseData['message'] ?? 'Gagal mengambil data dari PMB SIAKAD2'
-      ];
-    } catch (Exception $e) {
-      Log::error('SiakadService getDetailCalonMahasiswa error: ' . $e->getMessage());
-      return [
-        'success' => false,
-        'message' => 'Tidak dapat terhubung ke PMB SIAKAD2'
-      ];
-    }
-  }
-
-  /**
-   * Check API status
-   */
-  public function checkApiStatus(): bool
-  {
-    try {
-      $response = Http::timeout(10)
-        ->get($this->baseUrl . '/api/v2/ping');
-
-      return $response->successful() && ($response->json()['message'] ?? '') === 'pong';
-    } catch (Exception $e) {
-      return false;
-    }
+    return $response->json();
   }
 }
