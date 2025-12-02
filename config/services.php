@@ -32,8 +32,13 @@ return [
     ],
 
     'siakad' => [
-        'base_url' => env('URL_API_SIAKAD', 'http://localhost:8000'),
-        'timeout' => env('URL_API_SIAKAD_TIMEOUT', 30),
+        // 'baseUrl' => env('URL_API_SIAKAD', 'http://localhost:8000'),
+        // 'timeout' => env('URL_API_SIAKAD_TIMEOUT', 30),
+    ],
+
+    'whatsapp' => [
+        // 'baseUrl' => konfigs('wa.endpoint', env('WA_GATEWAY_URL', 'https://wa.stie-pembangunan.ac.id')),
+        // 'session' => konfigs('wa.session', env('WA_GATEWAY_SESSION', 'notifstie87x6v8r2js')),
     ],
 
 ];
