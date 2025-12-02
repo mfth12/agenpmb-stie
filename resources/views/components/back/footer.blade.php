@@ -16,7 +16,7 @@
         <ul class="list-inline list-inline-dots mb-0">
           <li class="list-inline-item">
             Copyright &copy; {{ now()->year }}
-            <a href="https://stie-pembangunan.ac.id/" class="link-secondary">{{ konfigs('NAMA_PT') ?? '' }}</a>.
+            <a href="https://stie-pembangunan.ac.id/" target="_blank" class="link-secondary">{{ konfigs('NAMA_PT') ?? '' }}</a>.
             All rights reserved.
           </li>
         </ul>
