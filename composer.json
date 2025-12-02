@@ -56,8 +56,7 @@
             "Tests\\": "tests/"
         },
         "files": [
-            "app/Helpers/HelperKonfigs.php",
-            "app/Helpers/HelperNotifWhatsapp.php"
+            "app/Helpers/HelperKonfigs.php"
         ]
     },
     "scripts": {
