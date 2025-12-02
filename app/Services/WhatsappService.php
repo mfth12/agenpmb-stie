@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Throwable;
 use Illuminate\Support\Facades\Http;
 
 class WhatsappService
@@ -73,14 +74,24 @@ class WhatsappService
 
     $to = $this->normalizeNumber($to);
 
-    $response = Http::timeout(30)->post($this->baseUrl . '/send-message', [
-      'session' => $this->session,
-      'to'      => $to,
-      'text'    => $text,
-    ]);
+    try {
+      $response = Http::timeout(30)->post($this->baseUrl . '/send-message', [
+        'session' => $this->session,
+        'to'      => $to,
+        'text'    => $text,
+      ]);
 
-    return $response->json();
+      return $response->json();
+    } catch (Throwable $e) {
+      // jika ada error koneksi / timeout / gagal decode JSON
+      return [
+        'status'  => false,
+        'error'   => $e->getMessage(),
+        'to'      => $to,
+      ];
+    }
   }
+
 
   /**
    * Kirim pesan bulk
@@ -99,12 +110,19 @@ class WhatsappService
       return $item;
     }, $data);
 
-    $response = Http::timeout(30)->post($this->baseUrl . '/send-bulk-message', [
-      'session' => $this->session,
-      'data'    => $data,
-      'delay'   => $delay,
-    ]);
+    try {
+      $response = Http::timeout(30)->post($this->baseUrl . '/send-bulk-message', [
+        'session' => $this->session,
+        'data'    => $data,
+        'delay'   => $delay,
+      ]);
 
-    return $response->json();
+      return $response->json();
+    } catch (Throwable $e) {
+      return [
+        'status' => false,
+        'error'  => $e->getMessage(),
+      ];
+    }
   }
 }
