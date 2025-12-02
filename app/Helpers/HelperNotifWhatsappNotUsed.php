@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
 
-class HelperNotifWhatsapp
+class HelperNotifWhatsappNotUsed
 {
   /**
    * Session WhatsApp Gateway (gunakan dari .env biar gampang diganti)
