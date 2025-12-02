@@ -108,109 +108,136 @@
               </div>
             </div>
           </div>
-        @elseif ($user_role == 'baak')
-        @endif
 
-
-        <div class="col-sm-6 col-lg-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="subheader">Total Pengguna</div>
-              <div class="d-flex align-items-baseline">
-                <div class="h1 mb-0 me-2">75,782</div>
-                <div class="me-auto">
-                  <span class="text-green d-inline-flex align-items-center lh-1">
-                    8% <i class="ti ti-trending-up fs-2"></i>
-                  </span>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="subheader">Total Pendaftaran</div>
+                <div class="d-flex align-items-baseline">
+                  <div class="h1 mb-0 me-2">{{ $dashboard_data['total_pendaftaran'] }}</div>
+                  <div class="me-auto">
+                    <span class="text-green d-inline-flex align-items-center lh-1">
+                      8% <i class="ti ti-trending-up fs-2"></i>
+                    </span>
+                  </div>
                 </div>
+                <div class="text-secondary mt-2">2 pengguna meningkat dari bulan lalu.</div>
               </div>
-              <div class="text-secondary mt-2">24.635 pengguna meningkat dari bulan lalu.</div>
-            </div>
-            <div id="chart-visitors" class="position-relative"></div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="subheader">Pengguna Aktif</div>
-              <div class="d-flex align-items-baseline mb-2">
-                <div class="h1 mb-0 me-2">25,782</div>
-                <div class="me-auto">
-                  <span class="text-red d-inline-flex align-items-center lh-1">
-                    -1% <i class="ti ti-trending-down fs-2"></i>
-                  </span>
-                </div>
-              </div>
-              <div id="chart-active-users-3" class="position-relative"></div>
+              <div id="chart-visitors" class="position-relative"></div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex align-items-center">
-                <div class="subheader">Target</div>
-                <div class="ms-auto lh-1">
-                  <div class="dropdown">
-                    <a class="dropdown-toggle text-secondary" id="sales-dropdown" href="#" data-bs-toggle="dropdown"
-                      aria-haspopup="true" aria-expanded="false" aria-label="Select time range for sales data">Last 7
-                      days</a>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="sales-dropdown">
-                      <a class="dropdown-item active" href="#" aria-current="true">Last 7 days</a>
-                      <a class="dropdown-item" href="#">Last 30 days</a>
-                      <a class="dropdown-item" href="#">Last 3 months</a>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="subheader">Total Pengguna</div>
+                <div class="d-flex align-items-baseline mb-2">
+                  <div class="h1 mb-0 me-2">{{ $dashboard_data['total_users'] }}</div>
+                  <div class="me-auto">
+                    <span class="text-red d-inline-flex align-items-center lh-1">
+                      -1% <i class="ti ti-trending-down fs-2"></i>
+                    </span>
+                  </div>
+                </div>
+                <div id="chart-active-users-3" class="position-relative"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center">
+                  <div class="subheader">Pendaftaran per Prodi</div>
+                  <div class="ms-auto lh-1">
+                    <div class="dropdown">
+                      <a class="dropdown-toggle text-secondary" id="sales-dropdown" href="#"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        aria-label="Select time range for sales data">Last 7
+                        days</a>
+                      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="sales-dropdown">
+                        <a class="dropdown-item active" href="#" aria-current="true">Last 7 days</a>
+                        <a class="dropdown-item" href="#">Last 30 days</a>
+                        <a class="dropdown-item" href="#">Last 3 months</a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="h1 mb-3">75%</div>
-              <div class="d-flex mb-2">
-                <div>Tingkat Konversi</div>
-                <div class="ms-auto">
-                  <span class="text-green d-inline-flex align-items-center lh-1">
-                    7% <i class="ti ti-trending-up fs-2"></i>
-                  </span>
-                </div>
-              </div>
-              <div class="progress progress-sm">
+                <div class="h1 mb-3">75%</div>
+                @foreach ($dashboard_data['pendaftaran_by_prodi'] as $prodi => $total)
+                  <div class="d-flex mb-2">
+                    {{-- <div>Tingkat Konversi</div> --}}
+                    <div>{{ $prodi }}: {{ $total }}</div>
+                    {{-- <div class="ms-auto">
+                    <span class="text-green d-inline-flex align-items-center lh-1">
+                      7% <i class="ti ti-trending-up fs-2"></i>
+                    </span>
+                  </div> --}}
+                  </div>
+                @endforeach
+                {{-- <div class="progress progress-sm">
                 <div class="progress-bar bg-primary" style="width: 75%" role="progressbar" aria-valuenow="75"
                   aria-valuemin="0" aria-valuemax="100" aria-label="75% Complete">
                   <span class="visually-hidden">75% Complete</span>
                 </div>
+              </div> --}}
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex align-items-center">
-                <div class="subheader">Hasil</div>
-                <div class="ms-auto lh-1">
-                  <div class="dropdown">
-                    <a class="dropdown-toggle text-secondary" id="revenue-dropdown" href="#"
-                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                      aria-label="Select time range for revenue">Last 7 days</a>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="revenue-dropdown">
-                      <a class="dropdown-item active" href="#" aria-current="true">Last 7 days</a>
-                      <a class="dropdown-item" href="#">Last 30 days</a>
-                      <a class="dropdown-item" href="#">Last 3 months</a>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center">
+                  <div class="subheader">Pendaftaran per Status</div>
+                  <div class="ms-auto lh-1">
+                    <div class="dropdown">
+                      <a class="dropdown-toggle text-secondary" id="revenue-dropdown" href="#"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        aria-label="Select time range for revenue">Last 7 days</a>
+                      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="revenue-dropdown">
+                        <a class="dropdown-item active" href="#" aria-current="true">Last 7 days</a>
+                        <a class="dropdown-item" href="#">Last 30 days</a>
+                        <a class="dropdown-item" href="#">Last 3 months</a>
+                      </div>
                     </div>
                   </div>
                 </div>
+                @foreach ($dashboard_data['pendaftaran_by_status'] as $status => $total)
+                  <div class="d-flex mb-1 mt-2">
+                    <div>{{ $status }}: {{ $total }}</div>
+                  </div>
+                @endforeach
               </div>
-              <div class="d-flex align-items-baseline">
-                <div class="h1 mb-0 me-2">$4,300</div>
-                <div class="me-auto">
-                  <span class="text-green d-inline-flex align-items-center lh-1">
-                    8% <i class="ti ti-trending-up fs-2"></i>
-                  </span>
-                </div>
+              {{-- <div id="chart-revenue-bg" class="position-relative rounded-bottom chart-sm"></div> --}}
+            </div>
+          </div>
+        @elseif ($user_role == 'baak')
+          <div class="col-sm-6 col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="subheader">Total Pendaftaran</div>
+                <div class="h1 mb-3">{{ $dashboard_data['total_pendaftaran'] }}</div>
               </div>
             </div>
-            <div id="chart-revenue-bg" class="position-relative rounded-bottom chart-sm"></div>
           </div>
-        </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="subheader">Persetujuan Tertunda</div>
+                <div class="h1 mb-3">{{ $dashboard_data['pending_approvals'] }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="subheader">Disetujui Hari Ini</div>
+                <div class="h1 mb-3">{{ $dashboard_data['approved_today'] }}</div>
+              </div>
+            </div>
+          </div>
+        @endif
+
+
+
         <div class="col-sm-6 col-lg-3">
           <div class="card">
             <div class="card-body">
