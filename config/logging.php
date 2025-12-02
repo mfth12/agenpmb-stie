@@ -132,7 +132,7 @@ return [
             'driver' => 'daily',
             'tap' => [App\Helpers\HelperLogFormatBaris::class],
             'path' => storage_path('logs/whatsapp/whatsapp.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => env('LOG_LEVEL', 'info'),
             'days' => 7,
         ],
 

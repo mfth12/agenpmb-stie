@@ -16,7 +16,7 @@ Schedule::command('queue:work --stop-when-empty --queue=default')
 
 // job whatsapp
 Schedule::command('queue:work --stop-when-empty --queue=whatsapp')
-    ->sendOutputTo(storage_path() . '/logs/whatsapp.log')
     ->withoutOverlapping()
     ->everyMinute();
+// ->sendOutputTo(storage_path() . '/logs/whatsapp.log')
 // --stop-when-empty
