@@ -112,23 +112,6 @@
           <div class="col-sm-6 col-lg-3">
             <div class="card">
               <div class="card-body">
-                <div class="subheader">Total Pendaftaran</div>
-                <div class="d-flex align-items-baseline">
-                  <div class="h1 mb-0 me-2">{{ $dashboard_data['total_pendaftaran'] }}</div>
-                  <div class="me-auto">
-                    <span class="text-green d-inline-flex align-items-center lh-1">
-                      8% <i class="ti ti-trending-up fs-2"></i>
-                    </span>
-                  </div>
-                </div>
-                <div class="text-secondary mt-2">2 pengguna meningkat dari bulan lalu.</div>
-              </div>
-              <div id="chart-visitors" class="position-relative"></div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="card">
-              <div class="card-body">
                 <div class="subheader">Total Pengguna</div>
                 <div class="d-flex align-items-baseline mb-2">
                   <div class="h1 mb-0 me-2">{{ $dashboard_data['total_users'] }}</div>
@@ -182,6 +165,25 @@
               </div>
             </div>
           </div>
+
+          <div class="col-sm-6 col-lg-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="subheader">Total Pendaftaran</div>
+                <div class="d-flex align-items-baseline">
+                  <div class="h1 mb-0 me-2">{{ $dashboard_data['total_pendaftaran'] }}</div>
+                  <div class="me-auto">
+                    <span class="text-green d-inline-flex align-items-center lh-1">
+                      8% <i class="ti ti-trending-up fs-2"></i>
+                    </span>
+                  </div>
+                </div>
+                <div id="chart-pendaftaran" class="mt-2 w-100 h-100"></div>
+              </div>
+              {{-- <div id="chart-visitors" class="position-relative"></div> --}}
+            </div>
+          </div>
+
           <div class="col-sm-6 col-lg-3">
             <div class="card">
               <div class="card-body">
@@ -435,4 +437,9 @@
   {{-- TAMBAHAN JS UNTUK PAGE DASBOR --}}
   @vite(['resources/js/pages/dasbor.js'])
   {{-- KOMPONEN INKLUD --}}
+  @if (isset($dashboard_data['pendaftaran_chart']))
+    <script>
+      window.pendaftaranChartData = @json($dashboard_data['pendaftaran_chart']);
+    </script>
+  @endif
 @endsection
