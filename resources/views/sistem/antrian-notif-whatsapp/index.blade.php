@@ -31,18 +31,25 @@
             <form method="GET" class="row g-2">
               <div class="col-auto">
                 <select name="status" class="form-select">
-                  <option value="">Semua Status</option>
+                  <option value="" {{ request('status') === null || request('status') === '' ? 'selected' : '' }}>
+                    Semua Status
+                  </option>
                   <option value="{{ \App\Models\AntrianNotifWhatsappModel::PENDING }}"
-                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::PENDING ? 'selected' : '' }}>Pending
+                    {{ request('status') === strval(\App\Models\AntrianNotifWhatsappModel::PENDING) ? 'selected' : '' }}>
+                    Pending
                   </option>
                   <option value="{{ \App\Models\AntrianNotifWhatsappModel::SUKSES }}"
-                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::SUKSES ? 'selected' : '' }}>Sukses
+                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::SUKSES ? 'selected' : '' }}>
+                    Sukses
                   </option>
                   <option value="{{ \App\Models\AntrianNotifWhatsappModel::GAGAL }}"
-                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::GAGAL ? 'selected' : '' }}>Gagal
+                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::GAGAL ? 'selected' : '' }}>
+                    Gagal
                   </option>
                   <option value="{{ \App\Models\AntrianNotifWhatsappModel::DEAD }}"
-                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::DEAD ? 'selected' : '' }}>Dead</option>
+                    {{ request('status') == \App\Models\AntrianNotifWhatsappModel::DEAD ? 'selected' : '' }}>
+                    Dead
+                  </option>
                 </select>
               </div>
               <div class="col-auto">
