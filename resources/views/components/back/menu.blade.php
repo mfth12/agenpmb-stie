@@ -111,23 +111,30 @@
                         @endcan
 
                         {{-- Menu logs --}}
-                        <div class="dropend">
-                          <a class="dropdown-item dropdown-toggle {{ request()->routeIs('antrian-notif-whatsapp*') || request()->routeIs('log-sistem*') ? 'active' : '' }}"
-                            href="{{ route('role_permission.index') }}" data-bs-toggle="dropdown"
-                            data-bs-auto-close="outside" role="button" aria-expanded="false">
-                            Logs
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item {{ request()->routeIs('antrian-notif-whatsapp*') ? 'active' : '' }}"
-                              href="{{ route('antrian-notif-whatsapp.index') }}">
-                              Log Whatsapp
+                        @canany(['view-log-sistem', 'antrian_whatsapp_view'])
+                          <div class="dropend">
+                            <a class="dropdown-item dropdown-toggle {{ request()->routeIs('antrian-notif-whatsapp*') || request()->routeIs('log-sistem*') ? 'active' : '' }}"
+                              href="{{ route('role_permission.index') }}" data-bs-toggle="dropdown"
+                              data-bs-auto-close="outside" role="button" aria-expanded="false">
+                              Logs
                             </a>
-                            <a class="dropdown-item {{ request()->routeIs('log-sistem*') ? 'active' : '' }}"
-                              href="{{ url('/log-sistem') }}">
-                              Log Sistem
-                            </a>
+
+                            <div class="dropdown-menu">
+                              @can('antrian_whatsapp_view')
+                                <a class="dropdown-item {{ request()->routeIs('antrian-notif-whatsapp*') ? 'active' : '' }}"
+                                  href="{{ route('antrian-notif-whatsapp.index') }}">
+                                  Log Whatsapp
+                                </a>
+                              @endcan
+                              @can('view-log-sistem')
+                                <a class="dropdown-item {{ request()->routeIs('log-sistem*') ? 'active' : '' }}"
+                                  href="{{ url('/log-sistem') }}">
+                                  Log Sistem
+                                </a>
+                              @endcan
+                            </div>
                           </div>
-                        </div>
+                        @endcanany
                       </div>
                     </div>
                   </div>

@@ -120,21 +120,21 @@ class AntrianNotifWhatsappController extends Controller
             // Dispatch job ke queue
             NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
 
-            Log::channel('whatsapp')->info('Notif whatsapp baru berhasil masuk antrean', [
+            Log::channel('whatsapp')->info('Notif whatsapp baru berhasil masuk antrian', [
                 'antrian_id' => $antrian->antrian_id,
                 'user_id' => $antrian->user_id,
                 'target' => $antrian->target,
             ]);
 
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('success', 'Pesan WhatsApp berhasil ditambahkan ke antrean dan akan segera diproses.');
+                ->with('success', 'Pesan WhatsApp berhasil ditambahkan ke antrian dan akan segera diproses.');
         } catch (\Exception $e) {
-            Log::channel('whatsapp')->error('Gagal menambahkan notif whatsapp ke antrean: ' . $e->getMessage(), [
+            Log::channel('whatsapp')->error('Gagal menambahkan notif whatsapp ke antrian: ' . $e->getMessage(), [
                 'user_id' => $validatedData['user_id'] ?? null,
                 'target' => $validatedData['target'] ?? null,
             ]);
             return redirect()->back()
-                ->withErrors(['general' => 'Gagal menambahkan pesan ke antrean. Silakan coba lagi.'])
+                ->withErrors(['general' => 'Gagal menambahkan pesan ke antrian. Silakan coba lagi.'])
                 ->withInput();
         }
     }
@@ -171,7 +171,7 @@ class AntrianNotifWhatsappController extends Controller
         // Hanya boleh diedit jika statusnya pending
         if ($antrian->status !== AntrianNotifWhatsappModel::PENDING) {
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('error', 'Tidak dapat mengedit antrean yang statusnya bukan pending.');
+                ->with('error', 'Tidak dapat mengedit antrian yang statusnya bukan pending.');
         }
 
         $validator = Validator::make($request->all(), [
@@ -188,13 +188,13 @@ class AntrianNotifWhatsappController extends Controller
             $antrian->update(['isi_pesan' => $request->isi_pesan]);
 
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('success', 'Antrean notifikasi WhatsApp berhasil diperbarui.');
+                ->with('success', 'Antrian notifikasi WhatsApp berhasil diperbarui.');
         } catch (\Exception $e) {
             Log::channel('whatsapp')->error('Gagal memperbarui notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
             ]);
             return redirect()->back()
-                ->withErrors(['general' => 'Gagal memperbarui antrean. Silakan coba lagi.']);
+                ->withErrors(['general' => 'Gagal memperbarui antrian. Silakan coba lagi.']);
         }
     }
 
@@ -207,20 +207,20 @@ class AntrianNotifWhatsappController extends Controller
         // Hanya boleh dihapus jika statusnya pending
         if ($antrian->status !== AntrianNotifWhatsappModel::PENDING) {
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('error', 'Tidak dapat menghapus antrean yang statusnya bukan pending.');
+                ->with('error', 'Tidak dapat menghapus antrian yang statusnya bukan pending.');
         }
 
         try {
             $antrian->delete();
 
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('success', 'Antrean notifikasi WhatsApp berhasil dihapus.');
+                ->with('success', 'Antrian notifikasi WhatsApp berhasil dihapus.');
         } catch (\Exception $e) {
             Log::channel('whatsapp')->error('Gagal menghapus notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
             ]);
             return redirect()->back()
-                ->withErrors(['general' => 'Gagal menghapus antrean. Silakan coba lagi.']);
+                ->withErrors(['general' => 'Gagal menghapus antrian. Silakan coba lagi.']);
         }
     }
 
@@ -233,7 +233,7 @@ class AntrianNotifWhatsappController extends Controller
         // Hanya retry jika statusnya 'failed' (2) atau 'dead' (3)
         if (!in_array($antrian->status, [AntrianNotifWhatsappModel::GAGAL, AntrianNotifWhatsappModel::DEAD])) {
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('error', 'Hanya antrean dengan status Gagal atau Dead yang bisa diulang.');
+                ->with('error', 'Hanya antrian dengan status Gagal atau Dead yang bisa diulang.');
         }
 
         try {
@@ -253,7 +253,7 @@ class AntrianNotifWhatsappController extends Controller
             ]);
 
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('success', 'Proses pengiriman untuk antrean ini sedang diulang.');
+                ->with('success', 'Proses pengiriman untuk antrian ini sedang diulang.');
         } catch (\Exception $e) {
             Log::channel('whatsapp')->error('Gagal memicu retry notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
@@ -286,7 +286,7 @@ class AntrianNotifWhatsappController extends Controller
             ]);
 
             return redirect()->route('antrian-notif-whatsapp.index')
-                ->with('success', 'Proses pengiriman untuk antrean ini sedang diulang (force).');
+                ->with('success', 'Proses pengiriman untuk antrian ini sedang diulang (force).');
         } catch (\Exception $e) {
             Log::channel('whatsapp')->error('Gagal memicu force retry notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,

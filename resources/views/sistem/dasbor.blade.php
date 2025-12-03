@@ -39,76 +39,74 @@
   <div class="page-body">
     <div class="container-xl">
       <div class="row row-deck row-cards">
-
-        {{-- berdasarkan role --}}
-        @if ($user_role == 'superadmin')
-          <div class="col-sm-12 col-lg-6">
-            <div class="card">
-              <div class="card-body">
-                <div class="row gy-3">
-                  <div class="col-12 col-sm d-flex flex-column">
-                    @php
-                      $greeting =
-                          now()->hour < 11
-                              ? 'Pagi'
-                              : (now()->hour < 15
-                                  ? 'Siang'
-                                  : (now()->hour < 18
-                                      ? 'Sore'
-                                      : 'Malam'));
-                    @endphp
-                    <h3 class="h2">Selamat {{ $greeting }},
-                      {{ Str::of(auth()->user()->name)->explode(' ')->first() }}
-                    </h3>
-                    <p class="text-muted">Kamu punya 53 pesan baru dan 2 notifikasi baru.</p>
-                    <div class="row g-6 mt-auto">
-                      <div class="col-auto">
-                        <div class="subheader">Pendaftaran Hari Ini</div>
-                        <div class="d-flex align-items-baseline">
-                          <div class="h3 me-2">6,782</div>
-                          <div class="me-auto">
-                            <span class="text-green d-inline-flex align-items-center lh-1">
-                              7% <i class="ti ti-trending-up fs-2"></i>
-                            </span>
-                          </div>
-                        </div>
-                        <div class="progress progress-sm">
-                          <div class="progress-bar bg-success" style="width: 75%" role="progressbar" aria-valuenow="75"
-                            aria-valuemin="0" aria-valuemax="100" aria-label="75% Complete">
-                            <span class="visually-hidden">75% Complete</span>
-                          </div>
+        <div class="col-sm-12 col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="row gy-3">
+                <div class="col-12 col-sm d-flex flex-column">
+                  @php
+                    $greeting =
+                        now()->hour < 11
+                            ? 'Pagi'
+                            : (now()->hour < 15
+                                ? 'Siang'
+                                : (now()->hour < 18
+                                    ? 'Sore'
+                                    : 'Malam'));
+                  @endphp
+                  <h3 class="h2">Selamat {{ $greeting }},
+                    {{ Str::of(auth()->user()->name)->explode(' ')->first() }}
+                  </h3>
+                  <p class="text-muted">Kamu punya 53 pesan baru dan 2 notifikasi baru.</p>
+                  <div class="row g-6 mt-auto">
+                    <div class="col-auto">
+                      <div class="subheader">Pendaftaran Hari Ini</div>
+                      <div class="d-flex align-items-baseline">
+                        <div class="h3 me-2">6,782</div>
+                        <div class="me-auto">
+                          <span class="text-green d-inline-flex align-items-center lh-1">
+                            7% <i class="ti ti-trending-up fs-2"></i>
+                          </span>
                         </div>
                       </div>
-                      <div class="col-auto">
-                        <div class="subheader">Tahun Lalu</div>
-                        <div class="d-flex align-items-baseline">
-                          <div class="h3 me-2">78,4%</div>
-                          <div class="me-auto">
-                            <span class="text-red d-inline-flex align-items-center lh-1">
-                              -1% <i class="ti ti-trending-down fs-2"></i>
-                            </span>
-                          </div>
+                      <div class="progress progress-sm">
+                        <div class="progress-bar bg-success" style="width: 75%" role="progressbar" aria-valuenow="75"
+                          aria-valuemin="0" aria-valuemax="100" aria-label="75% Complete">
+                          <span class="visually-hidden">75% Complete</span>
                         </div>
-                        <div class="progress progress-sm">
-                          <div class="progress-bar bg-danger" style="width: 78%" role="progressbar" aria-valuenow="78"
-                            aria-valuemin="0" aria-valuemax="100" aria-label="78% Complete">
-                            <span class="visually-hidden">78% Complete</span>
-                          </div>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <div class="subheader">Tahun Lalu</div>
+                      <div class="d-flex align-items-baseline">
+                        <div class="h3 me-2">78,4%</div>
+                        <div class="me-auto">
+                          <span class="text-red d-inline-flex align-items-center lh-1">
+                            -1% <i class="ti ti-trending-down fs-2"></i>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="progress progress-sm">
+                        <div class="progress-bar bg-danger" style="width: 78%" role="progressbar" aria-valuenow="78"
+                          aria-valuemin="0" aria-valuemax="100" aria-label="78% Complete">
+                          <span class="visually-hidden">78% Complete</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {{-- ilustrasi dasbor --}}
-                  <div class="col-12 col-sm-auto d-flex justify-content-center">
-                    <a href="javascript:void(0)" class="">
-                      @include('components.back.illustrations-dasbor')
-                    </a>
-                  </div>
+                </div>
+                {{-- ilustrasi dasbor --}}
+                <div class="col-12 col-sm-auto d-flex justify-content-center">
+                  <a href="javascript:void(0)" class="">
+                    @include('components.back.illustrations-dasbor')
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-
+        </div>
+        {{-- berdasarkan role --}}
+        @if ($user_role == 'superadmin')
           <div class="col-sm-6 col-lg-3">
             <div class="card">
               <div class="card-body">
@@ -211,7 +209,7 @@
             </div>
           </div>
         @elseif ($user_role == 'baak')
-          <div class="col-sm-6 col-lg-4">
+          <div class="col-sm-6 col-lg-3">
             <div class="card">
               <div class="card-body">
                 <div class="subheader">Total Pendaftaran</div>
@@ -219,7 +217,7 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-6 col-lg-4">
+          <div class="col-sm-6 col-lg-3">
             <div class="card">
               <div class="card-body">
                 <div class="subheader">Persetujuan Tertunda</div>
@@ -227,7 +225,7 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-6 col-lg-4">
+          <div class="col-sm-6 col-lg-3">
             <div class="card">
               <div class="card-body">
                 <div class="subheader">Disetujui Hari Ini</div>

@@ -26,7 +26,7 @@
     <div class="container-xl">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title mb-0">Daftar Antrean</h3>
+          <h3 class="card-title mb-0">Daftar Antrian</h3>
           <div class="card-actions">
             <form method="GET" class="row g-2">
               <div class="col-auto">
@@ -182,12 +182,12 @@
                       <div class=" mb-2">
                         <i class="ti ti-message-circle fs-1"></i>
                       </div>
-                      <p class="empty-title">Tidak ada antrean</p>
-                      <p class="empty-subtitle text-muted">Belum ada pesan yang masuk ke antrean.</p>
+                      <p class="empty-title">Tidak ada antrian</p>
+                      <p class="empty-subtitle text-muted">Belum ada pesan yang masuk ke antrian.</p>
                       <div class="empty-action">
                         <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary">
                           <i class="ti ti-plus fs-2 me-1"></i>
-                          Buat Antrean Baru
+                          Buat Antrian Baru
                         </a>
                       </div>
                     </div>

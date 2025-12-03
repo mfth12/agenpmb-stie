@@ -25,7 +25,7 @@
           @if ($antrian->status !== \App\Models\AntrianNotifWhatsappModel::PENDING)
             <div class="alert alert-warning">
               <i class="ti ti-alert-triangle fs-2 me-2"></i>
-              Peringatan: Antrean ini tidak dalam status Pending. Anda mungkin tidak dapat mengeditnya.
+              Peringatan: Antrian ini tidak dalam status Pending. Anda mungkin tidak dapat mengeditnya.
             </div>
           @endif
           <form action="{{ route('antrian-notif-whatsapp.update', $antrian) }}" method="POST">
@@ -39,7 +39,7 @@
               @enderror
             </div>
             <div class="form-footer">
-              <button type="submit" class="btn btn-primary w-100">Perbarui Antrean</button>
+              <button type="submit" class="btn btn-primary w-100">Perbarui Antrian</button>
             </div>
           </form>
         </div>
