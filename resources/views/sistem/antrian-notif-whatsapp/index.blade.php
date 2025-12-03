@@ -29,8 +29,9 @@
           <h3 class="card-title mb-0">Daftar Antrian</h3>
           <div class="card-actions">
             <form method="GET" class="row g-2">
-              <div class="col-auto">
-                <select name="status" class="form-select">
+              {{-- Filter Status --}}
+              <div class="col-auto" style="min-width:180px;">
+                <select name="status" class="form-select select2-tabler" data-placeholder="Semua Status">
                   <option value="" {{ request('status') === null || request('status') === '' ? 'selected' : '' }}>
                     Semua Status
                   </option>
@@ -52,19 +53,26 @@
                   </option>
                 </select>
               </div>
-              <div class="col-auto">
-                <select name="user_id" class="form-select">
+
+              {{-- Filter Pengguna --}}
+              <div class="col-auto" style="min-width:220px;">
+                <select name="user_id" class="form-select select2-tabler" data-placeholder="Semua Pengguna">
                   <option value="">Semua Pengguna</option>
                   @foreach ($users as $user)
                     <option value="{{ $user->user_id }}" {{ request('user_id') == $user->user_id ? 'selected' : '' }}>
-                      {{ $user->name }}</option>
+                      {{ $user->name }}
+                    </option>
                   @endforeach
                 </select>
               </div>
+
+              {{-- Search --}}
               <div class="col-auto">
                 <input type="text" name="cari" class="form-control" placeholder="Cari target atau pesan..."
                   value="{{ request('cari') }}">
               </div>
+
+              {{-- Tombol Filter --}}
               <div class="col-auto">
                 <button type="submit" class="btn btn-default">
                   <i class="ti ti-search fs-2 me-1"></i>
@@ -212,4 +220,17 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('js_bawah')
+  <script>
+    $(document).ready(function() {
+      $('.select2-tabler').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: true
+      });
+    });
+  </script>
 @endsection
