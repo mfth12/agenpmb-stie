@@ -9,7 +9,7 @@ use App\Http\Controllers\Auth\MasukController;
 use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\Sistem\AntrianNotifWhatsappController;
+use App\Http\Controllers\AntrianNotifWhatsappController;
 
 // Rute "/" universal, tidak pakai middleware
 Route::get('/', fn() => redirect()->route(Auth::check() ? 'dashboard.index' : 'login'));
