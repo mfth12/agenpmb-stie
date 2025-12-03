@@ -295,11 +295,4 @@ class AntrianNotifWhatsappController extends Controller
                 ->withErrors(['general' => 'Gagal memicu force retry. Silakan coba lagi.']);
         }
     }
-
-    // Jika Anda ingin menambahkan relasi ke model User di AntrianNotifWhatsappModel
-    // Anda bisa menambahkan method ini ke model AntrianNotifWhatsappModel
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id', 'user_id');
-    // }
 }
