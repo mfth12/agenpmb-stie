@@ -73,6 +73,14 @@
                   <div class="dropdown-menu">
                     <div class="dropdown-menu-columns">
                       <div class="dropdown-menu-column">
+                        {{-- Menu Manajemen Pengguna --}}
+                        @can('user_view')
+                          <a class="dropdown-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}"
+                            href="{{ route('pengguna.index') }}">
+                            Manajemen Pengguna
+                          </a>
+                        @endcan
+
                         {{-- Menu Konfigurasi Sistem --}}
                         @can('konfigurasi_manage')
                           {{-- Asumsikan ada permission konfigurasi_manage --}}
@@ -82,22 +90,10 @@
                           </a>
                         @endcan
 
-                        {{-- Menu Manajemen Pengguna --}}
-                        @can('user_view')
-                          <a class="dropdown-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}"
-                            href="{{ route('pengguna.index') }}">
-                            Manajemen Pengguna
-                          </a>
-                        @endcan
-
                         {{-- Menu Roles & Permissions --}}
                         @can('role_manage')
                           {{-- Asumsikan ada permission role_view --}}
                           <div class="dropend">
-                            {{-- <a class="dropdown-item {{ request()->routeIs('role*') ? 'active' : '' }}"
-                              href="{{ route('role_permission.index') }}">
-                              Role & Permission
-                            </a> --}}
                             <a class="dropdown-item dropdown-toggle {{ request()->routeIs('role*') ? 'active' : '' }}"
                               href="{{ route('role_permission.index') }}" data-bs-toggle="dropdown"
                               data-bs-auto-close="outside" role="button" aria-expanded="false">
@@ -114,12 +110,24 @@
                           </div>
                         @endcan
 
-                        @can('view-log-sistem')
-                          <a class="dropdown-item {{ request()->routeIs('log-sistem*') ? 'active' : '' }}"
-                            href="{{ url('/log-sistem') }}">
-                            Log Sistem
+                        {{-- Menu logs --}}
+                        <div class="dropend">
+                          <a class="dropdown-item dropdown-toggle {{ request()->routeIs('antrian-notif-whatsapp*') || request()->routeIs('log-sistem*') ? 'active' : '' }}"
+                            href="{{ route('role_permission.index') }}" data-bs-toggle="dropdown"
+                            data-bs-auto-close="outside" role="button" aria-expanded="false">
+                            Logs
                           </a>
-                        @endcan
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item {{ request()->routeIs('antrian-notif-whatsapp*') ? 'active' : '' }}"
+                              href="{{ route('antrian-notif-whatsapp.index') }}">
+                              Log Whatsapp
+                            </a>
+                            <a class="dropdown-item {{ request()->routeIs('log-sistem*') ? 'active' : '' }}"
+                              href="{{ url('/log-sistem') }}">
+                              Log Sistem
+                            </a>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

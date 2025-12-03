@@ -165,8 +165,7 @@
           <div class="card-header">
             <div class="row w-full">
               <div class="col">
-                <h3 class="card-title mb-0">Daftar Calon Mahasiswa</h3>
-                <p class="text-secondary m-0">Berikut data calon mahasiswa yang telah didaftarkan</p>
+                <h3 class="card-title">Daftar Calon Mahasiswa</h3>
               </div>
               <div class="col-md-auto col-sm-12">
                 <div class="ms-auto d-flex flex-wrap btn-list">

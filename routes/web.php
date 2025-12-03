@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\MasukController;
 use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\Sistem\AntrianNotifWhatsappController;
 
 // Rute "/" universal, tidak pakai middleware
 Route::get('/', fn() => redirect()->route(Auth::check() ? 'dashboard.index' : 'login'));
@@ -121,5 +122,24 @@ Route::middleware(['auth'])->group(function () {
         // Route::post('/sync/{pendaftaran}', [PendaftaranController::class, 'syncOne'])->name('pendaftaran.syncOne');
         Route::post('/sync/{id_calon_mahasiswa}', [PendaftaranController::class, 'syncOne'])->name('pendaftaran.syncOne');
         Route::post('/sync-new/{id_calon_mahasiswa}', [PendaftaranController::class, 'syncNew'])->name('pendaftaran.syncNew');
+    });
+
+    Route::prefix('antrian-notif-whatsapp')->middleware(['permission:antrian_whatsapp_view'])->group(function () {
+        Route::get('/', [AntrianNotifWhatsappController::class, 'index'])->name('antrian-notif-whatsapp.index');
+        Route::get('/create', [AntrianNotifWhatsappController::class, 'create'])->name('antrian-notif-whatsapp.create')
+            ->middleware('permission:antrian_whatsapp_create');
+        Route::post('/', [AntrianNotifWhatsappController::class, 'store'])->name('antrian-notif-whatsapp.store')
+            ->middleware('permission:antrian_whatsapp_create');
+        Route::get('/{antrian}', [AntrianNotifWhatsappController::class, 'show'])->name('antrian-notif-whatsapp.show');
+        Route::get('/{antrian}/edit', [AntrianNotifWhatsappController::class, 'edit'])->name('antrian-notif-whatsapp.edit')
+            ->middleware('permission:antrian_whatsapp_edit');
+        Route::put('/{antrian}', [AntrianNotifWhatsappController::class, 'update'])->name('antrian-notif-whatsapp.update')
+            ->middleware('permission:antrian_whatsapp_edit');
+        Route::delete('/{antrian}', [AntrianNotifWhatsappController::class, 'destroy'])->name('antrian-notif-whatsapp.destroy')
+            ->middleware('permission:antrian_whatsapp_delete');
+        Route::post('/{antrian}/retry', [AntrianNotifWhatsappController::class, 'retry'])->name('antrian-notif-whatsapp.retry')
+            ->middleware('permission:antrian_whatsapp_retry');
+        Route::post('/{antrian}/force-retry', [AntrianNotifWhatsappController::class, 'forceRetry'])->name('antrian-notif-whatsapp.force-retry')
+            ->middleware('permission:antrian_whatsapp_retry'); // Gunakan permission yang sama atau buat yang baru
     });
 });
