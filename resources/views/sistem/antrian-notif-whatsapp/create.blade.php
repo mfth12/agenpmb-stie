@@ -29,7 +29,7 @@
                 <div class="mb-3">
                   <label class="form-label">Pilih Pengguna (Opsional)</label>
                   <select name="user_id" id="user-select" class="form-select @error('user_id') is-invalid @enderror">
-                    <option value="">-- Pilih Pengguna --</option>
+                    <option value="">- Pilih Pengguna -</option>
                     @foreach ($users as $user)
                       <option value="{{ $user->user_id }}" {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
                         {{ $user->name }} ({{ $user->username }}) - {{ $user->nomor_hp2 ?? ($user->nomor_hp ?? 'N/A') }}

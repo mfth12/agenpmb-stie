@@ -12,8 +12,8 @@
           <div class="btn-list">
             @can('antrian_whatsapp_create')
               <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary">
-                <i class="ti ti-plus fs-2 me-2"></i>
-                Kirim Pesan Baru
+                <i class="ti ti-send fs-2 me-2"></i>
+                Pesan Baru
               </a>
             @endcan
           </div>

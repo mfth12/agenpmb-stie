@@ -71,7 +71,7 @@ class AntrianNotifWhatsappController extends Controller
     {
         $users = User::select('user_id', 'name', 'nomor_hp', 'nomor_hp2')->get();
         return view('sistem.antrian-notif-whatsapp.create', [
-            'title' => 'Kirim Notifikasi WhatsApp Baru',
+            'title' => 'Kirim Notifikasi WhatsApp',
             'users' => $users,
         ]);
     }
