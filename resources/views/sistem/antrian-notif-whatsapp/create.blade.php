@@ -29,20 +29,20 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Pilih Pengguna (Opsional)</label>
-                      <select name="user_id" id="user-select" class="form-select @error('user_id') is-invalid @enderror">
+                      <label class="form-label">Pilih Pengguna <span class="text-muted">(Opsional)</span></label>
+                      <select name="user_id" id="user-select"
+                        class="form-select select2 @error('user_id') is-invalid @enderror">
                         <option value="">- Pilih Pengguna -</option>
                         @foreach ($users as $user)
                           <option value="{{ $user->user_id }}" {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
-                            {{ $user->name }} ({{ $user->username }}) -
-                            {{ $user->nomor_hp2 ?? ($user->nomor_hp ?? 'N/A') }}
+                            {{ $user->name }} ({{ $user->nomor_hp2 ?? ($user->nomor_hp ?? 'N/A') }})
                           </option>
                         @endforeach
                       </select>
                       @error('user_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
-                      <small class="form-hint">Jika dipilih, nomor HP akan diambil otomatis dari pengguna.</small>
+                      <small class="form-hint mt-2">Jika dipilih, nomor HP akan diambil otomatis dari pengguna.</small>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -90,9 +90,27 @@
   </div>
 @endsection
 
+@section('style')
+  <style>
+    /* kosong */
+  </style>
+@endsection
+
 @section('js_bawah')
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      $('#user-select').select2({
+        theme: 'bootstrap-5',
+        placeholder: '- Pilih Pengguna -',
+        allowClear: true,
+        width: '100%',
+        "language": {
+          "noResults": function() {
+            return "Pengguna tidak ditemukan";
+          }
+        },
+      });
+
       const userSelect = document.getElementById('user-select');
       const targetInput = document.getElementById('target-input');
 
