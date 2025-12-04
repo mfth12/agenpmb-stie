@@ -47,10 +47,10 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label required">Nomor Target</label>
+                      <label class="form-label">Nomor Target</label>
                       <input type="text" name="target" id="target-input" value="{{ old('target') }}"
                         class="form-control @error('target') is-invalid @enderror"
-                        placeholder="Masukkan nomor WhatsApp (misal: 628xxx)" required>
+                        placeholder="Masukkan nomor WhatsApp (misal: 628xxx)">
                       @error('target')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -73,7 +73,7 @@
                 <div class="mb-3">
                   <label class="form-label required">Isi Pesan</label>
                   <textarea name="isi_pesan" class="form-control @error('isi_pesan') is-invalid @enderror" rows="5"
-                    placeholder="Tulis pesan Anda disini..." required>{{ old('isi_pesan') }}</textarea>
+                    placeholder="Tulis pesan Anda disini...">{{ old('isi_pesan') }}</textarea>
                   @error('isi_pesan')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror

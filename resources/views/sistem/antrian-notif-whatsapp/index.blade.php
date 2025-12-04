@@ -29,6 +29,19 @@
           <h3 class="card-title mb-0">Daftar Antrian</h3>
           <div class="card-actions">
             <form method="GET" class="row g-2">
+              {{-- Filter Jumlah Per Halaman --}}
+              <div class="col-auto" style="min-width:130px;">
+                <select name="per_page" class="form-select select2-tabler" data-placeholder="Jumlah/Hal">
+                  <option value="5" {{ request('per_page') == '5' ? 'selected' : '' }}>5</option>
+                  <option value="10"{{ request('per_page') == '10' || request('status') === null ? 'selected' : '' }}>
+                    10</option>
+                  <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
+                  <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
+                  <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>100</option>
+                  <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+                </select>
+              </div>
+
               {{-- Filter Status --}}
               <div class="col-auto" style="min-width:180px;">
                 <select name="status" class="form-select select2-tabler" data-placeholder="Semua Status">
@@ -68,13 +81,13 @@
 
               {{-- Search --}}
               <div class="col-auto">
-                <input type="text" name="cari" class="form-control" placeholder="Cari target atau pesan..."
+                <input type="text" name="cari" class="form-control bg-light" placeholder="Cari target atau pesan..."
                   value="{{ request('cari') }}">
               </div>
 
               {{-- Tombol Filter --}}
               <div class="col-auto">
-                <button type="submit" class="btn btn-default">
+                <button type="submit" class="btn btn-default text-secondary bg-light">
                   <i class="ti ti-search fs-2 me-1"></i>
                   Filter
                 </button>
@@ -218,7 +231,7 @@
               <span>{{ $antrians->total() }}</span> data
             </p>
             <ul class="pagination m-0 ms-auto">
-              {{ $antrians->links('vendor.pagination.tabler') }}
+              {{ $antrians->appends(request()->query())->links('vendor.pagination.tabler') }}
             </ul>
           </div>
         @endif

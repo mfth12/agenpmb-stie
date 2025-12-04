@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -52,7 +53,15 @@ class AntrianNotifWhatsappController extends Controller
             $query->where('user_id', $request->user_id);
         }
 
-        $antrians = $query->orderBy('created_at', 'desc')->paginate(15);
+        // Filter jumlah data per halaman
+        $perPageOptions = [5, 10, 25, 50, 100, 'all'];
+        $perPage = $request->get('per_page', 10); // Default 15
+
+        if (!in_array($perPage, $perPageOptions) || $perPage === 'all') {
+            $perPage = $query->count(); // Jika 'all', tampilkan semua
+        }
+
+        $antrians = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         // Ambil daftar user untuk filter dropdown (opsional)
         $users = User::select('user_id', 'name')->get();
@@ -83,9 +92,28 @@ class AntrianNotifWhatsappController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'nullable|exists:users,user_id',
-            'target' => 'required_without:user_id|string|max:20', // Wajib jika user_id tidak dipilih
+            'target' => 'required_without:user_id|nullable|string|max:20', // Wajib jika user_id tidak dipilih
             'isi_pesan' => 'required|string|max:4096', // Batasi panjang pesan
             'tipe' => 'required|in:text,image,video,document', // Sesuaikan tipe yang didukung gateway
+        ], [
+            // Pesan kustom untuk user_id
+            'user_id.exists' => 'User yang dipilih tidak ditemukan.',
+            'user_id.nullable' => 'Input user_id tidak valid.',
+
+            // Pesan kustom untuk target
+            'target.required_without' => 'Target wajib diisi jika user tidak dipilih.',
+            'target.string' => 'Target harus berupa teks.',
+            'target.max' => 'Target maksimal :max karakter.',
+            'target.nullable' => 'Input target tidak valid.',
+
+            // Pesan kustom untuk isi_pesan
+            'isi_pesan.required' => 'Isi pesan wajib diisi.',
+            'isi_pesan.string' => 'Isi pesan harus berupa teks.',
+            'isi_pesan.max' => 'Isi pesan maksimal :max karakter.',
+
+            // Pesan kustom untuk tipe
+            'tipe.required' => 'Jenis pesan wajib dipilih.',
+            'tipe.in' => 'Jenis pesan yang dipilih tidak valid.',
         ]);
 
         if ($validator->fails()) {
@@ -128,7 +156,7 @@ class AntrianNotifWhatsappController extends Controller
 
             return redirect()->route('antrian-notif-whatsapp.index')
                 ->with('success', 'Pesan WhatsApp berhasil ditambahkan ke antrian dan akan segera diproses.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::channel('whatsapp')->error('Gagal menambahkan notif whatsapp ke antrian: ' . $e->getMessage(), [
                 'user_id' => $validatedData['user_id'] ?? null,
                 'target' => $validatedData['target'] ?? null,
@@ -189,7 +217,7 @@ class AntrianNotifWhatsappController extends Controller
 
             return redirect()->route('antrian-notif-whatsapp.index')
                 ->with('success', 'Antrian notifikasi WhatsApp berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::channel('whatsapp')->error('Gagal memperbarui notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
             ]);
@@ -215,7 +243,7 @@ class AntrianNotifWhatsappController extends Controller
 
             return redirect()->route('antrian-notif-whatsapp.index')
                 ->with('success', 'Antrian notifikasi WhatsApp berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::channel('whatsapp')->error('Gagal menghapus notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
             ]);
@@ -254,7 +282,7 @@ class AntrianNotifWhatsappController extends Controller
 
             return redirect()->route('antrian-notif-whatsapp.index')
                 ->with('success', 'Proses pengiriman untuk antrian ini sedang diulang.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::channel('whatsapp')->error('Gagal memicu retry notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
             ]);
@@ -287,7 +315,7 @@ class AntrianNotifWhatsappController extends Controller
 
             return redirect()->route('antrian-notif-whatsapp.index')
                 ->with('success', 'Proses pengiriman untuk antrian ini sedang diulang (force).');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::channel('whatsapp')->error('Gagal memicu force retry notif whatsapp: ' . $e->getMessage(), [
                 'antrian_id' => $antrian->antrian_id,
             ]);
