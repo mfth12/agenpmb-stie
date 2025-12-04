@@ -31,7 +31,7 @@
             <form method="GET" class="row g-2">
               {{-- Filter Jumlah Per Halaman --}}
               <div class="col-auto" style="min-width:130px;">
-                <select name="per_page" class="form-select select2-tabler" data-placeholder="Jumlah/Hal">
+                <select name="per_page" class="form-select select2-tabler" data-placeholder="Per/hal.">
                   <option value="5" {{ request('per_page') == '5' ? 'selected' : '' }}>5</option>
                   <option value="10"{{ request('per_page') == '10' || request('status') === null ? 'selected' : '' }}>
                     10</option>
@@ -223,18 +223,18 @@
             </tbody>
           </table>
         </div>
-        @if ($antrians->hasPages())
-          <div class="card-footer d-flex align-items-center">
-            <p class="m-0 text-muted">
-              Menampilkan <span>{{ $antrians->firstItem() }}</span> sampai
-              <span>{{ $antrians->lastItem() }}</span> dari
-              <span>{{ $antrians->total() }}</span> data
-            </p>
-            <ul class="pagination m-0 ms-auto">
-              {{ $antrians->appends(request()->query())->links('vendor.pagination.tabler') }}
-            </ul>
-          </div>
-        @endif
+        {{-- @if ($antrians->hasPages()) --}}
+        <div class="card-footer d-flex align-items-center">
+          <p class="m-0 text-muted">
+            Menampilkan <span>{{ $antrians->firstItem() }}</span> sampai
+            <span>{{ $antrians->lastItem() }}</span> dari
+            <span>{{ $antrians->total() }}</span> data
+          </p>
+          <ul class="pagination m-0 ms-auto">
+            {{ $antrians->appends(request()->query())->links('vendor.pagination.tabler') }}
+          </ul>
+        </div>
+        {{-- @endif --}}
       </div>
     </div>
   </div>
@@ -247,7 +247,12 @@
         theme: 'bootstrap-5',
         width: '100%',
         placeholder: $(this).data('placeholder'),
-        allowClear: true
+        allowClear: true,
+        "language": {
+          "noResults": function() {
+            return "Tidak ditemukan";
+          }
+        },
       });
     });
   </script>
