@@ -148,7 +148,7 @@ class AntrianNotifWhatsappController extends Controller
             // Dispatch job ke queue
             NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
 
-            Log::channel('whatsapp')->info('Notif whatsapp baru berhasil masuk antrian', [
+            Log::channel('whatsapp')->info('NotifWhatsapp (input baru) berhasil masuk antrian', [
                 'antrian_id' => $antrian->antrian_id,
                 'user_id' => $antrian->user_id,
                 'target' => $antrian->target,
@@ -157,7 +157,7 @@ class AntrianNotifWhatsappController extends Controller
             return redirect()->route('antrian-notif-whatsapp.index')
                 ->with('success', 'Pesan WhatsApp berhasil ditambahkan ke antrian dan akan segera diproses.');
         } catch (Exception $e) {
-            Log::channel('whatsapp')->error('Gagal menambahkan notif whatsapp ke antrian: ' . $e->getMessage(), [
+            Log::channel('whatsapp')->error('Gagal menambahkan pesan whatsapp ke antrian: ' . $e->getMessage(), [
                 'user_id' => $validatedData['user_id'] ?? null,
                 'target' => $validatedData['target'] ?? null,
             ]);

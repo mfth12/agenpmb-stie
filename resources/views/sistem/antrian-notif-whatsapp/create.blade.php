@@ -49,7 +49,7 @@
                     <div class="mb-3">
                       <label class="form-label">Nomor Target</label>
                       <input type="text" name="target" id="target-input" value="{{ old('target') }}"
-                        class="form-control @error('target') is-invalid @enderror"
+                        class="form-control text-secondary bg-light @error('target') is-invalid @enderror"
                         placeholder="Masukkan nomor WhatsApp (misal: 628xxx)">
                       @error('target')
                         <div class="invalid-feedback">{{ $message }}</div>

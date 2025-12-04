@@ -173,7 +173,8 @@
                           class="d-inline">
                           @csrf
                           <button type="submit" class="btn btn-sm btn-default text-warning" title="Retry">
-                            <i class="ti ti-refresh fs-3"></i>
+                            <i class="ti ti-refresh fs-3 me-1"></i>
+                            Ulagi
                           </button>
                         </form>
                       @endif
