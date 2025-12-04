@@ -164,7 +164,7 @@
         <div class="card">
           <div class="card-header">
             <div class="row w-full">
-              <div class="col">
+              <div class="col align-content-center">
                 <h3 class="card-title">Daftar Calon Mahasiswa</h3>
               </div>
               <div class="col-md-auto col-sm-12">
