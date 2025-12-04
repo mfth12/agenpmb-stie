@@ -102,7 +102,12 @@
                 <tr>
                   <td>{{ $antrian->antrian_id }}</td>
                   <td>
-                    <span class="text-nowrap">{{ $antrian->user?->name ?? 'N/A' }}</span>
+                    <span class="fw-bold text-nowrap">
+                      <a href="{{ route('antrian-notif-whatsapp.show', $antrian) }}"
+                        class="text-reset link-hover-underline">
+                        {{ $antrian->user?->name ?? 'N/A' }}
+                      </a>
+                    </span>
                     <br>
                     <small class="text-muted">{{ $antrian->user?->username ?? 'N/A' }}</small>
                   </td>

@@ -134,7 +134,7 @@
                         <select name="kelas" class="form-select @error('kelas') is-invalid @enderror" required>
                           <option value="" selected>- Pilih Kelas -</option>
                           @foreach ($kelasList as $id => $nama)
-                            <option value="{{ $id }}" {{ old('kelas') == $id ? 'selected' : '' }}>
+                            <option value="{{ $id }}" {{ old('kelas') == strval($id) ? 'selected' : '' }}>
                               {{ $nama }}
                             </option>
                           @endforeach
