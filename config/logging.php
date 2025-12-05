@@ -127,7 +127,14 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        //whatsapp
+        // akses pengguna
+        'aksespengguna' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/akses.log'),
+            'level' => 'info',
+        ],
+
+        // whatsapp
         'whatsapp' => [
             'driver' => 'daily',
             'tap' => [App\Helpers\HelperLogFormatBaris::class],

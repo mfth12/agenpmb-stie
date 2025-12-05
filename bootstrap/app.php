@@ -3,6 +3,7 @@
 // use App\Http\Middleware\setKonfigs;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\LogAksesPengguna;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // LocaleMiddleware::class, // disable, we use single language which is Indonesian
             // setKonfigs::class,
             // CheckPermission::class,
-
+            LogAksesPengguna::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [
@@ -39,7 +40,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission'            => PermissionMiddleware::class,
             'role_or_permission'    => RoleOrPermissionMiddleware::class,
             // 'set.konfigs'           => setKonfigs::class,
-            // 'check.permission'         => CheckPermission::class,
+            // 'check.permission'      => CheckPermission::class,
+            'log.akses'             => CheckPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
