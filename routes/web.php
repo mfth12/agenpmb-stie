@@ -28,10 +28,6 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard routes - semua role yang login bisa akses dashboard
     Route::get('/dasbor', [DasborController::class, 'index'])->name('dashboard.index')
         ->middleware('permission:dashboard_view');
-
-    Route::get('/dasbor_lawas', [DasborController::class, 'index_lawas'])->name('dashboard.lawas')
-        ->middleware('permission:dashboard_view');
-
     Route::post('/keluar', [MasukController::class, 'keluar'])->name('logout');
 
     // Rute Profil Pribadi
