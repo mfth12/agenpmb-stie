@@ -127,20 +127,29 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        // masuk
+        'masuk' => [
+            'driver'    => 'single',
+            'path'      => storage_path('logs/masuk.log'),
+            'level'     => 'info',
+        ],
+
         // akses pengguna
         'aksespengguna' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/akses.log'),
-            'level' => 'info',
+            'driver'    => 'daily',
+            'tap'       => [App\Helpers\HelperLogFormatBaris::class],
+            'path'      => storage_path('logs/akses/akses.log'),
+            'level'     => env('LOG_LEVEL', 'info'),
+            'days'      => 30,
         ],
 
         // whatsapp
-        'whatsapp' => [
-            'driver' => 'daily',
-            'tap' => [App\Helpers\HelperLogFormatBaris::class],
-            'path' => storage_path('logs/whatsapp/whatsapp.log'),
-            'level' => env('LOG_LEVEL', 'info'),
-            'days' => 7,
+        'whatsapp'      => [
+            'driver'    => 'daily',
+            'tap'       => [App\Helpers\HelperLogFormatBaris::class],
+            'path'      => storage_path('logs/whatsapp/whatsapp.log'),
+            'level'     => env('LOG_LEVEL', 'info'),
+            'days'      => 7,
         ],
 
     ],
