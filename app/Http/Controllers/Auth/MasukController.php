@@ -468,6 +468,19 @@ class MasukController extends Controller
         // Tambahkan informasi waktu ke context
         $context['time'] = now()->toDateTimeString();
 
+        // Tambahkan detail user agent
+        $agent = new Agent();
+        $deviceType = $agent->isMobile() ? 'Mobile' : ($agent->isTablet() ? 'Tablet' : 'Desktop');
+        $platform = $agent->platform() ?? 'Unknown';   // Windows, macOS, Android, iOS, Linux
+        $browser  = $agent->browser() ?? 'Unknown';    // Chrome, Firefox, Safari, dll
+
+        $context['user_agent'] = [
+            'raw'       => request()->userAgent(), // Ambil dari request saat ini
+            'device'    => $deviceType,
+            'platform'  => $platform,
+            'browser'   => $browser,
+        ];
+
         // Catat log ke channel 'masuk'
         Log::channel('masuk')->$level($message, $context);
     }
