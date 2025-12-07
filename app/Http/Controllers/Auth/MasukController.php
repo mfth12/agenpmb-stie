@@ -21,6 +21,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\AntrianNotifWhatsappModel;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Request;
 
 class MasukController extends Controller
 {
@@ -48,14 +49,28 @@ class MasukController extends Controller
         $maxAttempts  = (int) env('LOGIN_MAX_ATTEMPTS', 3);
         $decaySeconds = (int) env('LOGIN_DECAY_SECONDS', 120);
 
+        // --- LOGIKA RATE LIMITING DENGAN LOGGING ---
         if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
             event(new Lockout($request));
             $seconds = RateLimiter::availableIn($throttleKey);
+
+            // Log kejadian rate limit
+            $this->logAction(
+                'warning',
+                'Rate limiter aktif "' . $request->username . '"',
+                [
+                    'username'      => $request->username ?? 'Tidak diketahui',
+                    'ip_address'    => $request->ip(),
+                    'waiting_time'  => $seconds . ' detik',
+                    'user_agent'    => $request->userAgent(),
+                ]
+            );
 
             throw ValidationException::withMessages([
                 'masuk' => 'Silakan coba lagi dalam <span id="countdown" style="margin: -10px">' . $seconds . '</span> detik.',
             ]);
         }
+        // --- END LOGIKA RATE LIMITING ---
 
         // Ambil kredensial
         $credentials = $request->only(['username', 'password', 'via_siakad']);
@@ -81,7 +96,21 @@ class MasukController extends Controller
                 ]
             );
         } catch (Exception $e) {
+            // Hit rate limiter jika gagal koneksi
             RateLimiter::hit($throttleKey, $decaySeconds);
+
+            // Log error koneksi
+            $this->logAction(
+                'error',
+                'Gagal menghubungi layanan Siakad untuk login via API Siakad',
+                [
+                    'username' => $credentials['username'],
+                    'ip_address' => $request->ip(),
+                    'error' => $e->getMessage(),
+                    'user_agent' => $request->userAgent(),
+                ]
+            );
+
             return back()->withErrors(['koneksi' => 'Gagal menghubungi layanan Siakad.']);
         }
 
@@ -89,6 +118,16 @@ class MasukController extends Controller
 
         // Verifikasi Turnstile
         if (!$this->handleTurnstileValidation($request)) {
+            // Log kegagalan turnstile
+            $this->logAction(
+                'warning',
+                'Verifikasi keamanan Turnstile gagal untuk login via API Siakad',
+                [
+                    'username' => $credentials['username'],
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]
+            );
             return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
         }
 
@@ -101,6 +140,17 @@ class MasukController extends Controller
 
             // Validasi, status user harus aktif
             if (!in_array($userData['status'], ['active', 1, '1'], true)) {
+                // Log login gagal karena status tidak aktif
+                $this->logAction(
+                    'warning',
+                    'Login via API gagal, akun tidak aktif',
+                    [
+                        'username' => $userData['username'] ?? $credentials['username'],
+                        'siakad_id' => $userData['id'],
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                    ]
+                );
                 return back()->withErrors(['masuk' => 'Akun Siakad Anda tidak aktif.']);
             }
 
@@ -117,7 +167,7 @@ class MasukController extends Controller
                     'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
                     'email_verified_at' => $userData['email_verified_at'] ?? null,
                     'about'             => $userData['about'] ?? null,
-                    'default_role'      => $userData['default_role'] ?? 'mitra',
+                    'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
                     'theme'             => $userData['theme'] ?? 'default',
                     'avatar'            => $userData['avatar'] ?? null,
                     'status'            => $userData['status'] ?? 'active',
@@ -128,8 +178,8 @@ class MasukController extends Controller
                 ]
             );
 
-            // Untuk user lain, assign role berdasarkan default_role dari Siakad
-            $mitra_role = $userData['default_role'] ?? 'mahasiswa';
+            // Assign role berdasarkan default_role dari Siakad
+            $mitra_role = $userData['default_role'] ?? 'mitra'; // Ganti 'mitra' sesuai kebutuhan default
             $mitra_role = is_array($mitra_role) ? $mitra_role : [$mitra_role];
             $user->syncRoles($mitra_role);
 
@@ -139,14 +189,40 @@ class MasukController extends Controller
 
             Auth::login($user);
 
+            // Log login sukses via API
+            $this->logAction(
+                'info',
+                'Login via API Siakad berhasil',
+                [
+                    'user_id' => $user->user_id,
+                    'username' => $user->username,
+                    'name' => $user->name,
+                    'siakad_id' => $user->siakad_id,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]
+            );
+
             // Kirim notifikasi WhatsApp setelah login berhasil
             $this->sendLoginNotification($user, $request, $from = 'siakad');
 
             return redirect()->intended(route('dashboard.index'));
         }
 
-        // Hit jika gagal login
+        // Hit jika gagal login (gagal auth API)
         RateLimiter::hit($throttleKey, $decaySeconds);
+
+        // Log login gagal via API
+        $this->logAction(
+            'alert',
+            'Login via API Siakad gagal',
+            [
+                'username' => $credentials['username'],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'api_response' => $data, // Log respons API jika relevan
+            ]
+        );
 
         // Tampilkan error dari API
         $errorMessage = 'Tidak dapat melakukan otentikasi';
@@ -166,6 +242,16 @@ class MasukController extends Controller
     {
         // Verifikasi Turnstile untuk login lokal juga
         if (!$this->handleTurnstileValidation($request)) {
+            // Log kegagalan turnstile untuk login lokal
+            $this->logAction(
+                'warning',
+                'Verifikasi keamanan Turnstile gagal untuk login lokal',
+                [
+                    'username' => $credentials['username'],
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]
+            );
             return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
         }
 
@@ -178,20 +264,42 @@ class MasukController extends Controller
         ) {
             RateLimiter::clear($throttleKey);
 
-            // Validasi, jika user pending
-            if (in_array(Auth::user()->status, ['pending'], true)) {
+            $user = Auth::user();
+
+            // Validasi ulang (antisipasi jika status berubah setelah attempt)
+            if (!in_array($user->status, ['active', 1, '1'], true)) {
                 Auth::logout();
-                return back()->withErrors(['masuk' => 'Akun Anda belum diverifikasi TIM PMB.']);
-            }
-            // Validasi, jika tidak aktif
-            if (!in_array(Auth::user()->status, ['active', 1, '1'], true)) {
-                Auth::logout();
+                // Log logout karena status tidak aktif setelah login
+                $this->logAction(
+                    'warning',
+                    'Login lokal sukses tetapi akun tidak aktif, logout otomatis',
+                    [
+                        'user_id' => $user->user_id,
+                        'username' => $user->username,
+                        'name' => $user->name,
+                        'status' => $user->status,
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                    ]
+                );
                 return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
             }
 
             // Update last logged in
-            $user = Auth::user();
             $user->update(['last_logged_in' => Carbon::now()]);
+
+            // Log login sukses lokal
+            $this->logAction(
+                'info',
+                'Login lokal berhasil',
+                [
+                    'user_id' => $user->user_id,
+                    'username' => $user->username,
+                    'name' => $user->name,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]
+            );
 
             // Kirim notifikasi WhatsApp setelah login berhasil
             $this->sendLoginNotification($user, $request, $from = 'local');
@@ -199,8 +307,19 @@ class MasukController extends Controller
             return redirect()->intended(route('dashboard.index'));
         }
 
-        // Hit jika gagal login
+        // Hit jika gagal login (gagal auth lokal)
         RateLimiter::hit($throttleKey, $decaySeconds);
+
+        // Log login gagal lokal
+        $this->logAction(
+            'alert',
+            'Login lokal gagal (username/password salah)',
+            [
+                'username' => $credentials['username'],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]
+        );
 
         return back()->withErrors([
             'masuk' => 'Username atau password salah.',
@@ -239,17 +358,31 @@ class MasukController extends Controller
     /**
      * Proses logout
      */
-    public function keluar(): RedirectResponse
+    public function keluar(Request $request): RedirectResponse
     {
         // Update status login user
         if (Auth::check()) {
             Auth::user()->update(['status_login' => 'offline']);
         }
 
+        $user = Auth::user();
+
         // Hapus session
         Session::forget(['api_access_token', 'api_userroles']);
         Auth::logout();
 
+        // Log logout 
+        $this->logAction(
+            'info',
+            'Pengguna berhasil logout',
+            [
+                'user_id' => $user->user_id,
+                'username' => $user->username,
+                'name' => $user->name,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]
+        );
         return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
     }
 
@@ -324,4 +457,18 @@ class MasukController extends Controller
         // Simpan flag cache per user per IP, agar tidak kirim lagi dalam masa SESSION_LIFETIME
         Cache::put($cacheKey, true, now()->addMinutes($sessionLifetime));
     }
+
+    // FUNGSI PEMBANTU BARU UNTUK LOGGING ---
+    /**
+     * Fungsi untuk mencatat log aksi pengguna ke channel 'masuk'.
+     */
+    protected function logAction($level, $message, $context = [])
+    {
+        // Tambahkan informasi waktu ke context
+        $context['time'] = now()->toDateTimeString();
+
+        // Catat log ke channel 'masuk'
+        Log::channel('masuk')->$level($message, $context);
+    }
+    // --- END FUNGSI PEMBANTU ---
 }
