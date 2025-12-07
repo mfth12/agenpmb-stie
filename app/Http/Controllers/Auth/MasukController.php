@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Jenssegers\Agent\Agent;
 use App\Jobs\NotifWhatsappJob;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Log;
@@ -20,8 +21,8 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\AntrianNotifWhatsappModel;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Validation\ValidationException;
 
 class MasukController extends Controller
 {
