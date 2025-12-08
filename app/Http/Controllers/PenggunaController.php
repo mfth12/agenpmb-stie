@@ -346,9 +346,9 @@ class PenggunaController extends Controller
         // Kirim notif wa jika diapprove admin baak
         $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
         $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
-        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
-          . "*Akun Mitra* Anda telah diverifikasi pada: {$waktu}. "
-          . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n"
+        $pesan = "🚀 Selamat " . $greeting . ", *{$pengguna->name}*. "
+          . "Akun Mitra PMB Anda telah diverifikasi pada: {$waktu}. "
+          . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n\n"
           . "Link: " . route('login');
 
         // Aksi kirim
