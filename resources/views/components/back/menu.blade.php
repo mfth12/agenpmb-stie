@@ -38,6 +38,10 @@
                           </a>
                         @endcan
 
+                        <a class="dropdown-item" {{-- href="{{ route('pendaftaran.index') }}"> --}} href="#">
+                          Statistik & Laporan
+                        </a>
+
                         {{-- Menu Approval --}}
                         {{-- @can('approval_view')
                           <a class="dropdown-item {{ request()->routeIs('approval.*') ? 'active' : '' }}"
