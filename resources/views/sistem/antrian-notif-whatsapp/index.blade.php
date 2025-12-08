@@ -6,7 +6,7 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Notifikasi WhatsApp</h2>
-          <div class="page-pretitle">Seluruh pesan whatsapp yang diproses sistem</div>
+          <div class="page-pretitle">Pesan whatsapp yang diproses sistem</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
           <div class="btn-list">
