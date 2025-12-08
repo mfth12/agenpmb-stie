@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Throwable;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -263,32 +264,52 @@ class AntrianNotifWhatsappController extends Controller
     }
 
     try {
-      // Gunakan transaction untuk keamanan data
-      DB::transaction(function () {
+      // Hitung jumlah data sebelum melakukan truncate (truncate tidak mengembalikan jumlah)
+      $countBefore = AntrianNotifWhatsappModel::count();
 
-        // Hitung jumlah data sebelum truncate (truncate tidak mengembalikan jumlah row)
-        $countBefore = AntrianNotifWhatsappModel::count();
+      // Jika tabel memiliki foreign key constraints, truncate bisa gagal.
+      // Nonaktifkan sementara foreign key checks untuk MySQL/MariaDB supaya truncate bisa berjalan.
+      // Jika Anda yakin tidak ada FK, Anda boleh menghilangkan dua statement berikut.
+      DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // Hapus semua data dari tabel antrian_notif_whatsapps
-        // truncate() lebih cepat untuk menghapus semua data
-        AntrianNotifWhatsappModel::truncate();
+      // Hapus semua data dari tabel antrian_notif_whatsapps
+      // truncate() lebih cepat untuk menghapus semua data
+      AntrianNotifWhatsappModel::truncate();
 
-        // Log jumlah data yang dihapus
-        Log::channel('whatsapp')->info("Semua antrian notifikasi WhatsApp berhasil dihapus.", [
-          'jumlah_dihapus' => $countBefore,
-          'user_id'        => auth()->id(),
-          'username'       => auth()->user()->username,
-        ]);
-      });
+      // Set ulang auto increment mulai dari 3210
+      DB::statement('ALTER TABLE antrian_whatsapps AUTO_INCREMENT = 61231;');
+
+      // Kembalikan foreign key checks agar database kembali normal
+      DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+      // Log jumlah data yang dihapus
+      Log::channel('whatsapp')->info("Semua antrian notifikasi WhatsApp berhasil dihapus.", [
+        'jumlah_dihapus' => $countBefore,
+        'user_id'        => auth()->id(),
+        'username'       => auth()->user()->username ?? null,
+      ]);
 
       // Kembalikan RedirectResponse
       return redirect()->route('antrian-notif-whatsapp.index')
         ->with('success', 'Semua notifikasi WhatsApp berhasil dihapus.');
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
+      // Pastikan foreign key checks diaktifkan kembali jika terjadi error
+      try {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+      } catch (Throwable $inner) {
+        // jika gagal mengembalikan FK checks, catat juga (tidak melempar lagi)
+        Log::channel('whatsapp')->warning('Gagal mengembalikan FOREIGN_KEY_CHECKS setelah error: ' . $inner->getMessage(), [
+          'user_id' => auth()->id(),
+          'username' => auth()->user()->username ?? null,
+        ]);
+      }
 
+      // Log error lengkap termasuk pesan exception supaya mudah diagnosa
       Log::channel('whatsapp')->error('Gagal menghapus semua data notifikasi WhatsApp: ' . $e->getMessage(), [
         'user_id'  => auth()->id(),
-        'username' => auth()->user()->username,
+        'username' => auth()->user()->username ?? null,
+        'error'    => $e->getMessage(),
+        'trace'    => $e->getTraceAsString(),
       ]);
 
       // Kembalikan RedirectResponse dengan error
