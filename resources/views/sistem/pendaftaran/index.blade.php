@@ -300,7 +300,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success d-none" id="sync-all-btn">Sinkronisasi Semua</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Tutup</button>
         </div>
       </div>
     </div>

@@ -10,13 +10,13 @@
         </div>
         <div class="col-4 col-md-auto ms-auto d-print-none">
           @can('antrian_whatsapp_create')
-            <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary">
+            <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary me-1">
               <i class="ti ti-send fs-2 me-2"></i>
               Pesan Baru
             </a>
           @endcan
           @can('antrian_whatsapp_delete')
-            <a href="#" class="btn btn-danger mt-2 mt-md-0" id="hapus-semua-btn">
+            <a href="#" class="btn btn-default mt-2 mt-md-0" id="hapus-semua-btn">
               <i class="ti ti-trash fs-2 me-2"></i>
               Hapus Semua
             </a>
