@@ -87,8 +87,9 @@
                     <td class="text-center">{{ $pengguna->firstItem() + $loop->index }}</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <span class="avatar avatar-sm me-2"
-                          style="background-image: url({{ $user->avatar_thumb_url }})"></span>
+                        <span class="avatar avatar-sm me-2 flex-shrink-0"
+                          style="background-image: url({{ $user->avatar_thumb_url }})">
+                        </span>
                         <span>
                           <strong>
                             <a href="{{ route('pengguna.show', $user) }}" class="text-reset link-hover-underline">
