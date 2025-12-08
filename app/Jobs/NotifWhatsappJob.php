@@ -85,7 +85,7 @@ class NotifWhatsappJob implements ShouldQueue
         $this->antrian->save();
 
         // logging
-        Log::channel(self::LOG_CHANNEL)->info("NotifWhatsappJob for user_id '{$this->antrian->user_id}' on target '{$this->antrian->target}'  processed", [
+        Log::channel(self::LOG_CHANNEL)->info("NotifWhatsappJob untuk user_id '{$this->antrian->user_id}' dengan tujuan '{$this->antrian->target}'  berhasil diproses", [
             'antrian_id'      => $this->antrian->antrian_id,
             'target'          => $this->antrian->target,
             'res_status'      => $status,
