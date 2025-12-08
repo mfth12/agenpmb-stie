@@ -30,7 +30,17 @@
               <input type="text" name="cari" class="form-control"
                 placeholder="Cari nama, sekolah, email, username..." value="{{ request('cari') }}">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-1">
+              <select name="per_page" class="form-select" data-placeholder="Per/hal.">
+                <option value="10"{{ request('per_page') == '10' || request('status') === null ? 'selected' : '' }}>
+                  10</option>
+                <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>100</option>
+                <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+              </select>
+            </div>
+            <div class="col-md-2">
               <select name="role" class="form-select">
                 <option value="">Semua Role</option>
                 @foreach ($roles as $role)
@@ -60,6 +70,7 @@
             <table class="table table-vcenter table-bordered table-striped">
               <thead>
                 <tr>
+                  <th class="text-center">No</th>
                   <th>Nama</th>
                   <th>Asal Instansi / Sekolah</th>
                   <th>Email</th>
@@ -73,6 +84,7 @@
               <tbody>
                 @forelse($pengguna as $user)
                   <tr>
+                    <td class="text-center">{{ $pengguna->firstItem() + $loop->index }}</td>
                     <td>
                       <div class="d-flex align-items-center">
                         <span class="avatar avatar-sm me-2"
@@ -150,7 +162,7 @@
                 </div>
 
                 <div>
-                  {{ $pengguna->links('vendor.pagination.tabler') }}
+                  {{ $pengguna->appends(request()->query())->links('vendor.pagination.tabler') }}
                 </div>
               </div>
             </div>

@@ -55,10 +55,18 @@ class PenggunaController extends Controller
       $query->where('users.status', $request->status);
     }
 
+    // Filter jumlah data per halaman
+    $perPageOptions = [10, 25, 50, 100, 'all'];
+    $perPage = $request->get('per_page', 10); // Default 10
+
+    if (!in_array($perPage, $perPageOptions) || $perPage === 'all') {
+      $perPage = $query->count(); // Jika 'all', tampilkan semua
+    }
+
     // Sekarang $query sudah termasuk data afiliasi (jika ada)
     // Gunakan with() untuk relasi lain yang diakses di view untuk mencegah N+1
     $pengguna = $query->with(['media', 'roles']) // Tambahkan ini untuk mencegah N+1 pada media dan roles
-      ->latest('users.created_at')->paginate(10);
+      ->latest('users.created_at')->paginate($perPage);
     $roles = Role::all();
 
     return view('sistem.pengguna.index', [

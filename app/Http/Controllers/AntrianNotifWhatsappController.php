@@ -54,8 +54,8 @@ class AntrianNotifWhatsappController extends Controller
     }
 
     // Filter jumlah data per halaman
-    $perPageOptions = [5, 10, 25, 50, 100, 'all'];
-    $perPage = $request->get('per_page', 10); // Default 15
+    $perPageOptions = [10, 25, 50, 100, 'all'];
+    $perPage = $request->get('per_page', 10); // Default 10
 
     if (!in_array($perPage, $perPageOptions) || $perPage === 'all') {
       $perPage = $query->count(); // Jika 'all', tampilkan semua

@@ -32,8 +32,7 @@
               {{-- Filter Jumlah Per Halaman --}}
               <div class="col-auto" style="min-width:130px;">
                 <select name="per_page" class="form-select select2-tabler" data-placeholder="Per/hal.">
-                  <option value="5" {{ request('per_page') == '5' ? 'selected' : '' }}>5</option>
-                  <option value="10"{{ request('per_page') == '10' || request('status') === null ? 'selected' : '' }}>
+                  <option value="10"{{ request('per_page') == '10' || request('status') == null ? 'selected' : '' }}>
                     10</option>
                   <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
                   <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
@@ -99,6 +98,7 @@
           <table class="table table-vcenter table-bordered table-md table-hover">
             <thead>
               <tr>
+                <th class="text-center">No</th>
                 <th class="text-center">ID</th>
                 <th>Pengguna</th>
                 <th>Target</th>
@@ -113,6 +113,7 @@
             <tbody>
               @forelse($antrians as $antrian)
                 <tr>
+                  <td class="text-center">{{ $antrians->firstItem() + $loop->index }}</td>
                   <td>{{ $antrian->antrian_id }}</td>
                   <td>
                     <span class="fw-bold text-nowrap">
