@@ -1,7 +1,11 @@
 @extends('components.theme.error')
-@section('title', 'Eror-503 Layanan Tidak Tersedia')
+@section('title', 'Eror 503 (Layanan Tidak Tersedia)')
 
 @section('container')
-  <h1 class="display-4"><strong>Eror-503</strong> / Layanan Tidak Tersedia</h1>
-  <p class="lead">Sistem sedang maintenance. Untuk sementara layanan belum siap menerima permintaan</p>
+  <div class="empty-img">
+    @include('components.error.illustrations-computer-fix')
+  </div>
+  <p class="empty-title">Eror 503 (Layanan Tidak Tersedia)</p>
+  <p class="empty-subtitle text-secondary">Sistem sedang maintenance. Untuk sementara layanan belum siap menerima
+    permintaan</p>
 @endsection

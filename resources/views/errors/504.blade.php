@@ -1,7 +1,10 @@
 @extends('components.theme.error')
-@section('title', 'Eror-504 Batas Waktu Habis')
+@section('title', 'Eror 504 (Batas Waktu Habis)')
 
 @section('container')
-  <h1 class="display-4"><strong>Eror-504</strong> / Batas Waktu Habis</h1>
-  <p class="lead">Gerbang akses server tidak mampu merespon permintaan Anda</p>
+  <div class="empty-img">
+    @include('components.error.illustrations-computer-fix')
+  </div>
+  <p class="empty-title">Eror 504 (Batas Waktu Habis)</p>
+  <p class="empty-subtitle text-secondary">Gerbang akses server tidak mampu merespon permintaan Anda</p>
 @endsection

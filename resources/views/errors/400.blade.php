@@ -1,7 +1,10 @@
 @extends('components.theme.error')
-@section('title', 'Eror-400 Permintaan Buruk')
+@section('title', 'Eror 400 (Permintaan Buruk)')
 
 @section('container')
-  <h1 class="display-4"><strong>Eror-400</strong> / Permintaan Buruk</h1>
-  <p class="lead">Server tidak dapat merespon permintaan Anda</p>
+  <div class="empty-img">
+    @include('components.error.illustrations-computer-fix')
+  </div>
+  <p class="empty-title">Eror 400 (Permintaan Buruk)</p>
+  <p class="empty-subtitle text-secondary">Server tidak dapat merespon permintaan Anda</p>
 @endsection

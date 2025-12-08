@@ -1,7 +1,10 @@
 @extends('components.theme.error')
-@section('title', 'Eror-502 Gerbang Akses Buruk')
+@section('title', 'Eror 502 (Gerbang Akses Buruk)')
 
 @section('container')
-  <h1 class="display-4"><strong>Eror-502</strong> / Gerbang Akses Buruk</h1>
-  <p class="lead">Permintaan Anda tidak dapat diproses melalui gerbang akses ini</p>
+  <div class="empty-img">
+    @include('components.error.illustrations-computer-fix')
+  </div>
+  <p class="empty-title">Eror 502 (Gerbang Akses Buruk)</p>
+  <p class="empty-subtitle text-secondary">Permintaan Anda tidak dapat diproses melalui gerbang akses ini</p>
 @endsection

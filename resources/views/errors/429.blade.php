@@ -1,7 +1,10 @@
 @extends('components.theme.error')
-@section('title', 'Eror-429 Terlalu Banyak Permintaan')
+@section('title', 'Eror 429 (Terlalu Banyak Permintaan)')
 
 @section('container')
-  <h1 class="display-4"><strong>Eror-429</strong> / Terlalu Banyak Permintaan</h1>
-  <p class="lead">Server membatasi permintaan dari pengguna, silakan coba beberapa saat lagi</p>
+  <div class="empty-img">
+    @include('components.error.illustrations-computer-fix')
+  </div>
+  <p class="empty-title">Eror 429 (Terlalu Banyak Permintaan)</p>
+  <p class="empty-subtitle text-secondary">Server membatasi permintaan dari pengguna, silakan coba beberapa saat lagi</p>
 @endsection
