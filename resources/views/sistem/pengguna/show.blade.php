@@ -37,7 +37,7 @@
                   <div class="row">
                     <div class="col-md-6 mt-3 mt-md-0">
                       <strong>Asal Instansi/Sekolah:</strong><br>
-                      {{ $pengguna->asal_sekolah }}
+                      {{ $pengguna->asal_sekolah ?? $pengguna->afiliasi_nama }}
                     </div>
                     <div class="col-md-6 mt-3 mt-md-0">
                       <strong>Status:</strong><br>
