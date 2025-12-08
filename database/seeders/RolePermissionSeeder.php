@@ -32,6 +32,12 @@ class RolePermissionSeeder extends Seeder
             'pendaftaran_create',
             'pendaftaran_edit',
             'pendaftaran_delete',
+            
+            // Student Registration (Pendaftaran)
+            'antrian_whatsapp_view',
+            'antrian_whatsapp_create',
+            'antrian_whatsapp_edit',
+            'antrian_whatsapp_delete',
 
             // Financial
             'keuangan_view',
