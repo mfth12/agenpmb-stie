@@ -118,7 +118,8 @@
                     <td class="text-center" style="width: 1%;">
                       <div class="btn-list justify-content-center flex-nowrap">
                         @can('user_edit')
-                          <a href="{{ route('pengguna.edit', $user) }}" class="btn btn-sm btn-default" title="Edit">
+                          <a href="{{ route('pengguna.edit', $user) }}" class="btn btn-sm btn-default"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                             Edit
                           </a>
                         @else
@@ -130,7 +131,8 @@
                               class="d-inline delete-form">
                               @csrf
                               @method('DELETE')
-                              <button type="button" class="btn btn-sm btn-default text-danger delete-btn" title="Hapus"
+                              <button type="button" class="btn btn-sm btn-default text-danger delete-btn"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
                                 data-name="{{ $user->name }}">
                                 Hapus
                               </button>
