@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckPermission
 {
-    public function handle(Request $request, Closure $next, $permission): Response
-    {
-        if (!Auth()->check()) {
-            return redirect()->route('login');
-        }
-
-        if (!Auth()->user()->can($permission)) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return $next($request);
+  public function handle(Request $request, Closure $next, $permission): Response
+  {
+    if (!Auth()->check()) {
+      return redirect()->route('login');
     }
+
+    if (!Auth()->user()->can($permission)) {
+      abort(403, 'Unauthorized action.');
+    }
+
+    return $next($request);
+  }
 }

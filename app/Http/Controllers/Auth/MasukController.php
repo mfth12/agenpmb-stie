@@ -26,463 +26,463 @@ use Illuminate\Validation\ValidationException;
 
 class MasukController extends Controller
 {
-    /**
-     * Menampilkan halaman login
-     */
-    public function index(): View|RedirectResponse
-    {
-        if (Auth::check()) {
-            return redirect()->route('dashboard.index');
-        }
-
-        return view('sistem.masuk', [
-            'title' => 'Masuk ' . konfigs('NAMA_SISTEM_ALIAS'),
-        ]);
+  /**
+   * Menampilkan halaman login
+   */
+  public function index(): View|RedirectResponse
+  {
+    if (Auth::check()) {
+      return redirect()->route('dashboard.index');
     }
 
-    /**
-     * Proses login menggunakan API SIAKAD atau lokal
-     */
-    public function masuk(LoginRequest $request): RedirectResponse
-    {
-        // Rate limit dulu berdasarkan username + IP
-        $throttleKey  = Str::transliterate(Str::lower($request->string('username')) . '|' . $request->ip());
-        $maxAttempts  = (int) env('LOGIN_MAX_ATTEMPTS', 3);
-        $decaySeconds = (int) env('LOGIN_DECAY_SECONDS', 120);
+    return view('sistem.masuk', [
+      'title' => 'Masuk ' . konfigs('NAMA_SISTEM_ALIAS'),
+    ]);
+  }
 
-        // --- LOGIKA RATE LIMITING DENGAN LOGGING ---
-        if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
-            event(new Lockout($request));
-            $seconds = RateLimiter::availableIn($throttleKey);
+  /**
+   * Proses login menggunakan API SIAKAD atau lokal
+   */
+  public function masuk(LoginRequest $request): RedirectResponse
+  {
+    // Rate limit dulu berdasarkan username + IP
+    $throttleKey  = Str::transliterate(Str::lower($request->string('username')) . '|' . $request->ip());
+    $maxAttempts  = (int) env('LOGIN_MAX_ATTEMPTS', 3);
+    $decaySeconds = (int) env('LOGIN_DECAY_SECONDS', 120);
 
-            // Log kejadian rate limit
-            $this->logAction(
-                'warning',
-                'Rate limiter aktif "' . $request->username . '"',
-                [
-                    'username'      => $request->username ?? 'Tidak diketahui',
-                    'ip_address'    => $request->ip(),
-                    'waiting_time'  => $seconds . ' detik',
-                    'user_agent'    => $request->userAgent(),
-                ]
-            );
+    // --- LOGIKA RATE LIMITING DENGAN LOGGING ---
+    if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
+      event(new Lockout($request));
+      $seconds = RateLimiter::availableIn($throttleKey);
 
-            throw ValidationException::withMessages([
-                'masuk' => 'Silakan coba lagi dalam <span id="countdown" style="margin: -10px">' . $seconds . '</span> detik.',
-            ]);
-        }
-        // --- END LOGIKA RATE LIMITING ---
+      // Log kejadian rate limit
+      $this->logAction(
+        'warning',
+        'Rate limiter aktif "' . $request->username . '"',
+        [
+          'username'      => $request->username ?? 'Tidak diketahui',
+          'ip_address'    => $request->ip(),
+          'waiting_time'  => $seconds . ' detik',
+          'user_agent'    => $request->userAgent(),
+        ]
+      );
 
-        // Ambil kredensial
-        $credentials = $request->only(['username', 'password', 'via_siakad']);
+      throw ValidationException::withMessages([
+        'masuk' => 'Silakan coba lagi dalam <span id="countdown" style="margin: -10px">' . $seconds . '</span> detik.',
+      ]);
+    }
+    // --- END LOGIKA RATE LIMITING ---
 
-        // Cek status via_siakad
-        return $credentials['via_siakad'] == 1
-            ? $this->loginViaSiakad($request, $credentials, $throttleKey, $decaySeconds)
-            : $this->loginLocal($request, $credentials, $throttleKey, $decaySeconds);
+    // Ambil kredensial
+    $credentials = $request->only(['username', 'password', 'via_siakad']);
+
+    // Cek status via_siakad
+    return $credentials['via_siakad'] == 1
+      ? $this->loginViaSiakad($request, $credentials, $throttleKey, $decaySeconds)
+      : $this->loginLocal($request, $credentials, $throttleKey, $decaySeconds);
+  }
+
+  /**
+   * Login via API SIAKAD
+   */
+  protected function loginViaSiakad(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
+  {
+    // Lakukan try catch ke endpoint API SIAKAD
+    try {
+      $response = Http::timeout(10)->post(
+        rtrim(env('URL_API_SIAKAD'), '/') . '/api/v2/auth/login',
+        [
+          'username' => $credentials['username'],
+          'password' => $credentials['password']
+        ]
+      );
+    } catch (Exception $e) {
+      // Hit rate limiter jika gagal koneksi
+      RateLimiter::hit($throttleKey, $decaySeconds);
+
+      // Log error koneksi
+      $this->logAction(
+        'error',
+        'Gagal menghubungi layanan Siakad untuk login via API Siakad',
+        [
+          'username' => $credentials['username'],
+          'ip_address' => $request->ip(),
+          'error' => $e->getMessage(),
+          'user_agent' => $request->userAgent(),
+        ]
+      );
+
+      return back()->withErrors(['koneksi' => 'Gagal menghubungi layanan Siakad.']);
     }
 
-    /**
-     * Login via API SIAKAD
-     */
-    protected function loginViaSiakad(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
-    {
-        // Lakukan try catch ke endpoint API SIAKAD
-        try {
-            $response = Http::timeout(10)->post(
-                rtrim(env('URL_API_SIAKAD'), '/') . '/api/v2/auth/login',
-                [
-                    'username' => $credentials['username'],
-                    'password' => $credentials['password']
-                ]
-            );
-        } catch (Exception $e) {
-            // Hit rate limiter jika gagal koneksi
-            RateLimiter::hit($throttleKey, $decaySeconds);
+    $data = $response->json();
 
-            // Log error koneksi
-            $this->logAction(
-                'error',
-                'Gagal menghubungi layanan Siakad untuk login via API Siakad',
-                [
-                    'username' => $credentials['username'],
-                    'ip_address' => $request->ip(),
-                    'error' => $e->getMessage(),
-                    'user_agent' => $request->userAgent(),
-                ]
-            );
+    // Verifikasi Turnstile
+    if (!$this->handleTurnstileValidation($request)) {
+      // Log kegagalan turnstile
+      $this->logAction(
+        'warning',
+        'Verifikasi keamanan Turnstile gagal untuk login via API Siakad',
+        [
+          'username' => $credentials['username'],
+          'ip_address' => $request->ip(),
+          'user_agent' => $request->userAgent(),
+        ]
+      );
+      return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
+    }
 
-            return back()->withErrors(['koneksi' => 'Gagal menghubungi layanan Siakad.']);
-        }
+    // Jika login berhasil
+    if ($response->successful() && isset($data['access_token'], $data['user'])) {
+      RateLimiter::clear($throttleKey);
 
-        $data = $response->json();
+      $access_token = $data['access_token'];
+      $userData     = $data['user'];
 
-        // Verifikasi Turnstile
-        if (!$this->handleTurnstileValidation($request)) {
-            // Log kegagalan turnstile
-            $this->logAction(
-                'warning',
-                'Verifikasi keamanan Turnstile gagal untuk login via API Siakad',
-                [
-                    'username' => $credentials['username'],
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ]
-            );
-            return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
-        }
-
-        // Jika login berhasil
-        if ($response->successful() && isset($data['access_token'], $data['user'])) {
-            RateLimiter::clear($throttleKey);
-
-            $access_token = $data['access_token'];
-            $userData     = $data['user'];
-
-            // Validasi, status user harus aktif
-            if (!in_array($userData['status'], ['active', 1, '1'], true)) {
-                // Log login gagal karena status tidak aktif
-                $this->logAction(
-                    'warning',
-                    'Login via API gagal, akun tidak aktif',
-                    [
-                        'username' => $userData['username'] ?? $credentials['username'],
-                        'siakad_id' => $userData['id'],
-                        'ip_address' => $request->ip(),
-                        'user_agent' => $request->userAgent(),
-                    ]
-                );
-                return back()->withErrors(['masuk' => 'Akun Siakad Anda tidak aktif.']);
-            }
-
-            // Cari atau buat user di sistem
-            $user = User::updateOrCreate(
-                ['siakad_id' => $userData['id']],
-                [
-                    'siakad_id'         => $userData['id'],
-                    'username'          => $userData['username'],
-                    'password'          => null, // Jangan simpan password dari Siakad
-                    'email'             => $userData['email'] ?? null,
-                    'name'              => $userData['name'] ?? '',
-                    'nomor_hp'          => $userData['nomor_hp'] ?? '',
-                    'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
-                    'email_verified_at' => $userData['email_verified_at'] ?? null,
-                    'about'             => $userData['about'] ?? null,
-                    'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
-                    'theme'             => $userData['theme'] ?? 'default',
-                    'avatar'            => $userData['avatar'] ?? null,
-                    'status'            => $userData['status'] ?? 'active',
-                    'status_login'      => 'online',
-                    'isdeleted'         => $userData['isdeleted'] ?? false,
-                    'last_logged_in'    => Carbon::now(),
-                    'last_synced_at'    => Carbon::now(),
-                ]
-            );
-
-            // Assign role berdasarkan default_role dari Siakad
-            $mitra_role = $userData['default_role'] ?? 'mitra'; // Ganti 'mitra' sesuai kebutuhan default
-            $mitra_role = is_array($mitra_role) ? $mitra_role : [$mitra_role];
-            $user->syncRoles($mitra_role);
-
-            // Simpan access_token ke session
-            Session::put('api_access_token', $access_token);
-            Session::put('api_userroles', $userData['roles'] ?? []);
-
-            Auth::login($user);
-
-            // Log login sukses via API
-            $this->logAction(
-                'info',
-                'Login via API Siakad berhasil',
-                [
-                    'user_id' => $user->user_id,
-                    'username' => $user->username,
-                    'name' => $user->name,
-                    'siakad_id' => $user->siakad_id,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ]
-            );
-
-            // Kirim notifikasi WhatsApp setelah login berhasil
-            $this->sendLoginNotification($user, $request, $from = 'siakad');
-
-            return redirect()->intended(route('dashboard.index'));
-        }
-
-        // Hit jika gagal login (gagal auth API)
-        RateLimiter::hit($throttleKey, $decaySeconds);
-
-        // Log login gagal via API
+      // Validasi, status user harus aktif
+      if (!in_array($userData['status'], ['active', 1, '1'], true)) {
+        // Log login gagal karena status tidak aktif
         $this->logAction(
-            'alert',
-            'Login via API Siakad gagal',
-            [
-                'username' => $credentials['username'],
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'api_response' => $data, // Log respons API jika relevan
-            ]
+          'warning',
+          'Login via API gagal, akun tidak aktif',
+          [
+            'username' => $userData['username'] ?? $credentials['username'],
+            'siakad_id' => $userData['id'],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+          ]
         );
+        return back()->withErrors(['masuk' => 'Akun Siakad Anda tidak aktif.']);
+      }
 
-        // Tampilkan error dari API
-        $errorMessage = 'Tidak dapat melakukan otentikasi';
-        if (!empty($data['message'])) {
-            $errorMessage = is_array($data['message'])
-                ? implode('. ', array_map(fn($msg) => implode(' ', (array) $msg), $data['message']))
-                : $data['message'];
-        }
+      // Cari atau buat user di sistem
+      $user = User::updateOrCreate(
+        ['siakad_id' => $userData['id']],
+        [
+          'siakad_id'         => $userData['id'],
+          'username'          => $userData['username'],
+          'password'          => null, // Jangan simpan password dari Siakad
+          'email'             => $userData['email'] ?? null,
+          'name'              => $userData['name'] ?? '',
+          'nomor_hp'          => $userData['nomor_hp'] ?? '',
+          'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
+          'email_verified_at' => $userData['email_verified_at'] ?? null,
+          'about'             => $userData['about'] ?? null,
+          'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
+          'theme'             => $userData['theme'] ?? 'default',
+          'avatar'            => $userData['avatar'] ?? null,
+          'status'            => $userData['status'] ?? 'active',
+          'status_login'      => 'online',
+          'isdeleted'         => $userData['isdeleted'] ?? false,
+          'last_logged_in'    => Carbon::now(),
+          'last_synced_at'    => Carbon::now(),
+        ]
+      );
 
-        return back()->withErrors(['masuk' => $errorMessage . '.']);
+      // Assign role berdasarkan default_role dari Siakad
+      $mitra_role = $userData['default_role'] ?? 'mitra'; // Ganti 'mitra' sesuai kebutuhan default
+      $mitra_role = is_array($mitra_role) ? $mitra_role : [$mitra_role];
+      $user->syncRoles($mitra_role);
+
+      // Simpan access_token ke session
+      Session::put('api_access_token', $access_token);
+      Session::put('api_userroles', $userData['roles'] ?? []);
+
+      Auth::login($user);
+
+      // Log login sukses via API
+      $this->logAction(
+        'info',
+        'Login via API Siakad berhasil',
+        [
+          'user_id' => $user->user_id,
+          'username' => $user->username,
+          'name' => $user->name,
+          'siakad_id' => $user->siakad_id,
+          'ip_address' => $request->ip(),
+          'user_agent' => $request->userAgent(),
+        ]
+      );
+
+      // Kirim notifikasi WhatsApp setelah login berhasil
+      $this->sendLoginNotification($user, $request, $from = 'siakad');
+
+      return redirect()->intended(route('dashboard.index'));
     }
 
-    /**
-     * Login lokal ke database user
-     */
-    protected function loginLocal(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
-    {
-        // Verifikasi Turnstile untuk login lokal juga
-        if (!$this->handleTurnstileValidation($request)) {
-            // Log kegagalan turnstile untuk login lokal
-            $this->logAction(
-                'warning',
-                'Verifikasi keamanan Turnstile gagal untuk login lokal',
-                [
-                    'username' => $credentials['username'],
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ]
-            );
-            return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
-        }
+    // Hit jika gagal login (gagal auth API)
+    RateLimiter::hit($throttleKey, $decaySeconds);
 
-        // Coba login dengan kredensial lokal
-        if (
-            Auth::attempt([
-                'username' => $credentials['username'],
-                'password' => $credentials['password'],
-            ], $request->boolean('remember'))
-        ) {
-            RateLimiter::clear($throttleKey);
+    // Log login gagal via API
+    $this->logAction(
+      'alert',
+      'Login via API Siakad gagal',
+      [
+        'username' => $credentials['username'],
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+        'api_response' => $data, // Log respons API jika relevan
+      ]
+    );
 
-            $user = Auth::user();
-
-            // Validasi ulang (antisipasi jika status berubah setelah attempt)
-            if (!in_array($user->status, ['active', 1, '1'], true)) {
-                Auth::logout();
-                // Log logout karena status tidak aktif setelah login
-                $this->logAction(
-                    'warning',
-                    'Login lokal sukses tetapi akun tidak aktif, logout otomatis',
-                    [
-                        'user_id' => $user->user_id,
-                        'username' => $user->username,
-                        'name' => $user->name,
-                        'status' => $user->status,
-                        'ip_address' => $request->ip(),
-                        'user_agent' => $request->userAgent(),
-                    ]
-                );
-                return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
-            }
-
-            // Update last logged in
-            $user->update(['last_logged_in' => Carbon::now()]);
-
-            // Log login sukses lokal
-            $this->logAction(
-                'info',
-                'Login lokal berhasil',
-                [
-                    'user_id' => $user->user_id,
-                    'username' => $user->username,
-                    'name' => $user->name,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ]
-            );
-
-            // Kirim notifikasi WhatsApp setelah login berhasil
-            $this->sendLoginNotification($user, $request, $from = 'local');
-
-            return redirect()->intended(route('dashboard.index'));
-        }
-
-        // Hit jika gagal login (gagal auth lokal)
-        RateLimiter::hit($throttleKey, $decaySeconds);
-
-        // Log login gagal lokal
-        $this->logAction(
-            'alert',
-            'Login lokal gagal (username/password salah)',
-            [
-                'username' => $credentials['username'],
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]
-        );
-
-        return back()->withErrors([
-            'masuk' => 'Username atau password salah.',
-        ]);
+    // Tampilkan error dari API
+    $errorMessage = 'Tidak dapat melakukan otentikasi';
+    if (!empty($data['message'])) {
+      $errorMessage = is_array($data['message'])
+        ? implode('. ', array_map(fn($msg) => implode(' ', (array) $msg), $data['message']))
+        : $data['message'];
     }
 
-    /**
-     * Menambahkan notifikasi whatsapp ke daftar antrian
-     */
-    protected function notifikasiWhatsapp($user, $pesan)
-    {
-        $nomor_wa = $user->nomor_hp2 ?? $user->nomor_hp;
-        // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
-        if ($user->nomor_hp == $user->nomor_hp2) {
-            $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2
-        }
-        $antrian = AntrianNotifWhatsappModel::create([
-            'user_id'   => $user->user_id,
-            'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
-            'target'    => $nomor_wa,
-            'tipe'      => 'text',
-            'isi_pesan' => $pesan,
-            'status'    => 0,
-        ]);
+    return back()->withErrors(['masuk' => $errorMessage . '.']);
+  }
 
-        // dispatch ke queue whatsapp
-        NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
-        // log whatsapp
-        Log::channel('whatsapp')->info("NotifWhatsapp (login {$user->name}) berhasil masuk antrian", [
-            'user_id'     => $user->user_id,
-            'to'          => $nomor_wa, // Log nomor yang digunakan
-            'antrian_id'  => $antrian->antrian_id,
-        ]);
+  /**
+   * Login lokal ke database user
+   */
+  protected function loginLocal(LoginRequest $request, array $credentials, string $throttleKey, int $decaySeconds): RedirectResponse
+  {
+    // Verifikasi Turnstile untuk login lokal juga
+    if (!$this->handleTurnstileValidation($request)) {
+      // Log kegagalan turnstile untuk login lokal
+      $this->logAction(
+        'warning',
+        'Verifikasi keamanan Turnstile gagal untuk login lokal',
+        [
+          'username' => $credentials['username'],
+          'ip_address' => $request->ip(),
+          'user_agent' => $request->userAgent(),
+        ]
+      );
+      return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
     }
 
-    /**
-     * Proses logout
-     */
-    public function keluar(Request $request): RedirectResponse
-    {
-        // Update status login user
-        if (Auth::check()) {
-            Auth::user()->update(['status_login' => 'offline']);
-        }
+    // Coba login dengan kredensial lokal
+    if (
+      Auth::attempt([
+        'username' => $credentials['username'],
+        'password' => $credentials['password'],
+      ], $request->boolean('remember'))
+    ) {
+      RateLimiter::clear($throttleKey);
 
-        $user = Auth::user();
+      $user = Auth::user();
 
-        // Hapus session
-        Session::forget(['api_access_token', 'api_userroles']);
+      // Validasi ulang (antisipasi jika status berubah setelah attempt)
+      if (!in_array($user->status, ['active', 1, '1'], true)) {
         Auth::logout();
-
-        // Log logout 
+        // Log logout karena status tidak aktif setelah login
         $this->logAction(
-            'info',
-            'Pengguna berhasil logout',
-            [
-                'user_id' => $user->user_id,
-                'username' => $user->username,
-                'name' => $user->name,
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]
+          'warning',
+          'Login lokal sukses tetapi akun tidak aktif, logout otomatis',
+          [
+            'user_id' => $user->user_id,
+            'username' => $user->username,
+            'name' => $user->name,
+            'status' => $user->status,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+          ]
         );
-        return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
+        return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
+      }
+
+      // Update last logged in
+      $user->update(['last_logged_in' => Carbon::now()]);
+
+      // Log login sukses lokal
+      $this->logAction(
+        'info',
+        'Login lokal berhasil',
+        [
+          'user_id' => $user->user_id,
+          'username' => $user->username,
+          'name' => $user->name,
+          'ip_address' => $request->ip(),
+          'user_agent' => $request->userAgent(),
+        ]
+      );
+
+      // Kirim notifikasi WhatsApp setelah login berhasil
+      $this->sendLoginNotification($user, $request, $from = 'local');
+
+      return redirect()->intended(route('dashboard.index'));
     }
+
+    // Hit jika gagal login (gagal auth lokal)
+    RateLimiter::hit($throttleKey, $decaySeconds);
+
+    // Log login gagal lokal
+    $this->logAction(
+      'alert',
+      'Login lokal gagal (username/password salah)',
+      [
+        'username' => $credentials['username'],
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+      ]
+    );
+
+    return back()->withErrors([
+      'masuk' => 'Username atau password salah.',
+    ]);
+  }
+
+  /**
+   * Menambahkan notifikasi whatsapp ke daftar antrian
+   */
+  protected function notifikasiWhatsapp($user, $pesan)
+  {
+    $nomor_wa = $user->nomor_hp2 ?? $user->nomor_hp;
+    // Jika nomor_hp dan nomor_hp2 sama, gunakan salah satunya
+    if ($user->nomor_hp == $user->nomor_hp2) {
+      $nomor_wa = $user->nomor_hp2; // $user->nomor_hp2
+    }
+    $antrian = AntrianNotifWhatsappModel::create([
+      'user_id'   => $user->user_id,
+      'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
+      'target'    => $nomor_wa,
+      'tipe'      => 'text',
+      'isi_pesan' => $pesan,
+      'status'    => 0,
+    ]);
+
+    // dispatch ke queue whatsapp
+    NotifWhatsappJob::dispatch($antrian)->onQueue('whatsapp');
+    // log whatsapp
+    Log::channel('whatsapp')->info("NotifWhatsapp (login {$user->name}) berhasil masuk antrian", [
+      'user_id'     => $user->user_id,
+      'to'          => $nomor_wa, // Log nomor yang digunakan
+      'antrian_id'  => $antrian->antrian_id,
+    ]);
+  }
+
+  /**
+   * Proses logout
+   */
+  public function keluar(Request $request): RedirectResponse
+  {
+    // Update status login user
+    if (Auth::check()) {
+      Auth::user()->update(['status_login' => 'offline']);
+    }
+
+    $user = Auth::user();
+
+    // Hapus session
+    Session::forget(['api_access_token', 'api_userroles']);
+    Auth::logout();
+
+    // Log logout 
+    $this->logAction(
+      'info',
+      'Pengguna berhasil logout',
+      [
+        'user_id' => $user->user_id,
+        'username' => $user->username,
+        'name' => $user->name,
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+      ]
+    );
+    return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
+  }
 
 /////// --- FUNGSI PEMBANTU BARU UNTUK MENGURANGI DUPLIKASI --->
 /////// --- FUNGSI PEMBANTU BARU UNTUK MENGURANGI DUPLIKASI --->
 
-    /**
-     * Handle Turnstile validation logic.
-     * Returns true if validation passes, false otherwise.
-     */
-    private function handleTurnstileValidation(LoginRequest $request)
-    {
-        if (!env('USING_TURNSTILE', true)) {
-            return true; // Bypass if Turnstile is disabled
-        }
-
-        $turnstileResponse = $request->input('cf-turnstile-response');
-        if (!$turnstileResponse) {
-            return false; // Tidak ada respons turnstile
-        }
-
-        return $this->validateTurnstile($turnstileResponse, $request->ip());
+  /**
+   * Handle Turnstile validation logic.
+   * Returns true if validation passes, false otherwise.
+   */
+  private function handleTurnstileValidation(LoginRequest $request)
+  {
+    if (!env('USING_TURNSTILE', true)) {
+      return true; // Bypass if Turnstile is disabled
     }
 
-    /**
-     * Fungsi untuk memverifikasi Turnstile.
-     */
-    protected function validateTurnstile(string $response, string $ip): bool
-    {
-        $apiResponse = Http::asForm()->post(
-            'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
-            [
-                'secret'   => env('TURNSTILE_SECRET_KEY'),
-                'response' => $response,
-                'remoteip' => $ip,
-            ]
-        );
-
-        return $apiResponse->json('success', false);
+    $turnstileResponse = $request->input('cf-turnstile-response');
+    if (!$turnstileResponse) {
+      return false; // Tidak ada respons turnstile
     }
 
-    /**
-     * Send login notification via WhatsApp with cache guard.
-     */
-    private function sendLoginNotification($user, $request, $from): void
-    {
-        $sessionLifetime = (int) env('SESSION_LIFETIME', 120); // menit
-        $ip = $request->ip(); // Ambil IP user
-        $cacheKey = 'notif_wa_login_' . $user->user_id . '_' . $ip; // Gunakan $user->user_id bukan $user->user_id
+    return $this->validateTurnstile($turnstileResponse, $request->ip());
+  }
 
-        // Jika cache ada, langsung SKIP pengiriman notifikasi
-        if (Cache::has($cacheKey)) {
-            return; // Keluar dari fungsi jika sudah pernah dikirim dalam periode ini
-        }
+  /**
+   * Fungsi untuk memverifikasi Turnstile.
+   */
+  protected function validateTurnstile(string $response, string $ip): bool
+  {
+    $apiResponse = Http::asForm()->post(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify', // Perhatikan spasi di akhir URL sebelumnya
+      [
+        'secret'   => env('TURNSTILE_SECRET_KEY'),
+        'response' => $response,
+        'remoteip' => $ip,
+      ]
+    );
 
-        try {
-            // Pesan WhatsApp
-            $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-            $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
-            $pesan = "🔸Selamat " . $greeting . ", {$user->name}.\n"
-                . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *"
-                . konfigs('NAMA_SISTEM') . "* pada:\n" . "{$waktu}\n" . "\n"
-                . "Jika aktivitas ini mencurigakan, segera lakukan langkah pengamanan pada Akun Anda.";
-            $this->notifikasiWhatsapp($user, $pesan);
-        } catch (Throwable $e) {
-            Log::channel('whatsapp')->warning('Gagal masuk antrian notif whatsapp (login)', [
-                'err'     => $e->getMessage(),
-                'user_id' => $user->user_id ?? null
-            ]);
-        }
+    return $apiResponse->json('success', false);
+  }
 
-        // Simpan flag cache per user per IP, agar tidak kirim lagi dalam masa SESSION_LIFETIME
-        Cache::put($cacheKey, true, now()->addMinutes($sessionLifetime));
+  /**
+   * Send login notification via WhatsApp with cache guard.
+   */
+  private function sendLoginNotification($user, $request, $from): void
+  {
+    $sessionLifetime = (int) env('SESSION_LIFETIME', 120); // menit
+    $ip = $request->ip(); // Ambil IP user
+    $cacheKey = 'notif_wa_login_' . $user->user_id . '_' . $ip; // Gunakan $user->user_id bukan $user->user_id
+
+    // Jika cache ada, langsung SKIP pengiriman notifikasi
+    if (Cache::has($cacheKey)) {
+      return; // Keluar dari fungsi jika sudah pernah dikirim dalam periode ini
     }
+
+    try {
+      // Pesan WhatsApp
+      $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
+      $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
+      $pesan = "🔸Selamat " . $greeting . ", {$user->name}.\n"
+        . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *"
+        . konfigs('NAMA_SISTEM') . "* pada:\n" . "{$waktu}\n" . "\n"
+        . "Jika aktivitas ini mencurigakan, segera lakukan langkah pengamanan pada Akun Anda.";
+      $this->notifikasiWhatsapp($user, $pesan);
+    } catch (Throwable $e) {
+      Log::channel('whatsapp')->warning('Gagal masuk antrian notif whatsapp (login)', [
+        'err'     => $e->getMessage(),
+        'user_id' => $user->user_id ?? null
+      ]);
+    }
+
+    // Simpan flag cache per user per IP, agar tidak kirim lagi dalam masa SESSION_LIFETIME
+    Cache::put($cacheKey, true, now()->addMinutes($sessionLifetime));
+  }
 
     // FUNGSI PEMBANTU BARU UNTUK LOGGING ---
-    /**
-     * Fungsi untuk mencatat log aksi pengguna ke channel 'masuk'.
-     */
-    protected function logAction($level, $message, $context = [])
-    {
-        // Tambahkan informasi waktu ke context
-        $context['time'] = now()->toDateTimeString();
+  /**
+   * Fungsi untuk mencatat log aksi pengguna ke channel 'masuk'.
+   */
+  protected function logAction($level, $message, $context = [])
+  {
+    // Tambahkan informasi waktu ke context
+    $context['time'] = now()->toDateTimeString();
 
-        // Tambahkan detail user agent
-        $agent = new Agent();
-        $deviceType = $agent->isMobile() ? 'Mobile' : ($agent->isTablet() ? 'Tablet' : 'Desktop');
-        $platform = $agent->platform() ?? 'Unknown';   // Windows, macOS, Android, iOS, Linux
-        $browser  = $agent->browser() ?? 'Unknown';    // Chrome, Firefox, Safari, dll
+    // Tambahkan detail user agent
+    $agent = new Agent();
+    $deviceType = $agent->isMobile() ? 'Mobile' : ($agent->isTablet() ? 'Tablet' : 'Desktop');
+    $platform = $agent->platform() ?? 'Unknown';   // Windows, macOS, Android, iOS, Linux
+    $browser  = $agent->browser() ?? 'Unknown';    // Chrome, Firefox, Safari, dll
 
-        $context['user_agent'] = [
-            'raw'       => request()->userAgent(), // Ambil dari request saat ini
-            'device'    => $deviceType,
-            'platform'  => $platform,
-            'browser'   => $browser,
-        ];
+    $context['user_agent'] = [
+      'raw'       => request()->userAgent(), // Ambil dari request saat ini
+      'device'    => $deviceType,
+      'platform'  => $platform,
+      'browser'   => $browser,
+    ];
 
-        // Catat log ke channel 'masuk'
-        Log::channel('masuk')->$level($message, $context);
-    }
-    // --- END FUNGSI PEMBANTU ---
+    // Catat log ke channel 'masuk'
+    Log::channel('masuk')->$level($message, $context);
+  }
+  // --- END FUNGSI PEMBANTU ---
 }
