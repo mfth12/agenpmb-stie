@@ -131,6 +131,8 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('permission:antrian_whatsapp_edit');
         Route::put('/{antrian}', [AntrianNotifWhatsappController::class, 'update'])->name('antrian-notif-whatsapp.update')
             ->middleware('permission:antrian_whatsapp_edit');
+        Route::post('/all/hapus', [AntrianNotifWhatsappController::class, 'destroyAll'])->name('antrian-notif-whatsapp.destroy-all')
+            ->middleware('permission:antrian_whatsapp_delete');
         Route::delete('/{antrian}', [AntrianNotifWhatsappController::class, 'destroy'])->name('antrian-notif-whatsapp.destroy')
             ->middleware('permission:antrian_whatsapp_delete');
         Route::post('/{antrian}/retry', [AntrianNotifWhatsappController::class, 'retry'])->name('antrian-notif-whatsapp.retry')

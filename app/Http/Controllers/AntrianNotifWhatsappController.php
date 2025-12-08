@@ -253,6 +253,52 @@ class AntrianNotifWhatsappController extends Controller
   }
 
   /**
+   * Remove all notifications from the queue.
+   */
+  public function destroyAll(Request $request): RedirectResponse
+  {
+    // Authorization check - gunakan permission check
+    if (!auth()->user()->can('antrian_whatsapp_delete')) {
+      abort(403, 'Unauthorized action.');
+    }
+
+    try {
+      // Gunakan transaction untuk keamanan data
+      DB::transaction(function () {
+
+        // Hitung jumlah data sebelum truncate (truncate tidak mengembalikan jumlah row)
+        $countBefore = AntrianNotifWhatsappModel::count();
+
+        // Hapus semua data dari tabel antrian_notif_whatsapps
+        // truncate() lebih cepat untuk menghapus semua data
+        AntrianNotifWhatsappModel::truncate();
+
+        // Log jumlah data yang dihapus
+        Log::channel('whatsapp')->info("Semua antrian notifikasi WhatsApp berhasil dihapus.", [
+          'jumlah_dihapus' => $countBefore,
+          'user_id'        => auth()->id(),
+          'username'       => auth()->user()->username,
+        ]);
+      });
+
+      // Kembalikan RedirectResponse
+      return redirect()->route('antrian-notif-whatsapp.index')
+        ->with('success', 'Semua notifikasi WhatsApp berhasil dihapus.');
+    } catch (Exception $e) {
+
+      Log::channel('whatsapp')->error('Gagal menghapus semua data notifikasi WhatsApp: ' . $e->getMessage(), [
+        'user_id'  => auth()->id(),
+        'username' => auth()->user()->username,
+      ]);
+
+      // Kembalikan RedirectResponse dengan error
+      return redirect()->back()
+        ->withErrors(['general' => 'Gagal menghapus semua data. Silakan coba lagi.']);
+    }
+  }
+
+
+  /**
    * Retry sending the message for a specific queue item.
    * Only retry if status is 'failed' or 'dead'.
    */

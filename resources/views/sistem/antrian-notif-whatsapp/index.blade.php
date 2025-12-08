@@ -8,15 +8,24 @@
           <h2 class="page-title">Notifikasi WhatsApp</h2>
           <div class="page-pretitle">Pesan whatsapp yang diproses sistem</div>
         </div>
-        <div class="col-auto ms-auto d-print-none">
-          <div class="btn-list">
-            @can('antrian_whatsapp_create')
-              <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary">
-                <i class="ti ti-send fs-2 me-2"></i>
-                Pesan Baru
-              </a>
-            @endcan
-          </div>
+        <div class="col-4 col-md-auto ms-auto d-print-none">
+          @can('antrian_whatsapp_create')
+            <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary">
+              <i class="ti ti-send fs-2 me-2"></i>
+              Pesan Baru
+            </a>
+          @endcan
+          @can('antrian_whatsapp_delete')
+            <a href="#" class="btn btn-danger mt-2 mt-md-0" id="hapus-semua-btn">
+              <i class="ti ti-trash fs-2 me-2"></i>
+              Hapus Semua
+            </a>
+            <form id="hapus-semua-form" action="{{ route('antrian-notif-whatsapp.destroy-all') }}" method="POST"
+              class="d-none">
+              @csrf
+              @method('POST')
+            </form>
+          @endcan
         </div>
       </div>
     </div>
@@ -205,7 +214,7 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="9" class="text-center py-4">
+                  <td colspan="10" class="text-center py-4">
                     <div class="empty">
                       <div class=" mb-2">
                         <i class="ti ti-message-circle fs-1"></i>
@@ -214,8 +223,8 @@
                       <p class="empty-subtitle text-muted">Belum ada pesan yang masuk ke antrian.</p>
                       <div class="empty-action">
                         <a href="{{ route('antrian-notif-whatsapp.create') }}" class="btn btn-primary">
-                          <i class="ti ti-plus fs-2 me-1"></i>
-                          Buat Antrian Baru
+                          <i class="ti ti-send fs-2 me-2"></i>
+                          Pesan Baru
                         </a>
                       </div>
                     </div>
@@ -245,6 +254,7 @@
 @section('js_bawah')
   <script>
     $(document).ready(function() {
+      // Inisialisasi Select2
       $('.select2-tabler').select2({
         theme: 'bootstrap-5',
         width: '100%',
@@ -255,6 +265,29 @@
             return "Tidak ditemukan";
           }
         },
+      });
+
+      // --- SCRIPT UNTUK HAPUS SEMUA ---
+      // Gunakan event delegation untuk memastikan event tetap aktif setelah reload
+      $(document).on('click', '#hapus-semua-btn', function(e) {
+        e.preventDefault(); // Mencegah aksi default dari link
+
+        // Gunakan SweetAlert2 untuk konfirmasi
+        Swal.fire({
+          title: 'Konfirmasi Hapus Semua',
+          text: "Anda yakin ingin menghapus SELURUH data notifikasi WhatsApp dari antrian? Tindakan ini tidak dapat dibatalkan!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33', // Merah untuk bahaya
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Ya, Hapus Semua!',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Submit form DELETE tanpa AJAX
+            document.getElementById('hapus-semua-form').submit();
+          }
+        });
       });
     });
   </script>
