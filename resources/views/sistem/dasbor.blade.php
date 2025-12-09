@@ -18,12 +18,12 @@
               </a>
             @endcan
 
-            @can('user_view')
+            {{-- @can('user_view')
               <a href="{{ route('pengguna.index') }}" class="btn btn-default">
                 <i class="ti ti-users fs-2 me-2"></i>
                 Kelola Pengguna
               </a>
-            @endcan
+            @endcan --}}
 
             {{-- @can('approval_view')
               <a href="{{ route('approval.index') }}" class="btn btn-default">
