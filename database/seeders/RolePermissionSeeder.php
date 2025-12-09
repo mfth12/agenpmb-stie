@@ -34,6 +34,7 @@ class RolePermissionSeeder extends Seeder
             'pendaftaran_delete',
 
             // Jika ingin permission lebih spesifik
+            'laporan_view',
             'statistik_view',
             'laporan_generate_pdf',
             'laporan_filter',
@@ -68,6 +69,9 @@ class RolePermissionSeeder extends Seeder
             'pendaftaran_edit',
             'pendaftaran_delete',
             'user_view',
+            'statistik_view',
+            'laporan_generate_pdf',
+            'laporan_filter',
         ]);
 
         $mitra = Role::firstOrCreate(['name' => 'mitra']); // Menggunakan firstOrCreate untuk konsistensi dengan UserSeeder
@@ -77,6 +81,9 @@ class RolePermissionSeeder extends Seeder
             'pendaftaran_create',
             'pendaftaran_edit',
             'pendaftaran_delete',
+            'statistik_view',
+            'laporan_generate_pdf',
+            'laporan_filter',
         ]);
 
         $keuangan = Role::create(['name' => 'keuangan']);

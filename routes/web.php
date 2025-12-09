@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DasborController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\Auth\MasukController;
 use App\Http\Controllers\KonfigurasiController;
@@ -120,6 +121,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/sync-new/{id_calon_mahasiswa}', [PendaftaranController::class, 'syncNew'])->name('pendaftaran.syncNew');
     });
 
+    // Group untuk laporan/statistik - hanya untuk role yang diizinkan
+    Route::prefix('laporan')->middleware(['permission:laporan_view'])->group(function () {
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/data', [LaporanController::class, 'data'])->name('laporan.data'); // Untuk DataTables
+        Route::post('/generate-pdf', [LaporanController::class, 'generatePdf'])->name('laporan.generate-pdf');
+    });
+
+    // Antrian notifikasi whatsapp
     Route::prefix('antrian-notif-whatsapp')->middleware(['permission:antrian_whatsapp_view'])->group(function () {
         Route::get('/', [AntrianNotifWhatsappController::class, 'index'])->name('antrian-notif-whatsapp.index');
         Route::get('/create', [AntrianNotifWhatsappController::class, 'create'])->name('antrian-notif-whatsapp.create')

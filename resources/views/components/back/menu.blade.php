@@ -17,9 +17,10 @@
               </li>
 
               {{-- PENDAFTARAN --}}
-              @canany(['pendaftaran_view', 'approval_view', 'keuangan_view'])
+              @canany(['pendaftaran_view', 'approval_view', 'keuangan_view', 'laporan_view']) {{-- Tambahkan permission laporan_view --}}
                 <li
-                  class="nav-item dropdown {{ request()->routeIs('pendaftaran.*') || request()->routeIs('approval.*') ? 'active' : '' }}">
+                  class="nav-item dropdown {{ request()->routeIs('pendaftaran.*') || request()->routeIs('approval.*') || request()->routeIs('laporan.*') ? 'active' : '' }}">
+                  {{-- Tambahkan 'laporan.*' --}}
                   <a class="nav-link dropdown-toggle" href="#navbar-pendaftaran" data-bs-toggle="dropdown"
                     data-bs-auto-close="outside" role="button" aria-expanded="false">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -38,9 +39,13 @@
                           </a>
                         @endcan
 
-                        <a class="dropdown-item" {{-- href="{{ route('pendaftaran.index') }}"> --}} href="#">
-                          Statistik & Laporan
-                        </a>
+                        {{-- Menu Statistik & Laporan --}}
+                        @can('laporan_view')
+                          <a class="dropdown-item {{ request()->routeIs('laporan.*') ? 'active' : '' }}"
+                            {{-- Highlight jika route laporan aktif --}} href="{{ route('laporan.index') }}">
+                            Statistik & Laporan
+                          </a>
+                        @endcan
 
                         {{-- Menu Approval --}}
                         {{-- @can('approval_view')
