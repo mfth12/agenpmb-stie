@@ -81,17 +81,5 @@ class RolePermissionSeeder extends Seeder
             'keuangan_manage',
             'pendaftaran_view',
         ]);
-
-        // $mahasiswabaru = Role::create(['name' => 'mahasiswabaru']);
-        // $mahasiswabaru->givePermissionTo([
-        //     'dashboard_view',
-        //     'pendaftaran_create',
-        // ]);
-
-        // $mahasiswa = Role::create(['name' => 'mahasiswa']);
-        // $mahasiswa->givePermissionTo([
-        //     'dashboard_view',
-        //     'pendaftaran_create',
-        // ]);
     }
 }
