@@ -24,7 +24,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                      <label class="form-label required">Nama Lengkap</label>
                       <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
                         value="{{ old('nama') }}" required>
                       @error('nama')
@@ -34,7 +34,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Asal Instansi/Sekolah <span class="text-danger">*</span></label>
+                      <label class="form-label required">Asal Instansi/Sekolah</label>
                       <input type="text" name="asal_sekolah"
                         class="form-control @error('asal_sekolah') is-invalid @enderror" value="{{ old('asal_sekolah') }}"
                         required>
@@ -48,7 +48,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Username <span class="text-danger">*</span></label>
+                      <label class="form-label required">Username</label>
                       <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                         value="{{ old('username') }}" required>
                       @error('username')
@@ -58,7 +58,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Email <span class="text-danger">*</span></label>
+                      <label class="form-label required">Email</label>
                       <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                         value="{{ old('email') }}" required>
                       @error('email')
@@ -71,7 +71,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+                      <label class="form-label required">Nomor HP</label>
                       <input type="text" name="nomor_hp" class="form-control @error('nomor_hp') is-invalid @enderror"
                         value="{{ old('nomor_hp') }}" required>
                       @error('nomor_hp')
@@ -81,7 +81,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nomor Whatsapp</label>
+                      <label class="form-label required">Nomor Whatsapp</label>
                       <input type="text" name="nomor_hp2" class="form-control @error('nomor_hp2') is-invalid @enderror"
                         value="{{ old('nomor_hp2') }}">
                       @error('nomor_hp2')
@@ -104,7 +104,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Role <span class="text-danger">*</span></label>
+                      <label class="form-label required">Role</label>
                       <select name="role" class="form-select @error('role') is-invalid @enderror" required>
                         <option value="">- Pilih Role -</option>
                         @foreach ($roles as $role)
@@ -120,7 +120,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Status</label>
+                      <label class="form-label required">Status</label>
                       <select name="status" class="form-select">
                         <option value="" selected>- Pilih Status-</option>
                         <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
@@ -135,9 +135,9 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Password <span class="text-danger">*</span></label>
-                      <input type="password" name="password"
-                        class="form-control @error('password') is-invalid @enderror" required>
+                      <label class="form-label required">Password</label>
+                      <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                        required>
                       @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -145,7 +145,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Konfirmasi Password <span class="text-danger">*</span></label>
+                      <label class="form-label required">Konfirmasi Password</label>
                       <input type="password" name="password_confirmation" class="form-control" required>
                     </div>
                   </div>
@@ -156,7 +156,7 @@
                   <div class="col-md-12">
                     @if (env('USING_TURNSTILE', false))
                       <div class="mb-3" style="display: block; flex-flow: row;">
-                        <label class="form-label">Verifikasi Keamanan <span class="text-danger">*</span></label>
+                        <label class="form-label required">Verifikasi Keamanan</label>
                         @if ($errors->has('cf-turnstile-response'))
                           <div
                             class="alert alert-danger text-danger alert-dismissible d-flex align-items-center animate__animated animate__shakeX"

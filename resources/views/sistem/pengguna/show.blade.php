@@ -80,11 +80,17 @@
                   <div class="row">
                     <div class="col-md-6 mt-3">
                       <strong>Terakhir Login:</strong><br>
-                      {{ $pengguna->last_logged_in?->translatedFormat('d M Y H:i') ?? 'Belum pernah' }}
+                      {{ $pengguna->last_logged_in?->translatedFormat('d M Y H:i') ?? 'Belum pernah' }}<br>
+                      @if ($pengguna->last_logged_in)
+                        <span class="text-muted">({{ $pengguna->last_logged_in?->diffForHumans() ?? '' }})</span>
+                      @endif
                     </div>
                     <div class="col-md-6 mt-3">
                       <strong>Bergabung Sejak:</strong><br>
-                      {{ $pengguna->created_at?->translatedFormat('d M Y H:i') }}
+                      {{ $pengguna->created_at?->translatedFormat('d M Y H:i') }}<br>
+                      @if ($pengguna->created_at)
+                        <span class="text-muted">({{ $pengguna->created_at?->diffForHumans() ?? '' }})</span>
+                      @endif
                     </div>
                   </div>
                 </div>

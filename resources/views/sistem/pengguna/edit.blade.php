@@ -25,7 +25,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                      <label class="form-label required">Nama Lengkap</label>
                       <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
                         value="{{ old('nama', $pengguna->name) }}" required>
                       @error('nama')
@@ -35,7 +35,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Asal Instansi/Sekolah <span class="text-danger">*</span></label>
+                      <label class="form-label required">Asal Instansi/Sekolah</label>
                       <input type="text" name="asal_sekolah"
                         class="form-control @error('asal_sekolah') is-invalid @enderror"
                         value="{{ old('asal_sekolah', $pengguna->asal_sekolah) }}">
@@ -49,7 +49,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Username <span class="text-danger">*</span></label>
+                      <label class="form-label required">Username</label>
                       <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                         value="{{ old('username', $pengguna->username) }}" required>
                       @error('username')
@@ -59,7 +59,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Email <span class="text-danger">*</span></label>
+                      <label class="form-label required">Email</label>
                       <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                         value="{{ old('email', $pengguna->email) }}" required>
                       @error('email')
@@ -72,7 +72,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+                      <label class="form-label required">Nomor HP</label>
                       <input type="text" name="nomor_hp" class="form-control @error('nomor_hp') is-invalid @enderror"
                         value="{{ old('nomor_hp', $pengguna->nomor_hp) }}" required>
                       @error('nomor_hp')
@@ -82,7 +82,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nomor Whatsapp</label>
+                      <label class="form-label required">Nomor Whatsapp</label>
                       <input type="text" name="nomor_hp2" class="form-control @error('nomor_hp2') is-invalid @enderror"
                         value="{{ old('nomor_hp2', $pengguna->nomor_hp2) }}">
                       @error('nomor_hp2')
@@ -130,7 +130,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Role <span class="text-danger">*</span></label>
+                      <label class="form-label required">Role</label>
                       <select name="role" class="form-select @error('role') is-invalid @enderror" required
                         {{ $pengguna->hasRole('superadmin') ? 'disabled' : '' }}>
                         <option value="">- Pilih Role -</option>
@@ -152,7 +152,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Status <span class="text-danger">*</span></label>
+                      <label class="form-label required">Status</label>
                       <select name="status" class="form-select">
                         <option value="">- Pilih Status-</option>
                         <option value="active" {{ old('status', $pengguna->status) == 'active' ? 'selected' : '' }}>

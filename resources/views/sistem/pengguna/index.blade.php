@@ -114,7 +114,12 @@
                     <td>
                       {!! $user->status_badge !!}
                     </td>
-                    <td>{{ $user->last_logged_in?->translatedFormat('d M Y H:i') ?? 'Belum pernah' }}</td>
+                    <td>
+                      <span data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="{{ $user->last_logged_in ? $user->last_logged_in?->diffForHumans() : '' }}">
+                        {{ $user->last_logged_in?->translatedFormat('d M Y H:i') ?? 'Belum pernah' }}
+                      </span>
+                    </td>
                     <td class="text-center" style="width: 1%;">
                       <div class="btn-list justify-content-center flex-nowrap">
                         @can('user_edit')

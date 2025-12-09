@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('asal_sekolah', 64)->nullable();         //added
             $table->string('email')->unique();                                            //synced
             $table->string('nomor_hp', 64)->unique();                                     //synced
-            $table->string('nomor_hp2', 64)->nullable();                                  //synced
+            $table->string('nomor_hp2', 64)->unique()->nullable();                                  //synced
             $table->timestamp('email_verified_at')->nullable();                           //synced
             $table->text('about')->nullable();                                            //synced
             // $table->string('role', 64)->nullable();              //added

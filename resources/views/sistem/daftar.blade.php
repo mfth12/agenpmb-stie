@@ -34,7 +34,7 @@
           {{-- END OF ALERTS --}}
 
           <div class="mb-3">
-            <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+            <label class="form-label required">Nama Lengkap</label>
             <input type="text" name="nama" value="{{ old('nama') }}"
               class="form-control @error('nama') is-invalid @enderror" placeholder="Masukkan nama lengkap" required />
             @error('nama')
@@ -42,7 +42,7 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Username <span class="text-danger">*</span></label>
+            <label class="form-label required">Username</label>
             <input type="text" name="username" value="{{ old('username') }}"
               class="form-control @error('username') is-invalid @enderror" placeholder="Masukkan username" required />
             @error('username')
@@ -50,7 +50,7 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Email <span class="text-danger">*</span></label>
+            <label class="form-label required">Email</label>
             <input type="email" name="email" value="{{ old('email') }}"
               class="form-control @error('email') is-invalid @enderror" placeholder="Masukkan email" required />
             @error('email')
@@ -58,7 +58,7 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Jenis Mitra <span class="text-danger">*</span></label>
+            <label class="form-label required">Jenis Mitra</label>
             <select name="afiliasi" id="afiliasi-select" class="form-select @error('afiliasi') is-invalid @enderror"
               required>
               <option value="" selected>- Pilih Jenis -</option>
@@ -77,7 +77,7 @@
           <div id="dynamic-afiliasi-fields" class="d-none">
             <!-- Jenis Civitas -->
             <div id="jenis-civitas-container" class="mb-3 d-none">
-              <label class="form-label">Jenis Civitas <span class="text-danger">*</span></label>
+              <label class="form-label required">Jenis Civitas</label>
               <select name="afiliasi_child_civitas" id="jenis-civitas-select" class="form-select">
                 <option value="">- Pilih Jenis Civitas -</option>
                 <!-- Options will be populated by JS -->
@@ -86,7 +86,7 @@
 
             <!-- Instansi/Sekolah Asal (untuk Mitra) -->
             <div id="asal-sekolah-container" class="mb-3 d-none">
-              <label class="form-label">Instansi/Sekolah Asal <span class="text-danger">*</span></label>
+              <label class="form-label required">Instansi/Sekolah Asal</label>
               <input type="text" name="asal_sekolah" value="{{ old('asal_sekolah') }}"
                 class="form-control @error('asal_sekolah') is-invalid @enderror"
                 placeholder="Masukkan nama instansi / sekolah asal" />
@@ -98,7 +98,7 @@
           <!-- End Dynamic Field Container -->
 
           <div class="mb-3">
-            <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+            <label class="form-label required">Nomor HP</label>
             <input type="text" name="nomor_hp" value="{{ old('nomor_hp') }}"
               class="form-control @error('nomor_hp') is-invalid @enderror" placeholder="Masukkan nomor HP" required />
             @error('nomor_hp')
@@ -114,7 +114,7 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Password <span class="text-danger">*</span></label>
+            <label class="form-label required">Password</label>
             <div class="input-group input-group-flat">
               <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                 placeholder="Password" autocomplete="off" required />
@@ -124,7 +124,7 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Konfirmasi Password <span class="text-danger">*</span></label>
+            <label class="form-label required">Konfirmasi Password</label>
             <div class="input-group input-group-flat">
               <input type="password" name="password_confirmation" class="form-control" placeholder="Ulangi Password"
                 autocomplete="off" required />
@@ -137,7 +137,7 @@
           {{-- START: Turnstile Widget --}}
           @if (env('USING_TURNSTILE', false))
             <div class="mb-3" style="display: block; flex-flow: row;">
-              <label class="form-label">Verifikasi Keamanan <span class="text-danger">*</span></label>
+              <label class="form-label required">Verifikasi Keamanan</label>
               <div id="cf-turnstile-widget" class="cf-turnstile" style="min-width: 100px;"
                 data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-size="flexible" data-refresh-expired="auto"
                 data-callback="javascriptCallbackRegister" data-theme="light"

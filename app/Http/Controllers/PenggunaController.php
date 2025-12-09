@@ -384,9 +384,9 @@ class PenggunaController extends Controller
       if ($terreject) {
         // Kirim notif wa jika direject admin baak
         $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->nama}. "
+        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
           . "Dengan berat hati kami ucapkan. Bahwa *Akun Mitra* yang Anda daftarkan tidak dapat kami proses lebih lanjut. "
-          . "Jika ada hal lain yang ingin ditanyakan, silakan hubungi kontak person" . konfigs('NAMA_SISTEM_ALIAS') . ".";
+          . "Jika ada hal lain yang ingin ditanyakan, silakan hubungi kontak person " . konfigs('NAMA_SISTEM_ALIAS') . ".";
 
         // Aksi kirim
         $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
