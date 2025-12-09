@@ -121,7 +121,7 @@
           <form id="filter-form" method="GET">
             <div class="row g-3">
               <div class="col-md-3">
-                <label class="form-label">Agen</label>
+                <label class="form-label">Mitra</label>
                 <select name="mitra_filter" id="mitra_filter" class="form-select">
                   <option value="">Semua Mitra</option>
                   @foreach ($mitra as $mitraa)
@@ -197,7 +197,7 @@
                 <th>Akademik</th>
                 <th>Biaya</th>
                 <th>Status</th>
-                <th>Agen</th>
+                <th>Mitra</th>
                 <th class="text-center">Aksi</th>
               </tr>
             </thead>

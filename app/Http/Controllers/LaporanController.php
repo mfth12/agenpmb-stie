@@ -84,7 +84,7 @@ class LaporanController extends Controller
       $query->where('status', $request->columns[5]['search']['value']);
     }
 
-    // Filter Agen (dari dropdown filter di atas tabel)
+    // Filter Mitra (dari dropdown filter di atas tabel)
     if ($request->has('mitra_filter') && $request->mitra_filter != '') {
       $query->where('mitra_id', $request->mitra_filter);
     }
