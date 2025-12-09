@@ -21,29 +21,34 @@ class RolePermissionSeeder extends Seeder
             'role_manage',
             'permission_manage',
 
-            // User Management
+            // Manajemen Pengguna
             'user_view',
             'user_create',
             'user_edit',
             'user_delete',
 
-            // Student Registration (Pendaftaran)
+            // Pendaftaran Calon Mahasiswa
             'pendaftaran_view',
             'pendaftaran_create',
             'pendaftaran_edit',
             'pendaftaran_delete',
-            
-            // Student Registration (Pendaftaran)
+
+            // Jika ingin permission lebih spesifik
+            'statistik_view',
+            'laporan_generate_pdf',
+            'laporan_filter',
+
+            // Antrian Whatsapp
             'antrian_whatsapp_view',
             'antrian_whatsapp_create',
             'antrian_whatsapp_edit',
             'antrian_whatsapp_delete',
 
-            // Financial
+            // Keurangan
             'keuangan_view',
             'keuangan_manage',
 
-            // Dashboard
+            // Dasbor
             'dashboard_view',
         ];
 
