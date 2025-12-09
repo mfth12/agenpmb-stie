@@ -187,7 +187,7 @@
             </div>
           </div>
           {{-- Tabel pendaftaran --}}
-          <div class="table-responsive" style="padding: 1rem">
+          <div class="table-responsive" style="padding: 1.2rem">
             <table id="pendaftaran-table" class="table table-vcenter table-bordered table-md table-hover">
               <thead>
                 <tr>
