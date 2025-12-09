@@ -86,7 +86,7 @@
         <th>Email</th>
         <th>No HP</th>
         <th>Prodi</th>
-        <th>Tahun/Gelombang</th>
+        <th>Tahun/Gel.</th>
         <th>Status</th>
         <th>Mitra</th>
       </tr>
