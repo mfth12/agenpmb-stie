@@ -156,28 +156,72 @@ class MasukController extends Controller
       }
 
       // Cari atau buat user di sistem
-      $user = User::updateOrCreate(
-        ['siakad_id' => $userData['id']],
-        [
-          'siakad_id'         => $userData['id'],
-          'username'          => $userData['username'],
-          'password'          => null, // Jangan simpan password dari Siakad
-          'email'             => $userData['email'] ?? null,
-          'name'              => $userData['name'] ?? '',
-          'nomor_hp'          => $userData['nomor_hp'] ?? '',
-          'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
-          'email_verified_at' => $userData['email_verified_at'] ?? null,
-          'about'             => $userData['about'] ?? null,
-          'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
-          'theme'             => $userData['theme'] ?? 'default',
-          'avatar'            => $userData['avatar'] ?? null,
-          'status'            => $userData['status'] ?? 'active',
-          'status_login'      => 'online',
-          'isdeleted'         => $userData['isdeleted'] ?? false,
-          'last_logged_in'    => Carbon::now(),
-          'last_synced_at'    => Carbon::now(),
-        ]
-      );
+      try {
+        $user = User::updateOrCreate(
+          ['siakad_id' => $userData['id']],
+          [
+            'siakad_id'         => $userData['id'],
+            'username'          => $userData['username'],
+            'password'          => null, // Jangan simpan password dari Siakad
+            'email'             => $userData['email'] ?? null,
+            'name'              => $userData['name'] ?? '',
+            'nomor_hp'          => $userData['nomor_hp'] ?? '',
+            'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
+            'email_verified_at' => $userData['email_verified_at'] ?? null,
+            'about'             => $userData['about'] ?? null,
+            'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
+            'theme'             => $userData['theme'] ?? 'default',
+            'avatar'            => $userData['avatar'] ?? null,
+            'status'            => $userData['status'] ?? 'active',
+            'status_login'      => 'online',
+            'isdeleted'         => $userData['isdeleted'] ?? false,
+            'last_logged_in'    => Carbon::now(),
+            'last_synced_at'    => Carbon::now(),
+          ]
+        );
+      } catch (Exception $e) {
+        // Hit rate limiter jika gagal karena konflik data unik
+        RateLimiter::hit($throttleKey, $decaySeconds);
+
+        // Log error detail ke file log
+        $this->logAction(
+          'error',
+          'Login via Siakad gagal - Konflik Data Unik: ' . $e->getMessage(),
+          [
+            'siakad_user_id' => $userData['id'] ?? null,
+            'siakad_username' => $userData['username'] ?? null,
+            'siakad_nomor_hp' => $userData['nomor_hp'] ?? null,
+            'siakad_email' => $userData['email'] ?? null,
+            'request_ip' => $request->ip(),
+            'request_user_agent' => $request->userAgent(),
+          ]
+        );
+
+        // Tangani spesifik error Duplicate Entry untuk memberikan pesan yang jelas ke user
+        $pesanError = "Terjadi kesalahan saat sinkronisasi data akun dari Siakad. ";
+        $pesanLog = "Konflik data unik: " . $e->getMessage(); // Pesan untuk log
+
+        if (str_contains($e->getMessage(), 'Duplicate entry')) {
+          if (str_contains($e->getMessage(), 'users_username_unique')) {
+            $pesanError .= "Username '" . $userData['username'] . "' dari Siakad sudah digunakan oleh akun lain.";
+          } elseif (str_contains($e->getMessage(), 'users_email_unique')) {
+            $pesanError .= "Email '" . ($userData['email'] ?? 'N/A') . "' dari Siakad sudah digunakan oleh akun lain.";
+          } elseif (str_contains($e->getMessage(), 'users_nomor_hp_unique')) {
+            $pesanError .= "Nomor HP '" . $userData['nomor_hp'] . "' dari Siakad sudah digunakan oleh akun lain.";
+          } elseif (str_contains($e->getMessage(), 'users_nomor_hp2_unique')) {
+            $pesanError .= "Nomor Whatsapp '" . ($userData['nomor_hp2'] ?? 'N/A') . "' dari Siakad sudah digunakan oleh akun lain.";
+          } else {
+            // Jika Duplicate entry tapi kolomnya tidak dikenali
+            $pesanError .= "Data dari akun Siakad Anda menyebabkan konflik (mungkin dengan username, email, atau nomor HP).";
+          }
+        } else {
+          // Jika error bukan Duplicate Entry, tampilkan pesan umum
+          $pesanError .= "Silakan hubungi administrator.";
+        }
+
+        // Kembalikan ke halaman login dengan pesan error yang jelas
+        return back()->withErrors(['masuk' => $pesanError]);
+      }
 
       // Assign role berdasarkan default_role dari Siakad
       $mitra_role = $userData['default_role'] ?? 'mitra'; // Ganti 'mitra' sesuai kebutuhan default
