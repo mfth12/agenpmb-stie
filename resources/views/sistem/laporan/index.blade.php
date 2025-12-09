@@ -184,27 +184,29 @@
 
       {{-- Tabel Hasil --}}
       <div class="card mt-4">
-        <div class="card-header">
-          <h3 class="card-title">Data Pendaftaran</h3>
-        </div>
-        <div class="table-responsive" style="padding: 1rem">
-          <table id="laporan-table" class="table table-vcenter table-bordered table-md table-hover">
-            <thead>
-              <tr>
-                <th class="w-1">No</th>
-                <th>Calon Mahasiswa</th>
-                <th>Program Studi</th>
-                <th>Akademik</th>
-                <th>Biaya</th>
-                <th>Status</th>
-                <th>Mitra</th>
-                <th class="text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Data akan diisi oleh DataTables -->
-            </tbody>
-          </table>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Data Pendaftaran</h3>
+          </div>
+          <div class="table-responsive" style="padding: 1.2rem">
+            <table id="laporan-table" class="table table-vcenter table-bordered table-md table-hover">
+              <thead>
+                <tr>
+                  <th class="w-1">No</th>
+                  <th>Calon Mahasiswa</th>
+                  <th>Program Studi</th>
+                  <th>Akademik</th>
+                  <th>Biaya</th>
+                  <th>Status</th>
+                  <th>Mitra</th>
+                  <th class="text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Data akan diisi oleh DataTables -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -215,6 +217,10 @@
   <style>
     /* Tambahkan styling jika perlu */
   </style>
+
+  {{-- DataTables CSS --}}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 @endsection
 
 @section('js_atas')
@@ -303,7 +309,8 @@
       let table = $('#laporan-table').DataTable({
         processing: true,
         serverSide: true,
-        responsive: true,
+        responsive: false,
+        stateSave: true,
         searchDelay: 500,
         ajax: {
           url: "{{ route('laporan.data') }}",
@@ -320,7 +327,7 @@
         columns: [{
             data: 'DT_RowIndex',
             name: 'pendaftaran_id',
-            orderable: false,
+            orderable: true,
             searchable: false,
             className: 'text-muted text-center'
           },
@@ -361,6 +368,11 @@
             orderable: false
           } // Kolom No dan Aksi tidak bisa diurutkan
         ],
+        pageLength: 25,
+        lengthMenu: [
+          [10, 25, 50, 100, -1],
+          [10, 25, 50, 100, "Semua"]
+        ], //jumlah data yang ditampilkan
         order: [
           [3, 'desc']
         ], // Urutkan berdasarkan kolom tahun (indeks 3) secara descending
