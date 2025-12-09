@@ -25,7 +25,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                      <label class="form-label required">Nama Lengkap</label>
                       <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
                         value="{{ old('nama', $user->name) }}" required>
                       @error('nama')
@@ -35,10 +35,10 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Asal Instansi/Sekolah <span class="text-danger">*</span></label>
+                      <label class="form-label required">Asal Instansi/Sekolah</label>
                       <input type="text" name="asal_sekolah"
                         class="form-control @error('asal_sekolah') is-invalid @enderror"
-                        value="{{ old('asal_sekolah', $user->asal_sekolah) }}" required>
+                        value="{{ old('asal_sekolah', $user->asal_sekolah) }}">
                       @error('asal_sekolah')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -49,7 +49,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Email <span class="text-danger">*</span></label>
+                      <label class="form-label required">Email</label>
                       <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                         value="{{ old('email', $user->email) }}" required>
                       @error('email')
@@ -69,7 +69,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+                      <label class="form-label required">Nomor HP</label>
                       <input type="text" name="nomor_hp" class="form-control @error('nomor_hp') is-invalid @enderror"
                         value="{{ old('nomor_hp', $user->nomor_hp) }}" required>
                       @error('nomor_hp')
@@ -79,7 +79,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="form-label">Nomor Whatsapp</label>
+                      <label class="form-label required">Nomor Whatsapp</label>
                       <input type="text" name="nomor_hp2" class="form-control @error('nomor_hp2') is-invalid @enderror"
                         value="{{ old('nomor_hp2', $user->nomor_hp2) }}">
                       @error('nomor_hp2')
@@ -150,7 +150,7 @@
                 @method('PUT')
 
                 <div class="mb-3">
-                  <label class="form-label">Password Lama <span class="text-danger">*</span></label>
+                  <label class="form-label required">Password Lama</label>
                   <input type="password" name="password_lama"
                     class="form-control @error('password_lama') is-invalid @enderror" required>
                   @error('password_lama')
@@ -159,7 +159,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">Password Baru <span class="text-danger">*</span></label>
+                  <label class="form-label required">Password Baru</label>
                   <input type="password" name="password_baru"
                     class="form-control @error('password_baru') is-invalid @enderror" required>
                   @error('password_baru')
@@ -168,7 +168,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">Konfirmasi Password Baru <span class="text-danger">*</span></label>
+                  <label class="form-label required">Konfirmasi Password Baru</label>
                   <input type="password" name="password_baru_confirmation" class="form-control" required>
                 </div>
             </div>

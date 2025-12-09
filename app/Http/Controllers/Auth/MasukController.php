@@ -166,7 +166,7 @@ class MasukController extends Controller
             'email'             => $userData['email'] ?? null,
             'name'              => $userData['name'] ?? '',
             'nomor_hp'          => $userData['nomor_hp'] ?? '',
-            'nomor_hp2'         => $userData['nomor_hp2'] ?? null,
+            'nomor_hp2'         => $userData['nomor_hp2'] ?? '',
             'email_verified_at' => $userData['email_verified_at'] ?? null,
             'about'             => $userData['about'] ?? null,
             'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan

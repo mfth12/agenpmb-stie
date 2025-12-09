@@ -18,7 +18,7 @@ class PenggunaUpdateRequest extends FormRequest
 
     return [
       'nama' => 'required|string|max:255',
-      'asal_sekolah' => 'required|string|max:255',
+      'asal_sekolah' => 'nullable|string|max:255',
       'email' => [
         'required',
         'email',
@@ -30,8 +30,18 @@ class PenggunaUpdateRequest extends FormRequest
         'max:100',
         Rule::unique('users', 'username')->ignore($userId, 'user_id')
       ],
-      'nomor_hp' => 'required|string|max:20',
-      'nomor_hp2' => 'nullable|string|max:20',
+      'nomor_hp' => [
+        'required',
+        'string',
+        'max:20',
+        Rule::unique('users', 'nomor_hp')->ignore($userId, 'user_id')
+      ],
+      'nomor_hp2' => [
+        'required',
+        'string',
+        'max:20',
+        Rule::unique('users', 'nomor_hp2')->ignore($userId, 'user_id')
+      ],
       'role' => 'required|string|exists:roles,name',
       'password' => 'sometimes|nullable|min:6|confirmed',
       'status' => 'required|string|in:active,inactive,pending',
@@ -44,12 +54,14 @@ class PenggunaUpdateRequest extends FormRequest
   {
     return [
       'nama.required' => 'Nama lengkap wajib diisi.',
-      'asal_sekolah.required' => 'Asal sekolah wajib diisi.',
       'email.required' => 'Email wajib diisi.',
       'email.unique' => 'Email sudah digunakan.',
       'username.required' => 'Username wajib diisi.',
       'username.unique' => 'Username sudah digunakan.',
       'nomor_hp.required' => 'Nomor HP wajib diisi.',
+      'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
+      'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
+      'nomor_hp2.unique' => 'Nomor Whatsapp sudah digunakan.',
       'role.required' => 'Role wajib dipilih.',
       'password.min' => 'Password minimal 6 karakter.',
       'password.confirmed' => 'Konfirmasi password tidak sesuai.',

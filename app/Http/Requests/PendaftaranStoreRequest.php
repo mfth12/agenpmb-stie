@@ -19,7 +19,7 @@ class PendaftaranStoreRequest extends FormRequest
       'nama_lengkap' => 'required|string|max:255',
       'email' => 'required|email',
       'nomor_hp' => 'required|string|max:20',
-      'nomor_hp2' => 'nullable|string|max:20',
+      'nomor_hp2' => 'required|string|max:20',
       'password' => 'required|string|min:8|confirmed',
     ];
   }
@@ -33,6 +33,7 @@ class PendaftaranStoreRequest extends FormRequest
       'email.required' => 'Email wajib diisi.',
       // 'email.unique' => 'Email sudah digunakan.',
       'nomor_hp.required' => 'Nomor HP wajib diisi.',
+      'nomor_h2.required' => 'Nomor Whatsapp wajib diisi.',
       // 'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
       // 'nomor_hp2.unique' => 'Nomor HP kedua sudah digunakan.',
       'password.required' => 'Password wajib diisi.',

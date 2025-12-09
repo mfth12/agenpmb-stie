@@ -26,7 +26,7 @@ class PendaftaranUpdateRequest extends FormRequest
         Rule::unique('pendaftaran', 'email')->ignore($pendaftaranId, 'pendaftaran_id')
       ],
       'nomor_hp' => 'required|string|max:20',
-      'nomor_hp2' => 'nullable|string|max:20',
+      'nomor_hp2' => 'required|string|max:20',
     ];
   }
 
@@ -37,8 +37,9 @@ class PendaftaranUpdateRequest extends FormRequest
       'kelas.required' => 'Kelas wajib dipilih.',
       'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
       'email.required' => 'Email wajib diisi.',
-      'email.unique' => 'Email sudah digunakan.',
+      // 'email.unique' => 'Email sudah digunakan.',
       'nomor_hp.required' => 'Nomor HP wajib diisi.',
+      'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
     ];
   }
 }

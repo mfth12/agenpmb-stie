@@ -106,9 +106,10 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label class="form-label">Nomor Whatsapp</label>
+            <label class="form-label required">Nomor Whatsapp</label>
             <input type="text" name="nomor_hp2" value="{{ old('nomor_hp2') }}"
-              class="form-control @error('nomor_hp2') is-invalid @enderror" placeholder="Masukkan whatsapp aktif" />
+              class="form-control @error('nomor_hp2') is-invalid @enderror" placeholder="Masukkan whatsapp aktif"
+              required />
             @error('nomor_hp2')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
