@@ -117,7 +117,7 @@
     Laporan dicetak pada {{ now()->format('d/m/Y H:i:s') }}
   </div>
 
-  @if (request()->boolean('cetak_saja'))
+  @if (request()->boolean('cetak'))
     <script>
       window.addEventListener('load', function() {
         window.print();

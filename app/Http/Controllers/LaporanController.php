@@ -229,8 +229,8 @@ class LaporanController extends Controller
     $data = $query->get(); // Ambil semua data yang difilter
 
     // Filter Status
-    if ($request->has('cetak_saja') && $request->boolean('cetak_saja')) {
-      // dd($request->cetak_saja);
+    if ($request->has('cetak') && $request->boolean('cetak')) {
+      // dd($request->cetak);
       // $query->where('status', $request->status_filter);
       return view('sistem.laporan.pdf', [
         'title' => 'Laporan Pendaftaran',
