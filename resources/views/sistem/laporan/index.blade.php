@@ -133,7 +133,7 @@
         <div class="card-body">
           <form id="filter-form" method="GET">
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label class="form-label">Mitra</label>
                 <select name="mitra_filter" id="mitra_filter" class="form-select">
                   <option value="">Semua Mitra</option>
@@ -160,7 +160,7 @@
                   <option value="3">3</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-2">
                 <label class="form-label">Program Studi</label>
                 <select name="prodi_filter" id="prodi_filter" class="form-select">
                   <option value="">Semua Prodi</option>
@@ -179,13 +179,13 @@
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <button type="button" id="apply-filter" class="btn btn-primary me-2">
+            <div class="mt-3">
+              <div class="d-flex flex-column flex-md-row bd-highlight">
+                <button type="button" id="apply-filter" class="btn btn-primary">
                   <i class="ti ti-filter fs-2 me-1"></i>
                   Terapkan Filter
                 </button>
-                <button type="button" id="export-pdf" class="btn btn-default">
+                <button type="button" id="export-pdf" class="btn btn-default ms-md-2 mt-2 mt-md-0">
                   <i class="ti ti-download fs-2 me-1"></i>
                   Ekspor ke PDF
                 </button>
