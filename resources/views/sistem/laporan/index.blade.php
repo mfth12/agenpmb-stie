@@ -98,7 +98,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 mt-4 mt-md-0">
+        <div class="col-md-3 mt-3 mt-md-0">
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">Distribusi Status Pendaftaran</h3>
@@ -184,29 +184,27 @@
 
       {{-- Tabel Hasil --}}
       <div class="card mt-4">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Data Pendaftaran</h3>
-          </div>
-          <div class="table-responsive" style="padding: 1.2rem">
-            <table id="laporan-table" class="table table-vcenter table-bordered table-md table-hover">
-              <thead>
-                <tr>
-                  <th class="w-1">No</th>
-                  <th>Calon Mahasiswa</th>
-                  <th>Program Studi</th>
-                  <th>Akademik</th>
-                  <th>Biaya</th>
-                  <th>Status</th>
-                  <th>Mitra</th>
-                  <th class="text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Data akan diisi oleh DataTables -->
-              </tbody>
-            </table>
-          </div>
+        <div class="card-header">
+          <h3 class="card-title">Data Pendaftaran</h3>
+        </div>
+        <div class="table-responsive" style="padding: 1.2rem">
+          <table id="laporan-table" class="table table-vcenter table-bordered table-md table-hover">
+            <thead>
+              <tr>
+                <th class="w-1">No</th>
+                <th>Calon Mahasiswa</th>
+                <th>Program Studi</th>
+                <th>Akademik</th>
+                <th>Biaya</th>
+                <th>Status</th>
+                <th>Mitra</th>
+                <th class="text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data akan diisi oleh DataTables -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
