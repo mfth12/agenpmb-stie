@@ -442,83 +442,24 @@
         try {
           // Ambil base URL
           let printURL = '{{ route('laporan.generate-pdf-get') }}';
-
           // Siapkan object URLSearchParams untuk menampung semua parameter GET
           let params = new URLSearchParams();
-
           // Tambahkan parameter cetak_saja=true
           params.append('cetak', 'true');
-
           // Loop semua data dari form dan masukkan ke parameter GET
           for (let [key, value] of formData.entries()) {
             if (value !== '') { // hanya kirim jika tidak kosong
               params.append(key, value);
             }
           }
-
           // Gabungkan dengan URL
           printURL = printURL + '?' + params.toString();
-
           // Buka tab baru
           window.open(printURL, '_blank');
-
         } catch (error) {
           console.error("Terjadi kesalahan saat memproses pencetakan:", error.message);
           alert("Terjadi kesalahan saat mencoba mencetak. Silakan ulangi.");
         }
-
-
-
-        // const formData = new FormData($('#filter-form')[0]);
-        // try {
-        //   // Redirect ke URL cetak dengan parameter tanggal
-        //   var printURL = '{{ route('laporan.generate-pdf-get') }}' +
-        //     '?cetak_saja=' + 'true';
-        //   window.open(printURL, '_blank');
-        // } catch (error) {
-        //   console.error("Terjadi kesalahan saat memproses pencetakan:", error.message);
-        //   alert("Terjadi kesalahan saat mencoba mencetak. Silakan ulangi.");
-        // }
-
-        // // Ambil nilai filter saat ini
-        // const formData = new FormData($('#filter-form')[0]);
-
-        // // Buat form sementara untuk submit POST
-        // const cetakForm = document.createElement('form');
-        // cetakForm.method = 'DELETE';
-        // cetakForm.action = "{{ route('laporan.index') }}";
-
-        // // Tambahkan token CSRF
-        // const csrfInput = document.createElement('input');
-        // csrfInput.type = 'hidden';
-        // csrfInput.name = '_token';
-        // csrfInput.value = $('meta[name="csrf-token"]').attr('content');
-        // cetakForm.appendChild(csrfInput);
-
-        // // Tambahkan input cetak saja
-        // const cetakInput = document.createElement('cetak_saja');
-        // cetakInput.type = 'hidden';
-        // cetakInput.name = 'cetak_saja';
-        // cetakInput.value = true;
-        // cetakForm.appendChild(cetakInput);
-
-        // // Tambahkan data filter ke form
-        // for (let [key, value] of formData.entries()) {
-        //   const input = document.createElement('input');
-        //   const cetak_saja = document.createElement('cetak_saja');
-        //   input.type = 'hidden';
-        //   input.name = key;
-        //   input.value = value;
-        //   cetak_saja.type = 'hidden';
-        //   cetak_saja.name = key;
-        //   cetak_saja.value = value;
-        //   cetakForm.appendChild(input);
-        //   cetakForm.appendChild(cetak_saja);
-        // }
-
-        // document.body.appendChild(cetakForm);
-        // cetakForm.submit();
-        // document.body.removeChild(cetakForm);
       });
 
       // Handler untuk tombol "Ekspor ke PDF"
