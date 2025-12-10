@@ -61,6 +61,24 @@ class PendaftaranModel extends Model
     }
 
     /**
+     * Mutator nomor_hp -> simpan hanya angka
+     */
+    public function setNomorHpAttribute($value)
+    {
+        // Ambil hanya angka 0–9
+        $this->attributes['nomor_hp'] = preg_replace('/\D+/', '', $value);
+    }
+
+    /**
+     * Mutator nomor_hp2 -> simpan hanya angka
+     */
+    public function setNomorHp2Attribute($value)
+    {
+        $this->attributes['nomor_hp2'] = preg_replace('/\D+/', '', $value);
+    }
+
+
+    /**
      * Scope untuk pendaftaran berhasil
      */
     public function scopeSuccess($query)
