@@ -88,8 +88,8 @@
         <th>Email</th>
         <th>No HP</th>
         <th>Prodi</th>
-        <th>Tahun/Gel.</th>
-        <th>Status</th>
+        <th>Th./Gel.</th>
+        {{-- <th>Status</th> --}}
         <th>Mitra</th>
         <th>Asal</th>
       </tr>
@@ -99,11 +99,11 @@
         <tr>
           <td>{{ $loop->iteration }}</td>
           <td>{{ $item->nama_lengkap }}</td>
-          <td>{{ Str::limit($item->email, 15, '...') }} </td>
+          <td>{{ Str::limit('**' . substr($item->email, 2), 15, '..') }}</td>
           <td>{{ $item->nomor_hp }}</td>
           <td>{{ $item->prodi_nama }}</td>
           <td>{{ $item->tahun }}/{{ $item->gelombang }}</td>
-          <td>{{ ucfirst($item->status) }}</td>
+          {{-- <td>{{ ucfirst($item->status) }}</td> --}}
           <td>{{ $item->mitra->name ?? '-' }}</td>
           <td>{{ $item->mitra?->asal_sekolah ?? '-' }}</td>
         </tr>
@@ -116,7 +116,7 @@
   </table>
 
   <div class="footer">
-    Laporan dicetak pada {{ now()->format('d/m/Y H:i:s') }}
+    Laporan dicetak pada {{ now()->translatedFormat('d M Y H:i:s') }}
   </div>
 
   @if (request()->boolean('cetak'))
