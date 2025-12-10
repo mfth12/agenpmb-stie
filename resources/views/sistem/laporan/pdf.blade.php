@@ -6,8 +6,10 @@
   <title>Laporan Pendaftaran</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 2cm 1cm;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      line-height: 1.3;
+      color: #000;
     }
 
     .header {
@@ -96,7 +98,7 @@
         <tr>
           <td>{{ $loop->iteration }}</td>
           <td>{{ $item->nama_lengkap }}</td>
-          <td>{{ $item->email }}</td>
+          <td>{{ Str::limit($item->email, 15, '...') }} </td>
           <td>{{ $item->nomor_hp }}</td>
           <td>{{ $item->prodi_nama }}</td>
           <td>{{ $item->tahun }}/{{ $item->gelombang }}</td>
@@ -114,6 +116,14 @@
   <div class="footer">
     Laporan dicetak pada {{ now()->format('d/m/Y H:i:s') }}
   </div>
+
+  @if (request()->boolean('cetak_saja'))
+    <script>
+      window.addEventListener('load', function() {
+        window.print();
+      });
+    </script>
+  @endif
 </body>
 
 </html>

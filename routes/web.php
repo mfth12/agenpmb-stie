@@ -125,6 +125,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('laporan')->middleware(['permission:laporan_view'])->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/data', [LaporanController::class, 'data'])->name('laporan.data'); // Untuk DataTables
+        Route::get('/generate-pdf', [LaporanController::class, 'generatePdf'])->name('laporan.generate-pdf-get');
         Route::post('/generate-pdf', [LaporanController::class, 'generatePdf'])->name('laporan.generate-pdf');
     });
 

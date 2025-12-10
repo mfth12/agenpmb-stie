@@ -155,10 +155,10 @@ class LaporanController extends Controller
       })
       ->addColumn('akademik', function ($row) {
         return '<div class="font-weight-medium">' . $row->tahun . '/' . $row->gelombang . '</div>
-                    <div class="text-muted small">' . $row->created_at->translatedFormat('d/m/Y H:i:s') . '</div>';
+                    <div class="text-muted small">' . $row->created_at->translatedFormat('d M Y') . '</div>';
       })
-      ->addColumn('biaya', function ($row) {
-        return '<div class="font-weight-medium">' . $row->biaya_formatted . '</div>';
+      ->addColumn('asal', function ($row) {
+        return '<div class="font-weight-medium">' . $row->mitra->asal_sekolah . '</div>';
       })
       ->addColumn('status_badge', function ($row) {
         return $row->status_badge;
@@ -167,15 +167,15 @@ class LaporanController extends Controller
         return '<div class="font-weight-medium">' . e($row->mitra->name ?? '-') . '</div>';
       })
       ->addColumn('aksi', function ($row) {
-        $html = '<div class="btn-list justify-content-center">
-                        <a href="' . route('pendaftaran.show', $row) . '" class="btn btn-sm btn-default" title="Detail"
-                          data-bs-toggle="tooltip" data-bs-placement="top">
-                          <i class="ti ti-eye fs-3 me-1"></i>
-                          Detail
-                        </a>';
+        // $html = '<div class="btn-list justify-content-center">
+        //                 <a href="' . route('pendaftaran.show', $row) . '" class="btn btn-sm btn-default" title="Detail"
+        //                   data-bs-toggle="tooltip" data-bs-placement="top">
+        //                   <i class="ti ti-eye fs-3 me-1"></i>
+        //                   Detail
+        //                 </a>';
 
         // Opsi cetak PDF untuk satu data (opsional)
-        $html .= '<a href="#" onclick="cetakPdfSatu(\'' . $row->id_calon_mahasiswa . '\')" class="btn btn-sm btn-default text-primary" title="Cetak PDF"
+        $html = '<a href="#" onclick="cetakPdfSatu(\'' . $row->id_calon_mahasiswa . '\')" class="btn btn-sm btn-default text-primary" title="Cetak PDF"
                           data-bs-toggle="tooltip" data-bs-placement="top">
                           <i class="ti ti-printer fs-3 me-1"></i>
                           Cetak
@@ -184,7 +184,7 @@ class LaporanController extends Controller
         $html .= '</div>';
         return $html;
       })
-      ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'biaya', 'status_badge', 'mitra_nama', 'aksi']) // Kolom yang berisi HTML
+      ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'asal', 'status_badge', 'mitra_nama', 'aksi']) // Kolom yang berisi HTML
       ->make(true);
   }
 
@@ -228,20 +228,36 @@ class LaporanController extends Controller
 
     $data = $query->get(); // Ambil semua data yang difilter
 
-    $pdf = Pdf::loadView('sistem.laporan.pdf', [
-      'title' => 'Laporan Pendaftaran',
-      'data' => $data,
-      'filters' => [
-        'mitra' => User::find($request->mitra_filter)?->name ?? 'Semua',
-        'tahun' => $request->tahun_filter ?? 'Semua',
-        'gelombang' => $request->gelombang_filter ?? 'Semua',
-        'prodi' => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
-        'status' => $request->status_filter ?? 'Semua',
-      ]
-    ]);
+    // Filter Status
+    if ($request->has('cetak_saja') && $request->boolean('cetak_saja')) {
+      // dd($request->cetak_saja);
+      // $query->where('status', $request->status_filter);
+      return view('sistem.laporan.pdf', [
+        'title' => 'Laporan Pendaftaran',
+        'data' => $data,
+        'filters' => [
+          'mitra' => User::find($request->mitra_filter)?->name ?? 'Semua',
+          'tahun' => $request->tahun_filter ?? 'Semua',
+          'gelombang' => $request->gelombang_filter ?? 'Semua',
+          'prodi' => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
+          'status' => $request->status_filter ?? 'Semua',
+        ]
+      ]);
+    } else {
+      $pdf = Pdf::loadView('sistem.laporan.pdf', [
+        'title' => 'Laporan Pendaftaran',
+        'data' => $data,
+        'filters' => [
+          'mitra' => User::find($request->mitra_filter)?->name ?? 'Semua',
+          'tahun' => $request->tahun_filter ?? 'Semua',
+          'gelombang' => $request->gelombang_filter ?? 'Semua',
+          'prodi' => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
+          'status' => $request->status_filter ?? 'Semua',
+        ]
+      ]);
 
-    $filename = 'Laporan_Pendaftaran_' . date('Y-m-d_H-i-s') . '.pdf';
-
-    return $pdf->download($filename);
+      $filename = 'Laporan_Pendaftaran_' . date('Y-m-d_H-i-s') . '.pdf';
+      return $pdf->download($filename);
+    }
   }
 }

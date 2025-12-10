@@ -102,7 +102,7 @@
         <div class="col-md-3 mt-3 mt-md-0">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Distribusi Status Pendaftaran</h3>
+              <h3 class="card-title">Distribusi Status</h3>
             </div>
             <div class="card-body">
               <div class="width-30">
@@ -154,7 +154,7 @@
               <div class="col-md-2">
                 <label class="form-label">Gelombang</label>
                 <select name="gelombang_filter" id="gelombang_filter" class="form-select">
-                  <option value="">Semua Gelombang</option>
+                  <option value="">Semua Gel.</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
@@ -185,9 +185,13 @@
                   <i class="ti ti-filter fs-2 me-1"></i>
                   Terapkan Filter
                 </button>
+                <button type="button" id="cetak-button" class="btn btn-default ms-md-2 mt-2 mt-md-0">
+                  <i class="ti ti-printer fs-2 me-1"></i>
+                  Cetak
+                </button>
                 <button type="button" id="export-pdf" class="btn btn-default ms-md-2 mt-2 mt-md-0">
                   <i class="ti ti-download fs-2 me-1"></i>
-                  Ekspor ke PDF
+                  Ekspor PDF
                 </button>
               </div>
             </div>
@@ -209,8 +213,8 @@
                 <th>Program Studi</th>
                 <th>Akademik</th>
                 <th>Biaya</th>
-                <th>Status</th>
                 <th>Mitra</th>
+                <th>Status</th>
                 <th class="text-center">Aksi</th>
               </tr>
             </thead>
@@ -388,16 +392,16 @@
             name: 'tahun'
           },
           {
-            data: 'biaya',
-            name: 'biaya'
-          },
-          {
             data: 'status_badge',
             name: 'status'
           },
           {
             data: 'mitra_nama',
             name: 'mitra_id'
+          },
+          {
+            data: 'asal',
+            name: 'asal'
           },
           {
             data: 'aksi',
@@ -429,6 +433,19 @@
       // Handler untuk tombol "Terapkan Filter"
       $('#apply-filter').on('click', function() {
         table.ajax.reload(); // Reload DataTable dengan parameter filter terbaru
+      });
+
+      // Handler untuk tombol "Cetak Halaman"
+      $('#cetak-button').click(function() {
+        try {
+          // Redirect ke URL cetak dengan parameter tanggal
+          var printURL = '{{ route('laporan.generate-pdf-get') }}' +
+            '?cetak_saja=' + 'true';
+          window.open(printURL, '_blank');
+        } catch (error) {
+          console.error("Terjadi kesalahan saat memproses pencetakan:", error.message);
+          alert("Terjadi kesalahan saat mencoba mencetak. Silakan ulangi.");
+        }
       });
 
       // Handler untuk tombol "Ekspor ke PDF"
