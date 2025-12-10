@@ -48,6 +48,14 @@ class LaporanController extends Controller
       ->groupBy('prodi_id', 'prodi_nama') // Tambahkan 'prodi_nama' ke GROUP BY
       ->get();
 
+    $distribusiGel = PendaftaranModel::select(
+      'gelombang',
+      DB::raw('COUNT(*) as jumlah')
+    )
+      ->where('created_at', '>=', now()->subMonths(18))
+      ->groupBy('gelombang') // Tambahkan 'gelombang' ke GROUP BY
+      ->get();
+
 
     // Ambil daftar mitra untuk filter dropdown
     $mitra = User::role(['superadmin', 'mitra', 'baak'])->select('user_id', 'name', 'asal_sekolah')->get();
@@ -57,6 +65,7 @@ class LaporanController extends Controller
       'pendaftaranPerBulan' => $pendaftaranPerBulan,
       'distribusiStatus'    => $distribusiStatus,
       'distribusiProdi'     => $distribusiProdi,
+      'distribusiGel'       => $distribusiGel,
       'mitra'               => $mitra,
     ]);
   }

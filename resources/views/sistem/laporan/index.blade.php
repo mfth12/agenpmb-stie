@@ -87,9 +87,9 @@
                 <label class="form-label">Gelombang</label>
                 <select name="gelombang_filter" id="gelombang_filter" class="form-select text-dark bg-light">
                   <option value="">Semua Gel.</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
+                  @foreach ($distribusiGel as $gel)
+                    <option value="{{ $gel->gelombang }}">{{ ucfirst($gel->gelombang) }}</option>
+                  @endforeach
                 </select>
               </div>
               <div class="col-md-2">

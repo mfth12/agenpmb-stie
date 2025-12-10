@@ -75,26 +75,32 @@
                   {{ $pendaftaran->nomor_hp }}
                 </div>
                 <div class="col-md-6 mt-3">
-                  <strong>Program Studi:</strong><br>
-                  {{ $pendaftaran->prodi_nama }}
+                  <strong>Whatsapp:</strong><br>
+                  {{ $pendaftaran?->nomor_hp2 ?? '-' }}
                 </div>
               </div>
 
               <div class="row">
+                <div class="col-md-6 mt-3">
+                  <strong>Program Studi:</strong><br>
+                  {{ $pendaftaran->prodi_nama }}
+                </div>
                 <div class="col-md-6 mt-3">
                   <strong>Kelas:</strong><br>
                   {{ $pendaftaran->nama_kelas }}
                 </div>
+              </div>
+
+              <div class="row">
                 <div class="col-md-6 mt-3">
                   <strong>Tahun Akademik:</strong><br>
                   {{ $pendaftaran->tahun }}/{{ $pendaftaran->tahun + 1 }} - Gel. {{ $pendaftaran->gelombang }}
                 </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                   <strong>Biaya Pendaftaran:</strong><br>
-                  <span class="fw-bold text-success">{{ $pendaftaran->biaya_formatted }}</span>
+                  <span class="fw-bold text-success">
+                    {{ $pendaftaran->biaya_formatted }}
+                  </span>
                 </div>
               </div>
             </div>
