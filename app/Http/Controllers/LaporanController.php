@@ -30,7 +30,7 @@ class LaporanController extends Controller
       DB::raw('DATE_FORMAT(created_at, "%M %Y") as bulan_tahun'),
       DB::raw('COUNT(*) as jumlah')
     )
-      ->where('created_at', '>=', now()->subMonths(6))
+      ->where('created_at', '>=', now()->subMonths(12))
       ->groupBy('bulan_tahun')
       ->orderBy('bulan_tahun', 'DESC')
       ->get();

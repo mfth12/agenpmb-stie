@@ -91,7 +91,8 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Jumlah Pendaftaran per Bulan (6 Bulan Terakhir)</h3>
+              <h3 class="card-title">Jumlah Pendaftar PMB</h3>
+              <span class="text-muted text-sm ms-1">(12 Bulan Terakhir)</span>
             </div>
             <div class="card-body">
               <canvas id="chartPendaftaranPerBulan" height="200"></canvas>
