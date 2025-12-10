@@ -40,6 +40,13 @@ class LaporanController extends Controller
       ->groupBy('status')
       ->get();
 
+    // Widget 3: Distribusi Pendaftaran Berdasarkan Prodi
+    $distribusiProdi = PendaftaranModel::select('prodi_id', 'prodi_nama', DB::raw('COUNT(*) as jumlah'))
+      ->groupBy('prodi_id', 'prodi_nama') // Tambahkan 'prodi_nama' ke GROUP BY
+      ->get();
+
+    // dd($distribusiProdi);
+
     // Ambil daftar mitra untuk filter dropdown
     $mitra = User::role(['superadmin', 'mitra', 'baak'])->select('user_id', 'name')->get();
 
@@ -51,6 +58,7 @@ class LaporanController extends Controller
       'totalPendaftaranGagal' => $totalPendaftaranGagal,
       'pendaftaranPerBulan' => $pendaftaranPerBulan,
       'distribusiStatus' => $distribusiStatus,
+      'distribusiProdi' => $distribusiProdi,
       'mitra' => $mitra,
     ]);
   }

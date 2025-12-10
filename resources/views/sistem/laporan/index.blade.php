@@ -15,7 +15,7 @@
   <div class="page-body">
     <div class="container-xl">
       {{-- Widget Statistik --}}
-      <div class="row row-cards mb-4">
+      {{-- <div class="row row-cards mb-4">
         <div class="col-sm-6 col-lg-3">
           <div class="card card-sm">
             <div class="card-body">
@@ -84,7 +84,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> --}}
 
       {{-- Grafik --}}
       <div class="row">
@@ -107,6 +107,18 @@
             <div class="card-body">
               <div class="width-30">
                 <canvas id="chartDistribusiStatus" height="70"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mt-3 mt-md-0">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Distribusi Program Studi</h3>
+            </div>
+            <div class="card-body">
+              <div class="width-30">
+                <canvas id="chartDistribusiProdi" height="70"></canvas>
               </div>
             </div>
           </div>
@@ -289,6 +301,39 @@
               'rgba(75, 192, 192, 0.8)', // Success (Blue-ish)
               'rgba(255, 205, 86, 0.8)', // Failed (Yellow-ish)
               // Tambahkan warna lain jika ada status lain
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+
+      const ctx3 = document.getElementById('chartDistribusiProdi').getContext('2d');
+      new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+          labels: [
+            @foreach ($distribusiProdi as $item)
+              '{{ ucfirst(strtolower($item->prodi_nama)) }}',
+            @endforeach
+          ],
+          datasets: [{
+            label: 'Jumlah',
+            data: [
+              @foreach ($distribusiProdi as $item)
+                {{ $item->jumlah }},
+              @endforeach
+            ],
+            backgroundColor: [
+              'rgba(189, 21, 21, 0.8)', // Manajemen (Red)
+              'rgba(46, 107, 201, 0.8)', // Akuntansi (Blue)
             ],
             hoverOffset: 4
           }]
