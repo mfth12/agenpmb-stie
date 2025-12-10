@@ -32,7 +32,7 @@ class LaporanController extends Controller
     )
       ->where('created_at', '>=', now()->subMonths(6))
       ->groupBy('bulan_tahun')
-      ->orderBy('bulan_tahun', 'ASC')
+      ->orderBy('bulan_tahun', 'DESC')
       ->get();
 
     // Widget 2: Distribusi Pendaftaran Berdasarkan Status
