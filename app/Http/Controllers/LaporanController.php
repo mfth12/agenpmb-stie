@@ -127,9 +127,6 @@ class LaporanController extends Controller
                       <a href="' . route('pendaftaran.show', $row) . '" class="text-reset link-hover-underline">
                         ' . $row->nama_lengkap . '
                       </a>
-                    </div>
-                    <div class="text-muted small">
-                      <i class="ti ti-mail me-1"></i>' . $row->email . '
                     </div>';
         if ($row->id_calon_mahasiswa) {
           $html .= '<div class="text-muted small">
@@ -150,9 +147,6 @@ class LaporanController extends Controller
       ->addColumn('asal', function ($row) {
         return '<div class="font-weight-medium">' . $row->mitra->asal_sekolah . '</div>';
       })
-      ->addColumn('status_badge', function ($row) {
-        return $row->status_badge;
-      })
       ->addColumn('mitra_nama', function ($row) {
         return '<div class="font-weight-medium">' . e($row->mitra->name ?? '-') . '</div>';
       })
@@ -167,7 +161,7 @@ class LaporanController extends Controller
         $html .= '</div>';
         return $html;
       })
-      ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'asal', 'status_badge', 'mitra_nama', 'aksi']) // Kolom yang berisi HTML
+      ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'asal', 'mitra_nama', 'aksi']) // Kolom yang berisi HTML
       ->make(true);
   }
 

@@ -144,7 +144,6 @@
                 <th>Calon Mahasiswa</th>
                 <th>Program Studi</th>
                 <th>Akademik</th>
-                <th>Status</th>
                 <th>Mitra</th>
                 <th>Biaya</th>
                 <th class="text-center">Aksi</th>
@@ -337,10 +336,6 @@
             name: 'tahun'
           },
           {
-            data: 'status_badge',
-            name: 'status'
-          },
-          {
             data: 'mitra_nama',
             name: 'mitra_id'
           },
@@ -357,7 +352,7 @@
           }
         ],
         columnDefs: [{
-            targets: [0, 7],
+            targets: [0, 6],
             orderable: false
           } // Kolom No dan Aksi tidak bisa diurutkan
         ],
@@ -382,13 +377,12 @@
       // Handler untuk tombol "Cetak Halaman"
       $('#cetak-button').click(function() {
         const formData = new FormData($('#filter-form')[0]);
-
         try {
           // Ambil base URL
           let printURL = '{{ route('laporan.generate-pdf-get') }}';
           // Siapkan object URLSearchParams untuk menampung semua parameter GET
           let params = new URLSearchParams();
-          // Tambahkan parameter cetak_saja=true
+          // Tambahkan parameter cetak=true
           params.append('cetak', 'true');
           // Loop semua data dari form dan masukkan ke parameter GET
           for (let [key, value] of formData.entries()) {
@@ -396,9 +390,8 @@
               params.append(key, value);
             }
           }
-          // Gabungkan dengan URL
+          // Gabungkan dengan URL, buka tab baru
           printURL = printURL + '?' + params.toString();
-          // Buka tab baru
           window.open(printURL, '_blank');
         } catch (error) {
           console.error("Terjadi kesalahan saat memproses pencetakan:", error.message);

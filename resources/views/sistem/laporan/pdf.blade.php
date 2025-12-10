@@ -91,6 +91,7 @@
         <th>Tahun/Gel.</th>
         <th>Status</th>
         <th>Mitra</th>
+        <th>Asal</th>
       </tr>
     </thead>
     <tbody>
@@ -104,10 +105,11 @@
           <td>{{ $item->tahun }}/{{ $item->gelombang }}</td>
           <td>{{ ucfirst($item->status) }}</td>
           <td>{{ $item->mitra->name ?? '-' }}</td>
+          <td>{{ $item->mitra?->asal_sekolah ?? '-' }}</td>
         </tr>
       @empty
         <tr>
-          <td colspan="8" class="text-center">Tidak ada data</td>
+          <td colspan="9" class="text-center">Tidak ada data</td>
         </tr>
       @endforelse
     </tbody>
