@@ -39,6 +39,7 @@ class LaporanController extends Controller
     $distribusiStatus = PendaftaranModel::select('status', DB::raw('COUNT(*) as jumlah'))
       ->groupBy('status')
       ->get();
+    // dd($distribusiStatus[0]);
 
     // Widget 3: Distribusi Pendaftaran Berdasarkan Prodi
     $distribusiProdi = PendaftaranModel::select('prodi_id', 'prodi_nama', DB::raw('COUNT(*) as jumlah'))
@@ -109,6 +110,11 @@ class LaporanController extends Controller
     // Filter Prodi
     if ($request->has('prodi_filter') && $request->prodi_filter != '') {
       $query->where('prodi_id', $request->prodi_filter);
+    }
+    
+    // Filter Status
+    if ($request->has('status_filter') && $request->status_filter != '') {
+      $query->where('status', $request->status_filter);
     }
 
     return DataTables::eloquent($query)

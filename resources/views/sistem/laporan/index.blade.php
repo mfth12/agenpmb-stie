@@ -165,7 +165,7 @@
                 <select name="prodi_filter" id="prodi_filter" class="form-select">
                   <option value="">Semua Prodi</option>
                   @foreach (App\Models\PendaftaranModel::daftarProdiAktif() as $id => $nama)
-                    <option value="{{ $id }}">{{ $nama }}</option>
+                    <option value="{{ $id }}">S1-{{ $nama }}</option>
                   @endforeach
                 </select>
               </div>
@@ -173,9 +173,9 @@
                 <label class="form-label">Status</label>
                 <select name="status_filter" id="status_filter" class="form-select">
                   <option value="">Semua Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="success">Berhasil</option>
-                  <option value="failed">Gagal</option>
+                  @foreach ($distribusiStatus as $dstStatus)
+                    <option value="{{ $dstStatus->status }}">{{ ucfirst($dstStatus->status) }}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
