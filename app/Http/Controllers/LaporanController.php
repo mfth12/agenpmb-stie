@@ -119,33 +119,33 @@ class LaporanController extends Controller
       ->addIndexColumn() // Kolom DT_RowIndex
       ->addColumn('calon_mahasiswa', function ($row) {
         $html = '<div class="d-flex align-items-center">
-                        <div class="avatar avatar-sm me-3 bg-blue-lt">
-                          <span class="avatar-text">' . substr($row->nama_lengkap, 0, 2) . '</span>
-                        </div>
-                        <div>
-                          <div class="font-weight-medium">
-                            <a href="' . route('pendaftaran.show', $row) . '" class="text-reset link-hover-underline">
-                              ' . $row->nama_lengkap . '
-                            </a>
-                          </div>
-                          <div class="text-muted small">
-                            <i class="ti ti-mail me-1"></i>' . $row->email . '
-                          </div>';
+                  <div class="avatar avatar-sm me-3 bg-primary-lt">
+                    <span class="avatar-text">' . substr($row->nama_lengkap, 0, 2) . '</span>
+                  </div>
+                  <div>
+                    <div class="fw-bold">
+                      <a href="' . route('pendaftaran.show', $row) . '" class="text-reset link-hover-underline">
+                        ' . $row->nama_lengkap . '
+                      </a>
+                    </div>
+                    <div class="text-muted small">
+                      <i class="ti ti-mail me-1"></i>' . $row->email . '
+                    </div>';
         if ($row->id_calon_mahasiswa) {
           $html .= '<div class="text-muted small">
-                            <i class="ti ti-id me-1"></i>' . $row->id_calon_mahasiswa . '
-                          </div>';
+                      <i class="ti ti-id me-1"></i>' . $row->id_calon_mahasiswa . '
+                    </div>';
         }
         $html .= '</div></div>';
         return $html;
       })
       ->addColumn('prodi', function ($row) {
         return '<div class="font-weight-medium">S1-' . $row->prodi_nama . '</div>
-                    <div class="text-muted small">Kelas: ' . $row->nama_kelas . '</div>';
+                <div class="text-muted small">Kelas: ' . $row->nama_kelas . '</div>';
       })
       ->addColumn('akademik', function ($row) {
         return '<div class="font-weight-medium">' . $row->tahun . '/' . $row->gelombang . '</div>
-                    <div class="text-muted small">' . $row->created_at->translatedFormat('d M Y') . '</div>';
+                <div class="text-muted small">' . $row->created_at->translatedFormat('d M Y') . '</div>';
       })
       ->addColumn('asal', function ($row) {
         return '<div class="font-weight-medium">' . $row->mitra->asal_sekolah . '</div>';
@@ -159,10 +159,10 @@ class LaporanController extends Controller
       ->addColumn('aksi', function ($row) {
         // Opsi cetak PDF untuk satu data (opsional)
         $html = '<a href="#" onclick="cetakPdfSatu(\'' . $row->id_calon_mahasiswa . '\')" class="btn btn-sm btn-default text-primary" title="Cetak PDF"
-                          data-bs-toggle="tooltip" data-bs-placement="top">
-                          <i class="ti ti-printer fs-3 me-1"></i>
-                          Cetak
-                        </a>';
+                  data-bs-toggle="tooltip" data-bs-placement="top">
+                  <i class="ti ti-printer fs-3 me-1"></i>
+                  Cetak
+                </a>';
 
         $html .= '</div>';
         return $html;

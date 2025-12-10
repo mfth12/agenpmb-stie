@@ -140,13 +140,13 @@
           <table id="laporan-table" class="table table-vcenter table-bordered table-md table-hover">
             <thead>
               <tr>
-                <th class="w-1">No</th>
+                <th class="w-1 text-center">No</th>
                 <th>Calon Mahasiswa</th>
                 <th>Program Studi</th>
                 <th>Akademik</th>
-                <th>Biaya</th>
-                <th>Mitra</th>
                 <th>Status</th>
+                <th>Mitra</th>
+                <th>Biaya</th>
                 <th class="text-center">Aksi</th>
               </tr>
             </thead>

@@ -58,7 +58,7 @@ class PendaftaranController extends Controller
       ->addIndexColumn() // Kolom DT_RowIndex
       ->addColumn('calon_mahasiswa', function ($row) {
         $html = '<div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-3 bg-blue-lt">
+                  <div class="avatar avatar-sm me-3 bg-primary-lt">
                       <span class="avatar-text">' . substr($row->nama_lengkap, 0, 2) . '</span>
                   </div>
                   <div>
