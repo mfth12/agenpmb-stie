@@ -228,7 +228,7 @@ class LaporanController extends Controller
 
     $data = $query->get(); // Ambil semua data yang difilter
 
-    // Filter Status
+    // Filter Cetak/Print
     if ($request->has('cetak') && $request->boolean('cetak')) {
       // dd($request->cetak);
       // $query->where('status', $request->status_filter);
