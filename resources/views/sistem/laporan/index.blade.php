@@ -14,78 +14,6 @@
 
   <div class="page-body">
     <div class="container-xl">
-      {{-- Widget Statistik --}}
-      {{-- <div class="row row-cards mb-4">
-        <div class="col-sm-6 col-lg-3">
-          <div class="card card-sm">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <span class="bg-blue text-white avatar">
-                    <i class="ti ti-users fs-2"></i>
-                  </span>
-                </div>
-                <div class="col">
-                  <div class="h2 mb-0">{{ $totalPendaftaran }}</div>
-                  <div class="text-secondary">Total Pendaftaran</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="card card-sm">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <span class="bg-green text-white avatar">
-                    <i class="ti ti-check fs-2"></i>
-                  </span>
-                </div>
-                <div class="col">
-                  <div class="h2 mb-0">{{ $totalPendaftaranBerhasil }}</div>
-                  <div class="text-secondary">Berhasil</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="card card-sm">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <span class="bg-warning text-white avatar">
-                    <i class="ti ti-clock fs-2"></i>
-                  </span>
-                </div>
-                <div class="col">
-                  <div class="h2 mb-0">{{ $totalPendaftaranPending }}</div>
-                  <div class="text-secondary">Pending</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="card card-sm">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <span class="bg-red text-white avatar">
-                    <i class="ti ti-x fs-2"></i>
-                  </span>
-                </div>
-                <div class="col">
-                  <div class="h2 mb-0">{{ $totalPendaftaranGagal }}</div>
-                  <div class="text-secondary">Gagal</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> --}}
-
       {{-- Grafik --}}
       <div class="row">
         <div class="col-md-6">
@@ -135,16 +63,20 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label">Mitra</label>
-                <select name="mitra_filter" id="mitra_filter" class="form-select">
+                <select name="mitra_filter" id="mitra_filter" class="form-select text-dark bg-light select2-tabler"
+                  data-placeholder="Semua Mitra">
                   <option value="">Semua Mitra</option>
                   @foreach ($mitra as $mitraa)
-                    <option value="{{ $mitraa->user_id }}">{{ $mitraa->name }}</option>
+                    <option value="{{ $mitraa->user_id }}"
+                      {{ request('mitra_id') == $mitraa->user_id ? 'selected' : '' }}> {{ $mitraa->name }}
+                      {{ $mitraa->asal_sekolah ? '- ' . Str::limit($mitraa->asal_sekolah, 16, '..') : '' }}
+                    </option>
                   @endforeach
                 </select>
               </div>
               <div class="col-md-2">
                 <label class="form-label">Tahun</label>
-                <select name="tahun_filter" id="tahun_filter" class="form-select">
+                <select name="tahun_filter" id="tahun_filter" class="form-select text-dark bg-light">
                   <option value="">Semua Tahun</option>
                   @for ($i = date('Y') + 1; $i >= 2020; $i--)
                     <option value="{{ $i }}">{{ $i }}</option>
@@ -153,7 +85,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Gelombang</label>
-                <select name="gelombang_filter" id="gelombang_filter" class="form-select">
+                <select name="gelombang_filter" id="gelombang_filter" class="form-select text-dark bg-light">
                   <option value="">Semua Gel.</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -162,7 +94,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Program Studi</label>
-                <select name="prodi_filter" id="prodi_filter" class="form-select">
+                <select name="prodi_filter" id="prodi_filter" class="form-select text-dark bg-light">
                   <option value="">Semua Prodi</option>
                   @foreach (App\Models\PendaftaranModel::daftarProdiAktif() as $id => $nama)
                     <option value="{{ $id }}">S1-{{ $nama }}</option>
@@ -171,7 +103,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Status</label>
-                <select name="status_filter" id="status_filter" class="form-select">
+                <select name="status_filter" id="status_filter" class="form-select text-dark bg-light">
                   <option value="">Semua Status</option>
                   @foreach ($distribusiStatus as $dstStatus)
                     <option value="{{ $dstStatus->status }}">{{ ucfirst($dstStatus->status) }}</option>
@@ -219,7 +151,7 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Data akan diisi oleh DataTables -->
+              {{-- Data akan diisi oleh DataTables --}}
             </tbody>
           </table>
         </div>
@@ -239,20 +171,33 @@
 @endsection
 
 @section('js_atas')
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection
 
 @section('js_bawah')
-  <!-- DataTables JS -->
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
   <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
   <script>
+    $(document).ready(function() {
+      // Inisialisasi Select2
+      $('.select2-tabler').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: true,
+        "language": {
+          "noResults": function() {
+            return "Tidak ditemukan";
+          }
+        },
+      });
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
-      // --- Inisialisasi Chart.js ---
+      // Inisialisasi Chart.js
       const ctx1 = document.getElementById('chartPendaftaranPerBulan').getContext('2d');
       new Chart(ctx1, {
         type: 'line',
@@ -351,9 +296,9 @@
           }
         }
       });
-      // --- END Chart.js ---
+      // Chart.js
 
-      // --- Inisialisasi DataTables ---
+      // Inisialisasi DataTables
       let table = $('#laporan-table').DataTable({
         processing: true,
         serverSide: true,
@@ -428,7 +373,6 @@
           url: '/data/datatables-id.json' // Bahasa Indonesia
         },
       });
-      // --- END DataTables ---
 
       // Handler untuk tombol "Terapkan Filter"
       $('#apply-filter').on('click', function() {

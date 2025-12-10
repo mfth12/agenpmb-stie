@@ -19,12 +19,6 @@ class LaporanController extends Controller
    */
   public function index(Request $request): View
   {
-    // Ambil data statistik/widget
-    $totalPendaftaran = PendaftaranModel::count();
-    $totalPendaftaranBerhasil = PendaftaranModel::where('status', 'success')->count();
-    $totalPendaftaranPending = PendaftaranModel::where('status', 'pending')->count();
-    $totalPendaftaranGagal = PendaftaranModel::where('status', 'failed')->count();
-
     // Widget 1: Jumlah Calon Mahasiswa Terdaftar per Bulan (6 bulan terakhir)
     $pendaftaranPerBulan = PendaftaranModel::select(
       DB::raw('DATE_FORMAT(created_at, "%M %Y") as bulan_tahun'),
@@ -56,18 +50,14 @@ class LaporanController extends Controller
 
 
     // Ambil daftar mitra untuk filter dropdown
-    $mitra = User::role(['superadmin', 'mitra', 'baak'])->select('user_id', 'name')->get();
+    $mitra = User::role(['superadmin', 'mitra', 'baak'])->select('user_id', 'name', 'asal_sekolah')->get();
 
     return view('sistem.laporan.index', [
-      'title' => 'Statistik & Laporan',
-      'totalPendaftaran' => $totalPendaftaran,
-      'totalPendaftaranBerhasil' => $totalPendaftaranBerhasil,
-      'totalPendaftaranPending' => $totalPendaftaranPending,
-      'totalPendaftaranGagal' => $totalPendaftaranGagal,
+      'title'               => 'Statistik & Laporan',
       'pendaftaranPerBulan' => $pendaftaranPerBulan,
-      'distribusiStatus' => $distribusiStatus,
-      'distribusiProdi' => $distribusiProdi,
-      'mitra' => $mitra,
+      'distribusiStatus'    => $distribusiStatus,
+      'distribusiProdi'     => $distribusiProdi,
+      'mitra'               => $mitra,
     ]);
   }
 
@@ -167,13 +157,6 @@ class LaporanController extends Controller
         return '<div class="font-weight-medium">' . e($row->mitra->name ?? '-') . '</div>';
       })
       ->addColumn('aksi', function ($row) {
-        // $html = '<div class="btn-list justify-content-center">
-        //                 <a href="' . route('pendaftaran.show', $row) . '" class="btn btn-sm btn-default" title="Detail"
-        //                   data-bs-toggle="tooltip" data-bs-placement="top">
-        //                   <i class="ti ti-eye fs-3 me-1"></i>
-        //                   Detail
-        //                 </a>';
-
         // Opsi cetak PDF untuk satu data (opsional)
         $html = '<a href="#" onclick="cetakPdfSatu(\'' . $row->id_calon_mahasiswa . '\')" class="btn btn-sm btn-default text-primary" title="Cetak PDF"
                           data-bs-toggle="tooltip" data-bs-placement="top">
@@ -201,7 +184,7 @@ class LaporanController extends Controller
     }
 
     // Terapkan filter dari request (misalnya dari form filter di index)
-    // Filter Agen
+    // Filter Mitra
     if ($request->has('mitra_filter') && $request->mitra_filter != '') {
       $query->where('mitra_id', $request->mitra_filter);
     }
@@ -234,25 +217,25 @@ class LaporanController extends Controller
       // $query->where('status', $request->status_filter);
       return view('sistem.laporan.pdf', [
         'title' => 'Laporan Pendaftaran',
-        'data' => $data,
-        'filters' => [
-          'mitra' => User::find($request->mitra_filter)?->name ?? 'Semua',
-          'tahun' => $request->tahun_filter ?? 'Semua',
+        'data'  => $data,
+        'filters'     => [
+          'mitra'     => User::find($request->mitra_filter)?->name ?? 'Semua',
+          'tahun'     => $request->tahun_filter ?? 'Semua',
           'gelombang' => $request->gelombang_filter ?? 'Semua',
-          'prodi' => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
-          'status' => $request->status_filter ?? 'Semua',
+          'prodi'     => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
+          'status'    => $request->status_filter ?? 'Semua',
         ]
       ]);
     } else {
       $pdf = Pdf::loadView('sistem.laporan.pdf', [
         'title' => 'Laporan Pendaftaran',
-        'data' => $data,
-        'filters' => [
-          'mitra' => User::find($request->mitra_filter)?->name ?? 'Semua',
-          'tahun' => $request->tahun_filter ?? 'Semua',
+        'data'  => $data,
+        'filters'     => [
+          'mitra'     => User::find($request->mitra_filter)?->name ?? 'Semua',
+          'tahun'     => $request->tahun_filter ?? 'Semua',
           'gelombang' => $request->gelombang_filter ?? 'Semua',
-          'prodi' => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
-          'status' => $request->status_filter ?? 'Semua',
+          'prodi'     => PendaftaranModel::daftarProdiAktif()[$request->prodi_filter] ?? 'Semua',
+          'status'    => $request->status_filter ?? 'Semua',
         ]
       ]);
 

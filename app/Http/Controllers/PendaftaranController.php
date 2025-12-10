@@ -94,8 +94,8 @@ class PendaftaranController extends Controller
         return $row->status_badge;
       })
       ->addColumn('mitra_id', function ($row) {
-        $asal = Str::limit($row->mitra->asal_sekolah, 15, '...');
-        $mitra = Str::limit($row->mitra->name, 15, '...');
+        $asal = Str::limit($row->mitra->asal_sekolah, 12, '..');
+        $mitra = Str::limit($row->mitra->name, 12, '..');
         return '<div class="font-weight-medium">' . e($mitra) . '</div>
             <div class="text-muted small">' . e($asal) . '</div>';
       })
