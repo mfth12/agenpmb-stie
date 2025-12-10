@@ -45,7 +45,6 @@ class LaporanController extends Controller
       ->groupBy('prodi_id', 'prodi_nama') // Tambahkan 'prodi_nama' ke GROUP BY
       ->get();
 
-    // dd($distribusiProdi);
 
     // Ambil daftar mitra untuk filter dropdown
     $mitra = User::role(['superadmin', 'mitra', 'baak'])->select('user_id', 'name')->get();

@@ -95,7 +95,7 @@
               <span class="text-muted text-sm ms-1">(12 Bulan Terakhir)</span>
             </div>
             <div class="card-body">
-              <canvas id="chartPendaftaranPerBulan" height="200"></canvas>
+              <canvas id="chartPendaftaranPerBulan" height="135"></canvas>
             </div>
           </div>
         </div>
