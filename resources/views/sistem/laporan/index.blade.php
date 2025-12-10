@@ -182,11 +182,11 @@
             <div class="row mt-3">
               <div class="col-md-12">
                 <button type="button" id="apply-filter" class="btn btn-primary me-2">
-                  <i class="ti ti-filter me-1"></i>
+                  <i class="ti ti-filter fs-2 me-1"></i>
                   Terapkan Filter
                 </button>
-                <button type="button" id="export-pdf" class="btn btn-success">
-                  <i class="ti ti-download me-1"></i>
+                <button type="button" id="export-pdf" class="btn btn-default">
+                  <i class="ti ti-download fs-2 me-1"></i>
                   Ekspor ke PDF
                 </button>
               </div>
