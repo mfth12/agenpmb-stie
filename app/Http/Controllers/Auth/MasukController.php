@@ -489,8 +489,7 @@ class MasukController extends Controller
       $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
       $pesan = "🔸Selamat " . $greeting . ", {$user->name}.\n"
         . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *"
-        . konfigs('NAMA_SISTEM') . "* pada:\n" . "{$waktu}\n" . "\n"
-        . "Jika aktivitas ini mencurigakan, segera lakukan langkah pengamanan pada Akun Anda.";
+        . konfigs('NAMA_SISTEM') . "* pada:\n" . "{$waktu}";
       $this->notifikasiWhatsapp($user, $pesan);
     } catch (Throwable $e) {
       Log::channel('whatsapp')->warning('Gagal masuk antrian notif whatsapp (login)', [
