@@ -82,7 +82,7 @@ class LaporanController extends Controller
       $query->where('mitra_id', auth()->id());
     }
 
-    // Filter berdasarkan pencarian global (cari di nama, email, ID calon mhs, no transaksi)
+    // Filter berdasarkan pencarian global (search di nama, email, ID calon mhs, no transaksi)
     if ($request->has('search') && $request->search['value'] != '') {
       $searchValue = $request->search['value'];
       $query->where(function ($q) use ($searchValue) {
@@ -104,11 +104,6 @@ class LaporanController extends Controller
     }
 
     // Filter berdasarkan kolom (bisa digunakan oleh DataTables jika kolom diaktifkan)
-    // Filter Status
-    if ($request->has('columns') && $request->columns[5]['search']['value'] != '') { // Kolom ke-5 (Status) di DataTables
-      $query->where('status', $request->columns[5]['search']['value']);
-    }
-
     // Filter Mitra (dari dropdown filter di atas tabel)
     if ($request->has('mitra_filter') && $request->mitra_filter != '') {
       $query->where('mitra_id', $request->mitra_filter);

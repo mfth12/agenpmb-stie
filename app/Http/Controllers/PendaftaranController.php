@@ -37,17 +37,28 @@ class PendaftaranController extends Controller
       $query->where('mitra_id', auth()->id());
     }
 
-    // Filter berdasarkan pencarian
-    if ($request->has('cari') && $request->cari != '') {
-      $search = $request->cari;
-      $query->where(function ($q) use ($search) {
-        $q->where('nama_lengkap', 'like', "%{$search}%")
-          ->orWhere('email', 'like', "%{$search}%")
-          ->orWhere('id_calon_mahasiswa', 'like', "%{$search}%")
-          ->orWhere('no_transaksi', 'like', "%{$search}%");
+    // Filter berdasarkan pencarian global (cari di nama, email, ID calon mhs, no transaksi)
+    if ($request->has('search') && $request->search['value'] != '') {
+      $searchValue = $request->search['value'];
+      $query->where(function ($q) use ($searchValue) {
+        $q->where('nama_lengkap', 'like', "%{$searchValue}%")
+          ->orWhere('id_calon_mahasiswa', 'like', "%{$searchValue}%")
+          ->orWhere('username_siakad', 'like', "%{$searchValue}%")
+          ->orWhere('prodi_nama', 'like', "%{$searchValue}%")
+          ->orWhere('tahun', 'like', "%{$searchValue}%")
+          ->orWhere('gelombang', 'like', "%{$searchValue}%")
+          ->orWhere('biaya', 'like', "%{$searchValue}%")
+          ->orWhere('email', 'like', "%{$searchValue}%")
+          ->orWhere('nomor_hp', 'like', "%{$searchValue}%")
+          ->orWhere('nomor_hp2', 'like', "%{$searchValue}%")
+          ->orWhereHas('mitra', function ($q_mitra) use ($searchValue) {
+            $q_mitra->where('name', 'like', "%{$searchValue}%")
+              ->orWhere('asal_sekolah', 'like', "%{$searchValue}%");
+          });
       });
     }
 
+    // Filter berdasarkan kolom (bisa digunakan oleh DataTables jika kolom diaktifkan)
     // Filter berdasarkan status
     if ($request->has('status') && $request->status != '') {
       $query->where('status', $request->status);

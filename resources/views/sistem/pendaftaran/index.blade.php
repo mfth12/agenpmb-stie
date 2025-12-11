@@ -391,7 +391,7 @@
           type: 'GET',
           data: function(d) {
             // Kirim parameter filter ke server
-            d.cari = $('input[name="cari"]').val();
+            // d.cari = $('input[name="cari"]').val();
             d.status = $('select[name="status"]').val();
           }
         },
