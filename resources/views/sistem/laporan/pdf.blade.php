@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt;
+      font-size: 11pt;
       line-height: 1.3;
       color: #000;
     }
@@ -115,9 +115,9 @@
     </tbody>
   </table>
 
-  {{-- <div class="footer">
+  <div class="footer">
     Laporan dicetak pada {{ now()->translatedFormat('d M Y H:i:s') }}
-  </div> --}}
+  </div>
 
   @if (request()->boolean('cetak'))
     <script>
