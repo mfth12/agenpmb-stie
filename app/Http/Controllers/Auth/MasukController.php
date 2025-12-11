@@ -484,12 +484,35 @@ class MasukController extends Controller
     }
 
     try {
+      $internalMap = [
+        '127.0.0.1'     => 'Local testing host',
+        '192.168.17.1'  => 'Kampus STIE Pembangunan',
+      ];
+      $location = 'Tidak diketahui';
+      // Jika IP ada di internal map, gunakan itu
+      if (isset($internalMap[$ip])) {
+        $location = $internalMap[$ip];
+      } else {
+        // Cek apakah IP publik -> hanya jika publik maka sistem memanggil ip-api
+        $isPublicIp = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        if ($isPublicIp) {
+          $geo = Http::get("http://ip-api.com/json/{$ip}?fields=status,country,regionName,city,query");
+          if ($geo->successful() && data_get($geo->json(), 'status') === 'success') {
+            $location = data_get($geo->json(), 'city') . ', ' . data_get($geo->json(), 'regionName') . ', ' . data_get($geo->json(), 'country');
+          }
+        } else {
+          $location = 'Tidak diketahui';
+        }
+      }
       // Pesan WhatsApp
       $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
       $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
       $pesan = "🔸Selamat " . $greeting . ", {$user->name}.\n"
-        . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *"
-        . konfigs('NAMA_SISTEM') . "* pada:\n" . "{$waktu}";
+        . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *" . konfigs('NAMA_SISTEM') . "* pada:\n"
+        . "Waktu: {$waktu}"
+        . "IP: {$ip}\n"
+        . "Lokasi: {$location}";
+      // Lakukan Pengiriman
       $this->notifikasiWhatsapp($user, $pesan);
     } catch (Throwable $e) {
       Log::channel('whatsapp')->warning('Gagal masuk antrian notif whatsapp (login)', [
