@@ -509,7 +509,7 @@ class MasukController extends Controller
       $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
       $pesan = "🔸Selamat " . $greeting . ", {$user->name}.\n"
         . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *" . konfigs('NAMA_SISTEM') . "* pada:\n"
-        . "Waktu: {$waktu}"
+        . "Waktu: {$waktu}\n"
         . "IP: {$ip}\n"
         . "Lokasi: {$location}";
       // Lakukan Pengiriman
