@@ -75,7 +75,7 @@ class LaporanController extends Controller
    */
   public function data(Request $request): JsonResponse
   {
-    $query = PendaftaranModel::with(['user', 'mitra']); // Eager load relasi
+    $query = PendaftaranModel::with(['user', 'mitra'])->orderBy('created_at', 'DESC'); // Eager load relasi
 
     // Filter berdasarkan role user
     if (auth()->user()->hasRole('mitra')) {
@@ -179,8 +179,7 @@ class LaporanController extends Controller
    */
   public function generatePdf(Request $request)
   {
-    $query = PendaftaranModel::with(['user', 'mitra'])
-      ->orderBy('created_at', 'DESC'); // Eager load relasi
+    $query = PendaftaranModel::with(['user', 'mitra'])->orderBy('created_at', 'DESC'); // Eager load relasi
 
     // Filter berdasarkan role user (jika role mitra)
     if (auth()->user()->hasRole('mitra')) {

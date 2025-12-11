@@ -30,7 +30,7 @@ class PendaftaranController extends Controller
    */
   public function data(Request $request): JsonResponse
   {
-    $query = PendaftaranModel::with(['user', 'mitra']);
+    $query = PendaftaranModel::with(['user', 'mitra'])->orderBy('created_at', 'DESC'); // Eager load relasi
 
     // Filter berdasarkan role user
     if (auth()->user()->hasRole('mitra')) {
@@ -147,7 +147,7 @@ class PendaftaranController extends Controller
    */
   public function index(Request $request): View
   {
-    $query = PendaftaranModel::with(['user', 'mitra']);
+    $query = PendaftaranModel::with(['user', 'mitra'])->orderBy('created_at', 'DESC'); // Eager load relasi
 
     // Filter berdasarkan role user
     if (auth()->user()->hasRole('mitra')) {
