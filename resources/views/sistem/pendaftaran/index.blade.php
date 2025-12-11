@@ -399,6 +399,7 @@
             data: 'DT_RowIndex',
             name: 'pendaftaran_id',
             orderable: true,
+            searchable: false,
             className: 'text-muted text-center'
           },
           {
@@ -430,12 +431,13 @@
             data: 'aksi',
             name: 'aksi',
             orderable: false,
+            searchable: false,
             className: 'text-center'
           }
         ],
         columnDefs: [{
-            targets: [6],
-            orderable: true
+            targets: [7],
+            orderable: false
           } // Kolom No dan Aksi tidak bisa diurutkan
         ],
         pageLength: 25,

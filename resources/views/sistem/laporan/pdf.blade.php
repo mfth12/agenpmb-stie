@@ -101,7 +101,7 @@
           <td>{{ $item->nama_lengkap }}</td>
           <td>{{ Str::limit('**' . substr($item->email, 2), 15, '..') }}</td>
           <td>{{ $item->nomor_hp }}</td>
-          <td>{{ $item->prodi_nama }}</td>
+          <td style="white-space: nowrap;">S1-{{ $item->prodi_nama }}</td>
           <td>{{ $item->tahun }}/{{ $item->gelombang }}</td>
           {{-- <td>{{ ucfirst($item->status) }}</td> --}}
           <td>{{ $item->mitra->name ?? '-' }}</td>
@@ -115,9 +115,9 @@
     </tbody>
   </table>
 
-  <div class="footer">
+  {{-- <div class="footer">
     Laporan dicetak pada {{ now()->translatedFormat('d M Y H:i:s') }}
-  </div>
+  </div> --}}
 
   @if (request()->boolean('cetak'))
     <script>

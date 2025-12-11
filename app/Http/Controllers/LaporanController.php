@@ -75,7 +75,7 @@ class LaporanController extends Controller
    */
   public function data(Request $request): JsonResponse
   {
-    $query = PendaftaranModel::with(['user', 'mitra'])->orderBy('created_at', 'DESC'); // Eager load relasi
+    $query = PendaftaranModel::with(['user', 'mitra']); // Eager load relasi
 
     // Filter berdasarkan role user
     if (auth()->user()->hasRole('mitra')) {
@@ -87,9 +87,19 @@ class LaporanController extends Controller
       $searchValue = $request->search['value'];
       $query->where(function ($q) use ($searchValue) {
         $q->where('nama_lengkap', 'like', "%{$searchValue}%")
-          ->orWhere('email', 'like', "%{$searchValue}%")
           ->orWhere('id_calon_mahasiswa', 'like', "%{$searchValue}%")
-          ->orWhere('no_transaksi', 'like', "%{$searchValue}%");
+          ->orWhere('username_siakad', 'like', "%{$searchValue}%")
+          ->orWhere('prodi_nama', 'like', "%{$searchValue}%")
+          ->orWhere('tahun', 'like', "%{$searchValue}%")
+          ->orWhere('gelombang', 'like', "%{$searchValue}%")
+          ->orWhere('biaya', 'like', "%{$searchValue}%")
+          ->orWhere('email', 'like', "%{$searchValue}%")
+          ->orWhere('nomor_hp', 'like', "%{$searchValue}%")
+          ->orWhere('nomor_hp2', 'like', "%{$searchValue}%")
+          ->orWhereHas('mitra', function ($q_mitra) use ($searchValue) {
+            $q_mitra->where('name', 'like', "%{$searchValue}%")
+              ->orWhere('asal_sekolah', 'like', "%{$searchValue}%");
+          });
       });
     }
 
@@ -153,11 +163,11 @@ class LaporanController extends Controller
         return '<div class="font-weight-medium">' . $row->tahun . '/' . $row->gelombang . '</div>
                 <div class="text-muted small">' . $row->created_at->translatedFormat('d M Y') . '</div>';
       })
-      ->addColumn('asal', function ($row) {
-        return '<div class="font-weight-medium">' . $row->mitra->asal_sekolah . '</div>';
-      })
-      ->addColumn('mitra_nama', function ($row) {
+      ->addColumn('mitra_name', function ($row) {
         return '<div class="font-weight-medium">' . e($row->mitra->name ?? '-') . '</div>';
+      })
+      ->addColumn('asal_sekolah', function ($row) {
+        return '<div class="font-weight-medium">' . $row->mitra->asal_sekolah . '</div>';
       })
       ->addColumn('aksi', function ($row) {
         // Opsi cetak PDF untuk satu data (opsional)
@@ -170,7 +180,7 @@ class LaporanController extends Controller
         $html .= '</div>';
         return $html;
       })
-      ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'asal', 'mitra_nama', 'aksi']) // Kolom yang berisi HTML
+      ->rawColumns(['calon_mahasiswa', 'prodi', 'akademik', 'mitra_name', 'asal_sekolah', 'aksi']) // Kolom yang berisi HTML
       ->make(true);
   }
 

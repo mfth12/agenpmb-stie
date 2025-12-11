@@ -145,7 +145,7 @@
                 <th>Program Studi</th>
                 <th>Akademik</th>
                 <th>Mitra</th>
-                <th>Biaya</th>
+                <th>Asal</th>
                 <th class="text-center">Aksi</th>
               </tr>
             </thead>
@@ -325,23 +325,23 @@
           },
           {
             data: 'calon_mahasiswa',
-            name: 'nama_lengkap'
+            name: 'calon_mahasiswa'
           },
           {
             data: 'prodi',
-            name: 'prodi_nama'
+            name: 'prodi'
           },
           {
             data: 'akademik',
-            name: 'tahun'
+            name: 'akademik'
           },
           {
-            data: 'mitra_nama',
-            name: 'mitra_id'
+            data: 'mitra_name',
+            name: 'mitra_name'
           },
           {
-            data: 'asal',
-            name: 'asal'
+            data: 'asal_sekolah',
+            name: 'asal_sekolah'
           },
           {
             data: 'aksi',
@@ -352,9 +352,9 @@
           }
         ],
         columnDefs: [{
-            targets: [0, 6],
+            targets: [6],
             orderable: false
-          } // Kolom No dan Aksi tidak bisa diurutkan
+          } // Kolom Aksi tidak bisa diurutkan
         ],
         pageLength: 25,
         lengthMenu: [
@@ -362,8 +362,8 @@
           [10, 25, 50, 100, "Semua"]
         ], //jumlah data yang ditampilkan
         order: [
-          [3, 'desc']
-        ], // Urutkan berdasarkan kolom tahun (indeks 3) secara descending
+          [0, 'desc']
+        ], // Urutkan berdasarkan pendaftar_id (indeks 0) secara descending
         language: {
           url: '/data/datatables-id.json' // Bahasa Indonesia
         },
