@@ -124,6 +124,14 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
+     * Mutator untuk mengkonversi email menjadi huruf kecil sebelum disimpan
+     */
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower($value);
+    }
+
+    /**
      * Mutator nomor_hp -> simpan hanya angka
      */
     public function setNomorHpAttribute($value)

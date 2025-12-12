@@ -35,12 +35,14 @@ class PenggunaUpdateRequest extends FormRequest
         'required',
         'string',
         'max:20',
+        'regex:/^[0-9]+$/',
         Rule::unique('users', 'nomor_hp')->ignore($userId, 'user_id')
       ],
       'nomor_hp2' => [
         'required',
         'string',
         'max:20',
+        'regex:/^[0-9]+$/',
         Rule::unique('users', 'nomor_hp2')->ignore($userId, 'user_id')
       ],
       'role' => 'required|string|exists:roles,name',
@@ -64,6 +66,8 @@ class PenggunaUpdateRequest extends FormRequest
       'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
       'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
       'nomor_hp2.unique' => 'Nomor Whatsapp sudah digunakan.',
+      'nomor_hp.regex' => 'Nomor HP hanya boleh berisi angka.',
+      'nomor_hp2.regex' => 'Nomor Whatsapp hanya boleh berisi angka.',
       'role.required' => 'Role wajib dipilih.',
       'password.min' => 'Password minimal 6 karakter.',
       'password.confirmed' => 'Konfirmasi password tidak sesuai.',

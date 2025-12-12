@@ -28,8 +28,21 @@ class PenggunaStoreRequest extends FormRequest
         'max:100',
         'regex:/^(?!.*\.\.)(?!\.)(?!.*\.$)[a-zA-Z0-9._]+$/', // Tidak boleh ada spasi
       ],
-      'nomor_hp' => 'required|string|unique:users,nomor_hp|max:20', // Jadikan wajib
-      'nomor_hp2' => 'required|string|unique:users,nomor_hp2|max:20',
+      'nomor_hp'  => [
+        'required',
+        'string',
+        'unique:users,nomor_hp',
+        'max:20',
+        'regex:/^[0-9]+$/'
+      ],
+
+      'nomor_hp2' => [
+        'required',
+        'string',
+        'unique:users,nomor_hp2',
+        'max:20',
+        'regex:/^[0-9]+$/'
+      ],
       'password' => 'required|string|min:6',
       'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
       'about' => 'nullable|string|max:500', // TAMBAHAN: Field about
@@ -80,6 +93,8 @@ class PenggunaStoreRequest extends FormRequest
       'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
       'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
       'nomor_hp2.unique' => 'Nomor Whatsapp sudah digunakan.',
+      'nomor_hp.regex' => 'Nomor HP hanya boleh berisi angka.',
+      'nomor_hp2.regex' => 'Nomor Whatsapp hanya boleh berisi angka.',
       'password.required' => 'Password wajib diisi.',
       'password.min' => 'Password minimal 6 karakter.',
       'password.confirmed' => 'Konfirmasi password tidak sesuai.',

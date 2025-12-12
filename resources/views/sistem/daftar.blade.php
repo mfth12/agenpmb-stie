@@ -52,7 +52,7 @@
           <div class="mb-3">
             <label class="form-label required">Email</label>
             <input type="email" name="email" value="{{ old('email') }}"
-              class="form-control @error('email') is-invalid @enderror" placeholder="Masukkan email" required />
+              class="form-control @error('email') is-invalid @enderror" placeholder="Masukkan email aktif" required />
             @error('email')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -118,7 +118,7 @@
             <label class="form-label required">Password</label>
             <div class="input-group input-group-flat">
               <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                placeholder="Password" autocomplete="off" required />
+                placeholder="Minimal 6 karakter" autocomplete="off" required />
             </div>
             @error('password')
               <div class="invalid-feedback">{{ $message }}</div>

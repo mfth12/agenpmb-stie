@@ -137,7 +137,7 @@
                   <td>{{ $antrian->target }}</td>
                   <td><span class="badge bg-blue-lt">{{ $antrian->tipe }}</span></td>
                   <td>
-                    <div style="max-height: 4rem; overflow-y: auto;">{!! nl2br(e($antrian->isi_pesan)) !!}</div>
+                    <div style="max-height: 4rem; max-width: 20rem; overflow-y: auto;">{!! nl2br(e($antrian->isi_pesan)) !!}</div>
                   </td>
                   <td>
                     @php

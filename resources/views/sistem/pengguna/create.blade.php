@@ -26,7 +26,7 @@
                     <div class="mb-3">
                       <label class="form-label required">Nama Lengkap</label>
                       <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
-                        value="{{ old('nama') }}" required>
+                        value="{{ old('nama') }}" required placeholder="Masukkan nama lengkap">
                       @error('nama')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -37,7 +37,7 @@
                       <label class="form-label required">Asal Instansi/Sekolah</label>
                       <input type="text" name="asal_sekolah"
                         class="form-control @error('asal_sekolah') is-invalid @enderror" value="{{ old('asal_sekolah') }}"
-                        required>
+                        required placeholder="Masukkan nama instansi / sekolah asal">
                       @error('asal_sekolah')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -50,7 +50,7 @@
                     <div class="mb-3">
                       <label class="form-label required">Username</label>
                       <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                        value="{{ old('username') }}" required>
+                        value="{{ old('username') }}" required placeholder="Masukkan username (untuk login)">
                       @error('username')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -60,7 +60,7 @@
                     <div class="mb-3">
                       <label class="form-label required">Email</label>
                       <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email') }}" required>
+                        value="{{ old('email') }}" required placeholder="Masukkan email aktif">
                       @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -73,7 +73,7 @@
                     <div class="mb-3">
                       <label class="form-label required">Nomor HP</label>
                       <input type="text" name="nomor_hp" class="form-control @error('nomor_hp') is-invalid @enderror"
-                        value="{{ old('nomor_hp') }}" required>
+                        value="{{ old('nomor_hp') }}" required placeholder="Masukkan nomor HP">
                       @error('nomor_hp')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -83,7 +83,7 @@
                     <div class="mb-3">
                       <label class="form-label required">Nomor Whatsapp</label>
                       <input type="text" name="nomor_hp2" class="form-control @error('nomor_hp2') is-invalid @enderror"
-                        value="{{ old('nomor_hp2') }}">
+                        value="{{ old('nomor_hp2') }}" required placeholder="Masukkan nomor whatsapp">
                       @error('nomor_hp2')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -136,8 +136,8 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label required">Password</label>
-                      <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                        required>
+                      <input type="password" name="password"
+                        class="form-control @error('password') is-invalid @enderror" required placeholder="Minimal 6 karakter">
                       @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -146,7 +146,7 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label required">Konfirmasi Password</label>
-                      <input type="password" name="password_confirmation" class="form-control" required>
+                      <input type="password" name="password_confirmation" class="form-control" required placeholder="Ulangi password">
                     </div>
                   </div>
                 </div>
