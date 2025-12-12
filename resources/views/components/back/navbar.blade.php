@@ -167,17 +167,62 @@
           </div>
         </a>
         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-          <a href="{{ route('profil.show') }}" class="dropdown-item">Profil Saya</a>
+          <a href="{{ route('profil.show') }}" class="dropdown-item">
+            <i class="ti ti-user fs-2"></i>
+            Profil Saya
+          </a>
           <div class="dropdown-divider"></div>
-          <a href="./panduan.pdf" target="_blank" class="dropdown-item">Panduan</a>
+          <a href="./panduan.pdf" target="_blank" class="dropdown-item">
+            <i class="ti ti-book-2 fs-2"></i>
+            Panduan
+          </a>
           @can('konfigurasi_manage')
-            <a href="{{ route('konfigurasi.index') }}" class="dropdown-item">Konfigurasi</a>
+            <a href="{{ route('konfigurasi.index') }}" class="dropdown-item">
+              <i class="ti ti-settings-2 fs-2"></i>
+              Konfigurasi
+            </a>
           @endcan
-          <form action="{{ route('logout') }}" method="POST" class="inline">
-            @csrf <button type="submit" class="dropdown-item text-danger">Keluar</button>
+          {{-- Ganti form submit menjadi link --}}
+          <a href="#" class="dropdown-item text-danger" id="logout-btn">
+            <i class="ti ti-logout fs-2"></i>
+            Keluar
+          </a>
+          {{-- Form logout disembunyikan --}}
+          <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
           </form>
         </div>
       </div>
     </div>
   </div>
 </header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutForm = document.getElementById('logout-form');
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // Cegah aksi default dari link
+        // Tampilkan konfirmasi SweetAlert
+        Swal.fire({
+          title: 'Konfirmasi',
+          text: "Apakah Anda yakin ingin keluar?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#d33', // Merah untuk bahaya
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Keluar',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Jika dikonfirmasi, submit form logout
+            logoutForm.submit();
+          }
+          // Jika dibatalkan (result.isDismissed), tidak ada aksi
+        });
+      });
+    }
+  });
+</script>
