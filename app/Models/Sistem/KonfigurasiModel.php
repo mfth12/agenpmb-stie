@@ -73,33 +73,6 @@ class KonfigurasiModel extends Model
         });
     }
 
-  // /**
-  //  * digunakan untuk  memanggil data cache.
-  //  *
-  //  */
-  // public static function getCache($idx = null)
-  // {
-  //   if (!Cache::has('konfigs')) {
-  //     KonfigurasiModel::toCache();
-  //   }
-
-  //   if ($idx == null) {
-  //     return Cache::get('konfigs');
-  //   } else {
-  //     $konfigs = Cache::get('konfigs');
-  //     return $konfigs[$idx];
-  //   }
-  // }
-
-  // /**
-  //  * digunakan untuk menghapus seluruh cache.
-  //  *
-  //  */
-  // public static function clear()
-  // {
-  //   Cache::flush();
-  // }
-
     /**
      * Digunakan untuk mengambil nama tabel model ini.
      *

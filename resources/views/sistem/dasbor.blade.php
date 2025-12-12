@@ -57,7 +57,7 @@
                   <h3 class="h2">Selamat {{ $greeting }},
                     {{ Str::of(auth()->user()->name)->explode(' ')->first() }}
                   </h3>
-                  <p class="text-muted">Kamu punya 53 pesan baru dan 2 notifikasi baru.</p>
+                  <p class="text-muted">Anda punya 53 pesan baru dan 2 notifikasi baru.</p>
                   <div class="row g-6 mt-auto">
                     <div class="col-auto">
                       <div class="subheader">Pendaftaran Hari Ini</div>
@@ -263,8 +263,8 @@
                   </span>
                 </div>
               </div>
-              <div id="chart-new-clients" class="position-relative chart-sm"></div>
-              <div id="chart-visitors" class="position-relative"></div>
+              {{-- <div id="chart-new-clients" class="position-relative chart-sm"></div> --}}
+              <div id="chart-visitors" class="position-relative chart-sm"></div>
             </div>
           </div>
         </div>
