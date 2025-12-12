@@ -61,9 +61,7 @@ class MasukController extends Controller
         'Rate limiter aktif "' . $request->username . '"',
         [
           'username'      => $request->username ?? 'Tidak diketahui',
-          'ip_address'    => $request->ip(),
           'waiting_time'  => $seconds . ' detik',
-          'user_agent'    => $request->userAgent(),
         ]
       );
 
@@ -106,9 +104,7 @@ class MasukController extends Controller
         'Gagal menghubungi layanan Siakad untuk login via API Siakad',
         [
           'username' => $credentials['username'],
-          'ip_address' => $request->ip(),
           'error' => $e->getMessage(),
-          'user_agent' => $request->userAgent(),
         ]
       );
 
@@ -125,8 +121,6 @@ class MasukController extends Controller
         'Verifikasi keamanan Turnstile gagal untuk login via API Siakad',
         [
           'username' => $credentials['username'],
-          'ip_address' => $request->ip(),
-          'user_agent' => $request->userAgent(),
         ]
       );
       return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
@@ -148,8 +142,6 @@ class MasukController extends Controller
           [
             'username' => $userData['username'] ?? $credentials['username'],
             'siakad_id' => $userData['id'],
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
           ]
         );
         return back()->withErrors(['masuk' => 'Akun Siakad Anda tidak aktif.']);
@@ -243,8 +235,6 @@ class MasukController extends Controller
           'username' => $user->username,
           'name' => $user->name,
           'siakad_id' => $user->siakad_id,
-          'ip_address' => $request->ip(),
-          'user_agent' => $request->userAgent(),
         ]
       );
 
@@ -263,8 +253,6 @@ class MasukController extends Controller
       'Login via API Siakad gagal',
       [
         'username' => $credentials['username'],
-        'ip_address' => $request->ip(),
-        'user_agent' => $request->userAgent(),
         'api_response' => $data, // Log respons API jika relevan
       ]
     );
@@ -293,8 +281,6 @@ class MasukController extends Controller
         'Verifikasi keamanan Turnstile gagal untuk login lokal',
         [
           'username' => $credentials['username'],
-          'ip_address' => $request->ip(),
-          'user_agent' => $request->userAgent(),
         ]
       );
       return back()->withErrors(['turnstile_notvalid' => 'Verifikasi keamanan gagal']);
@@ -323,8 +309,6 @@ class MasukController extends Controller
             'username' => $user->username,
             'name' => $user->name,
             'status' => $user->status,
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
           ]
         );
         return back()->withErrors(['masuk' => 'Akun Anda tidak aktif. Silakan hubungi administrator.']);
@@ -341,8 +325,6 @@ class MasukController extends Controller
           'user_id' => $user->user_id,
           'username' => $user->username,
           'name' => $user->name,
-          'ip_address' => $request->ip(),
-          'user_agent' => $request->userAgent(),
         ]
       );
 
@@ -361,8 +343,6 @@ class MasukController extends Controller
       'Login lokal gagal (username/password salah)',
       [
         'username' => $credentials['username'],
-        'ip_address' => $request->ip(),
-        'user_agent' => $request->userAgent(),
       ]
     );
 
@@ -424,8 +404,6 @@ class MasukController extends Controller
         'user_id' => $user->user_id,
         'username' => $user->username,
         'name' => $user->name,
-        'ip_address' => $request->ip(),
-        'user_agent' => $request->userAgent(),
       ]
     );
     return redirect()->route('login')->with('keluar', 'Anda telah keluar sistem');
@@ -525,30 +503,54 @@ class MasukController extends Controller
     Cache::put($cacheKey, true, now()->addMinutes($sessionLifetime));
   }
 
-    // FUNGSI PEMBANTU BARU UNTUK LOGGING ---
   /**
    * Fungsi untuk mencatat log aksi pengguna ke channel 'masuk'.
+   * Menambahkan informasi lokasi berdasarkan IP.
    */
   protected function logAction($level, $message, $context = [])
   {
-    // Tambahkan informasi waktu ke context
-    $context['time'] = now()->toDateTimeString();
-
     // Tambahkan detail user agent
     $agent = new Agent();
     $deviceType = $agent->isMobile() ? 'Mobile' : ($agent->isTablet() ? 'Tablet' : 'Desktop');
-    $platform = $agent->platform() ?? 'Unknown';   // Windows, macOS, Android, iOS, Linux
-    $browser  = $agent->browser() ?? 'Unknown';    // Chrome, Firefox, Safari, dll
+    $platform = $agent->platform() ?? 'Unknown';
+    $browser  = $agent->browser() ?? 'Unknown';
 
+    // Tambahkan detail ip
+    $ip = request()->ip();
+    $internalMap = [
+      '127.0.0.1'     => 'Local testing host',
+      '192.168.17.1'  => 'Kampus STIE Pembangunan',
+    ];
+
+    // Tambahkan detail lokasi
+    $location = 'Tidak diketahui';
+    if (isset($internalMap[$ip])) {
+      $location = $internalMap[$ip];
+    } else {
+      $isPublicIp = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+      if ($isPublicIp) {
+        $geo = Http::timeout(5)->get("http://ip-api.com/json/{$ip}?fields=status,country,regionName,city,query"); // Tambahkan timeout
+        if ($geo->successful() && data_get($geo->json(), 'status') === 'success') {
+          $location = data_get($geo->json(), 'city', 'N/A') . ', ' .
+            data_get($geo->json(), 'regionName', 'N/A') . ', ' .
+            data_get($geo->json(), 'country', 'N/A');
+        }
+      } else {
+        $location = 'Jaringan Internal';
+      }
+    }
+
+    // Apply konteks
     $context['user_agent'] = [
-      'raw'       => request()->userAgent(), // Ambil dari request saat ini
+      'raw'       => request()->userAgent(),
       'device'    => $deviceType,
       'platform'  => $platform,
       'browser'   => $browser,
     ];
+    $context['location'] = $location;
+    $context['time'] = now()->toDateTimeString();
 
     // Catat log ke channel 'masuk'
     Log::channel('masuk')->$level($message, $context);
   }
-  // --- END FUNGSI PEMBANTU ---
 }
