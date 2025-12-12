@@ -37,8 +37,8 @@
           </a>
         </div>
         <div class="nav-item dropdown d-none d-md-flex">
-          <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="LIhat Notifikasi"
-            data-bs-auto-close="outside" aria-expanded="false">
+          <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" title="Lihat Notifikasi"
+            data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-auto-close="outside">
             <!-- Download SVG icon from http://tabler.io/icons/icon/bell -->
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
@@ -159,8 +159,7 @@
       <div class="nav-item dropdown">
         <a href="#" class="nav-link d-flex lh-1 pb-2 px-2" data-bs-toggle="dropdown"
           aria-label="Open user menu">
-          <span class="avatar avatar-sm"
-            style="background-image: url({{ Auth()->user()->avatar_thumb_url }})">
+          <span class="avatar avatar-sm" style="background-image: url({{ Auth()->user()->avatar_thumb_url }})">
           </span>
           <div class="d-none d-xl-block ps-2">
             <div>{{ Auth()->user()->name }}</div>
@@ -171,9 +170,11 @@
           <a href="{{ route('profil.show') }}" class="dropdown-item">Profil Saya</a>
           <div class="dropdown-divider"></div>
           <a href="./panduan.pdf" target="_blank" class="dropdown-item">Panduan</a>
-          <a href="{{ route('konfigurasi.index') }}" class="dropdown-item">Konfigurasi</a>
+          @can('konfigurasi_manage')
+            <a href="{{ route('konfigurasi.index') }}" class="dropdown-item">Konfigurasi</a>
+          @endcan
           <form action="{{ route('logout') }}" method="POST" class="inline">
-            @csrf <button type="submit" class="dropdown-item">Keluar</button>
+            @csrf <button type="submit" class="dropdown-item text-danger">Keluar</button>
           </form>
         </div>
       </div>
