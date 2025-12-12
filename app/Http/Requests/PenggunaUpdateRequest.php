@@ -28,6 +28,7 @@ class PenggunaUpdateRequest extends FormRequest
         'required',
         'string',
         'max:100',
+        'regex:/^(?!.*\.\.)(?!\.)(?!.*\.$)[a-zA-Z0-9._]+$/', // Tidak boleh ada spasi
         Rule::unique('users', 'username')->ignore($userId, 'user_id')
       ],
       'nomor_hp' => [
@@ -58,6 +59,7 @@ class PenggunaUpdateRequest extends FormRequest
       'email.unique' => 'Email sudah digunakan.',
       'username.required' => 'Username wajib diisi.',
       'username.unique' => 'Username sudah digunakan.',
+      'username.regex' => 'Hanya huruf, angka, titik, dan underscore, tanpa spasi dan titik diawal/akhir.',
       'nomor_hp.required' => 'Nomor HP wajib diisi.',
       'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
       'nomor_hp.unique' => 'Nomor HP sudah digunakan.',

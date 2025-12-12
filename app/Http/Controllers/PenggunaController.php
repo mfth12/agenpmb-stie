@@ -132,11 +132,11 @@ class PenggunaController extends Controller
         // Menyiapkan pesan
         $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
         $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
-        $pesan = "🚀 Selamat " . $greeting . ", {$request->nama}. "
+        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
           . "Anda telah terdaftar sebagai *" . konfigs('NAMA_SISTEM_ALIAS') . "* pada " . konfigs('NAMA_PT') . ". "
           . "Berikut adalah kredensial akun Anda:\n"
-          . "Username: *{$request->username}*\n"
-          . "Password: *{$request->password}*\n"
+          . "Username: *{$pengguna->username}*\n"
+          . "Password: *{$pengguna->password}*\n"
           . "Link: " . route('login');
 
         // Aksi kirim

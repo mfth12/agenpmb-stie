@@ -21,7 +21,13 @@ class PenggunaStoreRequest extends FormRequest
       'asal_sekolah' => 'nullable|string|max:255', // Jadikan opsional secara default
       'afiliasi' => 'nullable|exists:user_afiliasis,afiliasi_id', // Validasi afiliasi
       'email' => 'required|email|unique:users,email',
-      'username' => 'required|string|unique:users,username|max:100',
+      'username' => [
+        'required',
+        'string',
+        'unique:users,username',
+        'max:100',
+        'regex:/^(?!.*\.\.)(?!\.)(?!.*\.$)[a-zA-Z0-9._]+$/', // Tidak boleh ada spasi
+      ],
       'nomor_hp' => 'required|string|unique:users,nomor_hp|max:20', // Jadikan wajib
       'nomor_hp2' => 'required|string|unique:users,nomor_hp2|max:20',
       'password' => 'required|string|min:6',
@@ -69,6 +75,7 @@ class PenggunaStoreRequest extends FormRequest
       'email.unique' => 'Email sudah digunakan.',
       'username.required' => 'Username wajib diisi.',
       'username.unique' => 'Username sudah digunakan.',
+      'username.regex' => 'Hanya huruf, angka, titik, dan underscore, tanpa spasi dan titik diawal/akhir.',
       'nomor_hp.required' => 'Nomor HP wajib diisi.',
       'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
       'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
