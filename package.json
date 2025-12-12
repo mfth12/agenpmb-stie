@@ -1,9 +1,9 @@
 {
     "name": "sistem-mitra-pmb",
     "private": true,
-    "version": "1.0.1",
+    "version": "v1.0.1",
     "type": "module",
-    "license": "GPL-3.0",
+    "license": "MIT",
     "scripts": {
         "dev": "vite",
         "build": "vite build"
