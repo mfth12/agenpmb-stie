@@ -64,14 +64,22 @@
               <div class="col-md-4">
                 <label class="form-label">Mitra</label>
                 <select name="mitra_filter" id="mitra_filter" class="form-select text-dark bg-light select2-tabler"
-                  data-placeholder="Semua Mitra">
-                  <option value="">Semua Mitra</option>
-                  @foreach ($mitra as $mitraa)
-                    <option value="{{ $mitraa->user_id }}"
-                      {{ request('mitra_id') == $mitraa->user_id ? 'selected' : '' }}> {{ $mitraa->name }}
-                      {{ $mitraa->asal_sekolah ? '- ' . Str::limit($mitraa->asal_sekolah, 16, '..') : '' }}
+                  data-placeholder="{{ auth()->user()->hasRole('mitra') ? '' : 'Semua Mitra' }}">
+                  @if (auth()->user()->hasRole('mitra'))
+                    {{-- Mitra hanya bisa melihat dirinya sendiri --}}
+                    <option value="{{ auth()->id() }}" selected>
+                      {{ auth()->user()->name }}
                     </option>
-                  @endforeach
+                  @else
+                    <option value=""></option> {{-- Placeholder untuk Select2 --}}
+                    @foreach ($mitra as $mitraa)
+                      <option value="{{ $mitraa->user_id }}"
+                        {{ request('mitra_filter') == $mitraa->user_id ? 'selected' : '' }}>
+                        {{ $mitraa->name }}
+                        {{ $mitraa->asal_sekolah ? '- ' . Str::limit($mitraa->asal_sekolah, 16, '..') : '' }}
+                      </option>
+                    @endforeach
+                  @endif
                 </select>
               </div>
               <div class="col-md-2">

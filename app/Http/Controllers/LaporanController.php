@@ -19,46 +19,65 @@ class LaporanController extends Controller
    */
   public function index(Request $request): View
   {
-    // Widget 1: Jumlah Calon Mahasiswa Terdaftar per Bulan (6 bulan terakhir)
+    // Filter berdasarkan role user
+    $filterMitra = [];
+    $mitra = [];
+
+    if (auth()->user()->hasRole('mitra')) {
+      $filterMitra['mitra_id'] = auth()->id();
+      
+      // Ambil 1 data user mitra yang sedang login (format sebagai collection)
+      $mitra = User::select('user_id', 'name', 'asal_sekolah')
+        ->where('user_id', auth()->id())
+        ->get(); // pakai get() supaya tetap iterable di Blade
+    } else {
+      // Ambil daftar mitra untuk dropdown (khusus UI admin)
+      $mitra = User::role(['superadmin', 'mitra', 'baak'])
+        ->select('user_id', 'name', 'asal_sekolah')
+        ->get();
+    }
+
+    // Widget 1: Jumlah Calon Mahasiswa Terdaftar per Bulan (12 bulan terakhir)
     $pendaftaranPerBulan = PendaftaranModel::select(
       DB::raw('DATE_FORMAT(created_at, "%M %Y") as bulan_tahun'),
       DB::raw('COUNT(*) as jumlah')
     )
+      ->where($filterMitra)
       ->where('created_at', '>=', now()->subMonths(12))
       ->groupBy('bulan_tahun')
       ->orderBy('bulan_tahun', 'DESC')
       ->get();
 
-    // Widget 2: Distribusi Pendaftaran Berdasarkan Status
+    // Widget 2: Distribusi Status
     $distribusiStatus = PendaftaranModel::select(
       'status',
       DB::raw('COUNT(*) as jumlah')
     )
+      ->where($filterMitra)
       ->where('created_at', '>=', now()->subMonths(12))
       ->groupBy('status')
       ->get();
 
-    // Widget 3: Distribusi Pendaftaran Berdasarkan Prodi
+    // Widget 3: Distribusi Prodi
     $distribusiProdi = PendaftaranModel::select(
       'prodi_id',
       'prodi_nama',
       DB::raw('COUNT(*) as jumlah')
     )
+      ->where($filterMitra)
       ->where('created_at', '>=', now()->subMonths(12))
-      ->groupBy('prodi_id', 'prodi_nama') // Tambahkan 'prodi_nama' ke GROUP BY
+      ->groupBy('prodi_id', 'prodi_nama')
       ->get();
 
+    // Widget 4: Distribusi Gelombang
     $distribusiGel = PendaftaranModel::select(
       'gelombang',
       DB::raw('COUNT(*) as jumlah')
     )
-      ->where('created_at', '>=', now()->subMonths(18))
-      ->groupBy('gelombang') // Tambahkan 'gelombang' ke GROUP BY
+      ->where($filterMitra)
+      ->where('created_at', '>=', now()->subMonths(12))
+      ->groupBy('gelombang')
       ->get();
-
-
-    // Ambil daftar mitra untuk filter dropdown
-    $mitra = User::role(['superadmin', 'mitra', 'baak'])->select('user_id', 'name', 'asal_sekolah')->get();
 
     return view('sistem.laporan.index', [
       'title'               => 'Statistik & Laporan',
@@ -69,6 +88,7 @@ class LaporanController extends Controller
       'mitra'               => $mitra,
     ]);
   }
+
 
   /**
    * Menyediakan data untuk DataTables
