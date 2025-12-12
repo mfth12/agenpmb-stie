@@ -18,8 +18,21 @@ class PendaftaranStoreRequest extends FormRequest
       'kelas' => 'required|string|in:0,1,2,3,5',
       'nama_lengkap' => 'required|string|max:255',
       'email' => 'required|email',
-      'nomor_hp' => 'required|string|max:20',
-      'nomor_hp2' => 'required|string|max:20',
+      // 'nomor_hp' => 'required|string|max:20',
+      // 'nomor_hp2' => 'required|string|max:20',
+      'nomor_hp'  => [
+        'required',
+        'string',
+        'max:20',
+        'regex:/^[0-9]+$/'
+      ],
+
+      'nomor_hp2' => [
+        'required',
+        'string',
+        'max:20',
+        'regex:/^[0-9]+$/'
+      ],
       'password' => 'required|string|min:8|confirmed',
     ];
   }
@@ -36,6 +49,8 @@ class PendaftaranStoreRequest extends FormRequest
       'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
       // 'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
       // 'nomor_hp2.unique' => 'Nomor HP kedua sudah digunakan.',
+      'nomor_hp.regex' => 'Nomor HP hanya boleh berisi angka.',
+      'nomor_hp2.regex' => 'Nomor Whatsapp hanya boleh berisi angka.',
       'password.required' => 'Password wajib diisi.',
       'password.min' => 'Password minimal 8 karakter.',
       'password.confirmed' => 'Konfirmasi password tidak sesuai.',
