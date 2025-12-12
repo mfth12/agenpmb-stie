@@ -311,7 +311,7 @@ class PendaftaranController extends Controller
         'nomor_hp2' => $request->nomor_hp2,
         'password_text' => $request->password, // SIMPAN PASSWORD PLAIN TEXT
         'status' => 'success',
-        'keterangan' => 'Pendaftaran berhasil via ' . konfigs('NAMA_SISTEM') . $pesan,
+        'keterangan' => 'Pendaftaran berhasil via ' . konfigs('NAMA_SISTEM') . ". " . $pesan,
         'response_data' => $response,
         'synced_at' => now(),
       ]);
