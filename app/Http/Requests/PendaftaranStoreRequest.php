@@ -33,7 +33,7 @@ class PendaftaranStoreRequest extends FormRequest
       'email.required' => 'Email wajib diisi.',
       // 'email.unique' => 'Email sudah digunakan.',
       'nomor_hp.required' => 'Nomor HP wajib diisi.',
-      'nomor_h2.required' => 'Nomor Whatsapp wajib diisi.',
+      'nomor_hp2.required' => 'Nomor Whatsapp wajib diisi.',
       // 'nomor_hp.unique' => 'Nomor HP sudah digunakan.',
       // 'nomor_hp2.unique' => 'Nomor HP kedua sudah digunakan.',
       'password.required' => 'Password wajib diisi.',

@@ -186,10 +186,10 @@
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="mb-3">
-                        <label class="form-label">Nomor HP (WhatsApp)</label>
+                        <label class="form-label required">Nomor HP (WhatsApp)</label>
                         <input type="text" name="nomor_hp2"
-                          class="form-control @error('nomor_hp2') is-invalid @enderror" value="{{ old('nomor_hp2') }}"
-                          placeholder="081234567891">
+                          class="form-control @error('nomor_hp2') is-invalid @enderror"
+                          value="{{ old('nomor_hp2') }}" placeholder="081234567891">
                         @error('nomor_hp2')
                           <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
