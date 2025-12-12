@@ -43,6 +43,7 @@ class RolePermissionSeeder extends Seeder
             'antrian_whatsapp_view',
             'antrian_whatsapp_create',
             'antrian_whatsapp_edit',
+            'antrian_whatsapp_retry',
             'antrian_whatsapp_delete',
 
             // Keurangan

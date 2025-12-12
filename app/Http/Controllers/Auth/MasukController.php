@@ -363,7 +363,7 @@ class MasukController extends Controller
     }
     $antrian = AntrianNotifWhatsappModel::create([
       'user_id'   => $user->user_id,
-      'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
+      'sesi'      => konfigs('WA_SESSION', 'sesiwhatsapp'),
       'target'    => $nomor_wa,
       'tipe'      => 'text',
       'isi_pesan' => $pesan,

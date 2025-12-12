@@ -564,7 +564,7 @@ class PenggunaController extends Controller
   {
     $antrian = AntrianNotifWhatsappModel::create([
       'user_id'   => $userPenerima->user_id, // Gunakan ID user yang menerima notif (baak)
-      'sesi'      => konfigs('wa.session', env('WA_GATEWAY_SESSION')),
+      'sesi'      => konfigs('WA_SESSION', 'sesiwhatsapp'),
       'target'    => $nomorTujuan, // Gunakan nomor tujuan yang diberikan
       'tipe'      => 'text',
       'isi_pesan' => $pesan,

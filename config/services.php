@@ -37,8 +37,8 @@ return [
     ],
 
     'whatsapp' => [
-        // 'url'     => env('WA_GATEWAY_URL'),
-        // 'session' => env('WA_GATEWAY_SESSION'),
+        // 'url'     => konfigs('WA_ENDPOINT', 'https://localhost'),
+        // 'session' => konfigs('WA_SESSION', 'sesiwhatsapp'),
     ],
 
 ];

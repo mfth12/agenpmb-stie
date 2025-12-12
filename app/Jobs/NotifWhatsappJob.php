@@ -16,7 +16,7 @@ class NotifWhatsappJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     const LOG_CHANNEL   = 'whatsapp';
-    const MAX_RETRY     = 20;   // batas retry, misal 20 kali
+    const MAX_RETRY     = 5;    // batas retry, misal 5 kali
 
     public $tries       = 5;    // Laravel retry internal
     public $backoff     = 30;   // Jeda 30 detik antar percobaan
@@ -78,7 +78,7 @@ class NotifWhatsappJob implements ShouldQueue
                 // optional: bisa dispatch event atau notifikasi admin
                 // event(new NotifWhatsappDead($this->antrian));
             } else {
-                $this->antrian->status = AntrianNotifWhatsappModel::PENDING; // tetap pending
+                $this->antrian->status = AntrianNotifWhatsappModel::GAGAL; // tetap pending
             }
         }
 

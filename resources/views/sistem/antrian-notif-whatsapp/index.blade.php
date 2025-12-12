@@ -184,7 +184,7 @@
                           @csrf
                           <button type="submit" class="btn btn-sm btn-default text-warning" title="Retry">
                             <i class="ti ti-refresh fs-3 me-1"></i>
-                            Ulagi
+                            Ulangi
                           </button>
                         </form>
                       @endif

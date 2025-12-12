@@ -148,6 +148,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{antrian}/retry', [AntrianNotifWhatsappController::class, 'retry'])->name('antrian-notif-whatsapp.retry')
             ->middleware('permission:antrian_whatsapp_retry');
         Route::post('/{antrian}/force-retry', [AntrianNotifWhatsappController::class, 'forceRetry'])->name('antrian-notif-whatsapp.force-retry')
-            ->middleware('permission:antrian_whatsapp_retry'); // Gunakan permission yang sama atau buat yang baru
+            ->middleware('permission:antrian_whatsapp_retry'); // rute ini belum digunakan
     });
 });

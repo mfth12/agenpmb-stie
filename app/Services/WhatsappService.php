@@ -21,8 +21,8 @@ class WhatsappService
   {
     // hanya inisialisasi sekali agar lebih efisien
     if (!$this->baseUrl || !$this->session) {
-      $this->baseUrl = rtrim(konfigs('wa.endpoint', env('WA_GATEWAY_URL', 'https://wa.stie-pembangunan.ac.id')), '/');
-      $this->session = konfigs('wa.session', env('WA_GATEWAY_SESSION', 'notifstie87x6v8r2js'));
+      $this->baseUrl = rtrim(konfigs('WA_ENDPOINT', 'https://localhost', '/'));
+      $this->session = konfigs('WA_SESSION', 'sesiwhatsapp',);
     }
   }
 

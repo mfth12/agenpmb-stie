@@ -139,7 +139,7 @@ class AntrianNotifWhatsappController extends Controller
     }
     // Jika user_id tidak dipilih, target diambil dari input form
 
-    $validatedData['sesi'] = konfigs('wa.session', env('WA_GATEWAY_SESSION'));
+    $validatedData['sesi'] = konfigs('WA_SESSION', 'sesiwhatsapp');
     $validatedData['status'] = AntrianNotifWhatsappModel::PENDING; // Default status adalah pending
     $validatedData['retry_count'] = 0; // Default retry count adalah 0
 
@@ -332,10 +332,10 @@ class AntrianNotifWhatsappController extends Controller
     }
 
     try {
-      // Reset status ke pending dan reset retry count
+      // Reset status ke pending
       $antrian->update([
         'status' => AntrianNotifWhatsappModel::PENDING,
-        'retry_count' => 0,
+        // 'retry_count' => 0,
       ]);
 
       // Dispatch ulang job ke queue
@@ -365,10 +365,10 @@ class AntrianNotifWhatsappController extends Controller
   public function forceRetry(AntrianNotifWhatsappModel $antrian): RedirectResponse
   {
     try {
-      // Reset status ke pending dan reset retry count
+      // Reset status ke pending
       $antrian->update([
         'status' => AntrianNotifWhatsappModel::PENDING,
-        'retry_count' => 0,
+        // 'retry_count' => 0,
       ]);
 
       // Dispatch ulang job ke queue
