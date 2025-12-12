@@ -259,6 +259,12 @@ class PenggunaController extends Controller
    */
   public function show(User $pengguna): View
   {
+    // Ambil data user dengan join afiliasi
+    $pengguna = User::select('users.*', 'user_afiliasis.nama as afiliasi_nama')
+      ->leftJoin('user_afiliasis', 'users.afiliasi', '=', 'user_afiliasis.afiliasi_id')
+      ->where('users.user_id', $pengguna->user_id)   // ambil user yang sedang di-show
+      ->firstOrFail();
+
     return view('sistem.pengguna.show', [
       'title' => 'Detail Pengguna - ' . $pengguna->name,
       'pengguna' => $pengguna,
