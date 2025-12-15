@@ -22,20 +22,31 @@ class LaporanController extends Controller
     // Filter berdasarkan role user
     $filterMitra = [];
     $mitra = [];
+    $query = PendaftaranModel::with(['user', 'mitra']);
 
     if (auth()->user()->hasRole('mitra')) {
       $filterMitra['mitra_id'] = auth()->id();
-      
       // Ambil 1 data user mitra yang sedang login (format sebagai collection)
       $mitra = User::select('user_id', 'name', 'asal_sekolah')
         ->where('user_id', auth()->id())
-        ->get(); // pakai get() supaya tetap iterable di Blade
+        ->get();
+      // Ambil hanya data query pendaftaran milik mitra
+      $query->where('mitra_id', auth()->id());
     } else {
       // Ambil daftar mitra untuk dropdown (khusus UI admin)
       $mitra = User::role(['superadmin', 'mitra', 'baak'])
         ->select('user_id', 'name', 'asal_sekolah')
         ->get();
     }
+
+    $pendaftaran = $query
+      ->whereBetween('created_at', [
+        now()->subMonths(12),
+        now()
+      ])
+      ->orderByDesc('created_at')
+      ->get();
+
 
     // Widget 1: Jumlah Calon Mahasiswa Terdaftar per Bulan (12 bulan terakhir)
     $pendaftaranPerBulan = PendaftaranModel::select(
@@ -85,6 +96,7 @@ class LaporanController extends Controller
       'distribusiStatus'    => $distribusiStatus,
       'distribusiProdi'     => $distribusiProdi,
       'distribusiGel'       => $distribusiGel,
+      'pendaftaran'         => $pendaftaran,
       'mitra'               => $mitra,
     ]);
   }

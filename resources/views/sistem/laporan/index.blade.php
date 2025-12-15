@@ -53,6 +53,78 @@
         </div>
       </div>
 
+      <div class="row row-cards mb-4 mt-2">
+        <div class="col-sm-4 col-lg-3">
+          <div class="card card-sm">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <span class="bg-x text-white avatar">
+                    <i class="ti ti-file-isr fs-1"></i>
+                  </span>
+                </div>
+                <div class="col">
+                  <div class="h2 mb-0">{{ $pendaftaran->count() }}</div>
+                  <div class="text-secondary">Seluruh Pendaftar</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-lg-3">
+          <div class="card card-sm">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <span class="bg-green text-white avatar">
+                    <i class="ti ti-cloud-check fs-1"></i>
+                  </span>
+                </div>
+                <div class="col">
+                  <div class="h2 mb-0">{{ $pendaftaran->whereIn('status', ['success', 'synced', 'imported'])->count() }}
+                  </div>
+                  <div class="text-secondary">Berhasil, Tersinkron, Terimpor</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-lg-3">
+          <div class="card card-sm">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <span class="bg-warning text-white avatar">
+                    <i class="ti ti-progress-alert fs-1"></i>
+                  </span>
+                </div>
+                <div class="col">
+                  <div class="h2 mb-0">{{ $pendaftaran->where('status', 'pending')->count() }}</div>
+                  <div class="text-secondary">Pending</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-lg-3">
+          <div class="card card-sm">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <span class="bg-danger text-white avatar">
+                    <i class="ti ti-cloud-off fs-1"></i>
+                  </span>
+                </div>
+                <div class="col">
+                  <div class="h2 mb-0">{{ $pendaftaran->where('status', 'failed')->count() }}</div>
+                  <div class="text-secondary">Gagal</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {{-- Card Filter --}}
       <div class="card mt-4">
         <div class="card-header">
