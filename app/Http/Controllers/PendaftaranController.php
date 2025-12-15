@@ -30,7 +30,8 @@ class PendaftaranController extends Controller
    */
   public function data(Request $request): JsonResponse
   {
-    $query = PendaftaranModel::with(['user', 'mitra']); // Eager load relasi
+    $query = PendaftaranModel::with(['user', 'mitra'])
+      ->where('tahun', konfigs('DEFAULT_TA'));
 
     // Filter berdasarkan role user
     if (auth()->user()->hasRole('mitra')) {
@@ -181,8 +182,10 @@ class PendaftaranController extends Controller
       $query->where('status', $request->status);
     }
 
-    // $pendaftaran = $query->latest()->paginate(15);
-    $pendaftaran = $query->orderByDesc('created_at')->get();
+    // Mengambil data pendaftaran
+    $pendaftaran = $query
+      ->where('tahun', konfigs('DEFAULT_TA'))
+      ->orderByDesc('created_at')->get();
 
     return view('sistem.pendaftaran.index', [
       'title' => 'Manajemen Pendaftaran',

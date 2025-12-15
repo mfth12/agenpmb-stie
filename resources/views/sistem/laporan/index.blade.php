@@ -6,7 +6,9 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Statistik & Laporan</h2>
-          <div class="page-pretitle">Analisis dan dokumen resmi pendaftaran calon mahasiswa</div>
+          <div class="page-pretitle">Analisis dan dokumen resmi pendaftaran PMB
+            TA. {{ konfigs('DEFAULT_TA') . '/' . konfigs('DEFAULT_TA') + 1 }}
+          </div>
         </div>
       </div>
     </div>
@@ -20,7 +22,6 @@
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">Jumlah Pendaftar PMB</h3>
-              <span class="text-muted text-sm ms-1">(12 Bulan Terakhir)</span>
             </div>
             <div class="card-body">
               <canvas id="chartPendaftaranPerBulan" height="135"></canvas>
@@ -156,16 +157,21 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Tahun</label>
-                <select name="tahun_filter" id="tahun_filter" class="form-select text-dark bg-light">
+                <select name="tahun_filter" id="tahun_filter" class="form-select text-dark bg-light select2-tabler">
                   <option value="">Semua Tahun</option>
+                  @php $defaultTahun = request('tahun_filter', konfigs('DEFAULT_TA'));@endphp
                   @for ($i = date('Y') + 1; $i >= 2020; $i--)
-                    <option value="{{ $i }}">{{ $i }}</option>
+                    <option value="{{ $i }}" {{ (string) $defaultTahun === (string) $i ? 'selected' : '' }}>
+                      {{ $i }}
+                    </option>
                   @endfor
                 </select>
+
               </div>
               <div class="col-md-2">
                 <label class="form-label">Gelombang</label>
-                <select name="gelombang_filter" id="gelombang_filter" class="form-select text-dark bg-light">
+                <select name="gelombang_filter" id="gelombang_filter"
+                  class="form-select text-dark bg-light select2-tabler">
                   <option value="">Semua Gel.</option>
                   @foreach ($distribusiGel as $gel)
                     <option value="{{ $gel->gelombang }}">{{ ucfirst($gel->gelombang) }}</option>
@@ -174,7 +180,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Program Studi</label>
-                <select name="prodi_filter" id="prodi_filter" class="form-select text-dark bg-light">
+                <select name="prodi_filter" id="prodi_filter" class="form-select text-dark bg-light select2-tabler">
                   <option value="">Semua Prodi</option>
                   @foreach (App\Models\PendaftaranModel::daftarProdiAktif() as $id => $nama)
                     <option value="{{ $id }}">S1-{{ $nama }}</option>
@@ -183,7 +189,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Status</label>
-                <select name="status_filter" id="status_filter" class="form-select text-dark bg-light">
+                <select name="status_filter" id="status_filter" class="form-select text-dark bg-light select2-tabler">
                   <option value="">Semua Status</option>
                   @foreach ($distribusiStatus as $dstStatus)
                     <option value="{{ $dstStatus->status }}">{{ ucfirst($dstStatus->status) }}</option>

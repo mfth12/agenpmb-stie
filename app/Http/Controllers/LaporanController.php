@@ -40,13 +40,9 @@ class LaporanController extends Controller
     }
 
     $pendaftaran = $query
-      ->whereBetween('created_at', [
-        now()->subMonths(12),
-        now()
-      ])
+      ->where('tahun', konfigs('DEFAULT_TA'))
       ->orderByDesc('created_at')
       ->get();
-
 
     // Widget 1: Jumlah Calon Mahasiswa Terdaftar per Bulan (12 bulan terakhir)
     $pendaftaranPerBulan = PendaftaranModel::select(
@@ -54,7 +50,7 @@ class LaporanController extends Controller
       DB::raw('COUNT(*) as jumlah')
     )
       ->where($filterMitra)
-      ->where('created_at', '>=', now()->subMonths(12))
+      ->where('tahun', konfigs('DEFAULT_TA'))
       ->groupBy('bulan_tahun')
       ->orderBy('bulan_tahun', 'DESC')
       ->get();
@@ -65,7 +61,7 @@ class LaporanController extends Controller
       DB::raw('COUNT(*) as jumlah')
     )
       ->where($filterMitra)
-      ->where('created_at', '>=', now()->subMonths(12))
+      ->where('tahun', konfigs('DEFAULT_TA'))
       ->groupBy('status')
       ->get();
 
@@ -76,7 +72,7 @@ class LaporanController extends Controller
       DB::raw('COUNT(*) as jumlah')
     )
       ->where($filterMitra)
-      ->where('created_at', '>=', now()->subMonths(12))
+      ->where('tahun', konfigs('DEFAULT_TA'))
       ->groupBy('prodi_id', 'prodi_nama')
       ->get();
 
@@ -86,12 +82,12 @@ class LaporanController extends Controller
       DB::raw('COUNT(*) as jumlah')
     )
       ->where($filterMitra)
-      ->where('created_at', '>=', now()->subMonths(12))
+      ->where('tahun', konfigs('DEFAULT_TA'))
       ->groupBy('gelombang')
       ->get();
 
     return view('sistem.laporan.index', [
-      'title'               => 'Statistik & Laporan',
+      'title'               => 'Statistik & Laporan ' . konfigs('DEFAULT_TA') . '/' . konfigs('DEFAULT_TA') + 1,
       'pendaftaranPerBulan' => $pendaftaranPerBulan,
       'distribusiStatus'    => $distribusiStatus,
       'distribusiProdi'     => $distribusiProdi,

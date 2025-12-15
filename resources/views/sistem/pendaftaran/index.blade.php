@@ -6,7 +6,9 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Manajemen Pendaftaran</h2>
-          <div class="page-pretitle">Gerbang pendaftaran calon mahasiswa baru melalui mitra PMB</div>
+          <div class="page-pretitle">Gerbang pendaftaran calon mahasiswa
+            TA. {{ konfigs('DEFAULT_TA') . '/' . konfigs('DEFAULT_TA') + 1 }}
+          </div>
         </div>
         <div class="col-4 col-md-auto ms-auto d-print-none">
           @can('pendaftaran_create')
