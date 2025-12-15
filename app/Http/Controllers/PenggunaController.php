@@ -136,7 +136,7 @@ class PenggunaController extends Controller
           . "Anda telah terdaftar sebagai *" . konfigs('NAMA_SISTEM_ALIAS') . "* pada " . konfigs('NAMA_PT') . ". "
           . "Berikut adalah kredensial akun Anda:\n"
           . "Username: *{$pengguna->username}*\n"
-          . "Password: *{$pengguna->password}*\n"
+          . "Password: *{$request->password}*\n"
           . "Link: " . route('login');
 
         // Aksi kirim
