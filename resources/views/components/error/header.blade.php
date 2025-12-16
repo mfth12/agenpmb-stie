@@ -18,7 +18,7 @@
 
   /* ADDITIONALS */
   @import url("https://rsms.me/inter/inter.css");
-  @import url("https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css");
+  @import url("https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css");
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js" async defer></script>
