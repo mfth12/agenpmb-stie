@@ -132,7 +132,7 @@ class PenggunaController extends Controller
         // Menyiapkan pesan
         $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
         $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
-        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
+        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}.\n"
           . "Anda telah terdaftar sebagai *" . konfigs('NAMA_SISTEM_ALIAS') . "* pada " . konfigs('NAMA_PT') . ". "
           . "Berikut adalah kredensial akun Anda:\n"
           . "Username: *{$pengguna->username}*\n"
@@ -352,7 +352,7 @@ class PenggunaController extends Controller
         // Kirim notif wa jika diapprove admin baak
         $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
         $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
-        $pesan = "🚀 Selamat " . $greeting . ", *{$pengguna->name}*. "
+        $pesan = "🚀 Selamat " . $greeting . ", *{$pengguna->name}*.\n"
           . "Akun Mitra PMB Anda telah diverifikasi pada: {$waktu}. "
           . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n\n"
           . "Link: " . route('login');
@@ -390,7 +390,7 @@ class PenggunaController extends Controller
       if ($terreject) {
         // Kirim notif wa jika direject admin baak
         $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
-        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}. "
+        $pesan = "🚀 Selamat " . $greeting . ", {$pengguna->name}.\n"
           . "Dengan berat hati kami ucapkan. Bahwa *Akun Mitra* yang Anda daftarkan tidak dapat kami proses lebih lanjut. "
           . "Jika ada hal lain yang ingin ditanyakan, silakan hubungi kontak person " . konfigs('NAMA_SISTEM_ALIAS') . ".";
 
@@ -517,7 +517,7 @@ class PenggunaController extends Controller
       $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
       $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
       $pesan = "🚀 Selamat " . $greeting . ", "
-        . konfigs('NAMA_SISTEM') . " memiliki pendaftar yang ingin bergabung menjadi mitra.\n"
+        . "*".konfigs('NAMA_SISTEM') . "* memiliki pendaftar yang ingin bergabung menjadi mitra.\n"
         . "Nama: *{$request->nama}*\n"
         . "Waktu: *{$waktu}*\n\n"
         . "Segera lakukan approval dengan masuk ke portal.\n"
