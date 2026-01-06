@@ -485,7 +485,7 @@ class MasukController extends Controller
       // Pesan WhatsApp
       $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
       $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
-      $pesan = "🔸Selamat " . $greeting . ", {$user->name}.\n"
+      $pesan = "🔸 Selamat " . $greeting . ", {$user->name}.\n"
         . "Akun" . ($from == 'siakad' ? ' SIAKAD' : '') . " Anda telah digunakan untuk akses masuk *" . konfigs('NAMA_SISTEM') . "* pada:\n"
         . "Waktu: {$waktu}\n"
         . "IP: {$ip}\n"
