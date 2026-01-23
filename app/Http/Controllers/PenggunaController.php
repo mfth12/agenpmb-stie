@@ -137,7 +137,7 @@ class PenggunaController extends Controller
           . "Berikut adalah kredensial akun Anda:\n"
           . "Username: *{$pengguna->username}*\n"
           . "Password: *{$request->password}*\n"
-          . "Link: " . route('login');
+          . "Link Masuk: " . route('login');
 
         // Aksi kirim
         $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
@@ -355,7 +355,7 @@ class PenggunaController extends Controller
         $pesan = "🚀 Selamat " . $greeting . ", *{$pengguna->name}*.\n"
           . "Akun Mitra PMB Anda telah diverifikasi pada: {$waktu}. "
           . "Silakan masuk sesuai kredensial yang Anda buat saat mendaftar.\n\n"
-          . "Link: " . route('login');
+          . "Link Masuk: " . route('login');
 
         // Aksi kirim
         $this->notifikasiWhatsapp($pengguna, $pesan, $pengguna->nomor_hp2 ?? $pengguna->nomor_hp);
@@ -517,7 +517,7 @@ class PenggunaController extends Controller
       $greeting = now()->hour < 11 ? 'Pagi' : (now()->hour < 15 ? 'Siang' : (now()->hour < 18 ? 'Sore' : 'Malam'));
       $waktu = Carbon::now()->locale('id')->translatedFormat('l, d M Y H:i:s');
       $pesan = "🚀 Selamat " . $greeting . ", "
-        . "*".konfigs('NAMA_SISTEM') . "* memiliki pendaftar yang ingin bergabung menjadi mitra.\n"
+        . "*" . konfigs('NAMA_SISTEM') . "* memiliki pendaftar yang ingin bergabung menjadi mitra.\n"
         . "Nama: *{$request->nama}*\n"
         . "Waktu: *{$waktu}*\n\n"
         . "Segera lakukan approval dengan masuk ke portal.\n"
