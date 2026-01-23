@@ -92,7 +92,7 @@
                       </label>
                     </div>
                   </div>
-                  {!! html()->text('username')->class('form-control' . ($errors->has('username') ? ' is-invalid' : ''))->placeholder('Username')->attributes(['aria-describedby' => 'username'])->value(old('username')) !!}
+                  {!! html()->text('username')->class('form-control' . ($errors->has('username') ? ' is-invalid' : ''))->placeholder('Username Mitra')->attributes(['aria-describedby' => 'username'])->value(old('username')) !!}
                 </div>
                 <div class="mb-2">
                   <label class="form-label">

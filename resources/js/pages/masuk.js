@@ -148,8 +148,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const switchInput = document.getElementById('switchCheckDefault');
     const switchLabel = document.getElementById('switchLabel');
 
-    function updateLabel() {                      //     Normal
-        switchLabel.textContent = switchInput.checked ? 'Siakad' : 'Normal';
+    function updateLabel() {
+        const isSiakad = switchInput.checked;
+        switchLabel.textContent = isSiakad ? 'Siakad' : 'Normal';
+        const usernameInput = formAuthentication.querySelector('input[name="username"]');
+        if (usernameInput) {
+            usernameInput.placeholder = isSiakad ? 'Username Siakad' : 'Username Mitra';
+        }
     }
 
     switchInput.addEventListener('change', updateLabel);
