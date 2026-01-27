@@ -7,15 +7,16 @@ use Throwable;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
+use Jenssegers\Agent\Agent;
 use App\Models\UserAfiliasi;
 use Illuminate\Http\Request;
 use App\Jobs\NotifWhatsappJob;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Cache;
 use App\Models\AntrianNotifWhatsappModel;
 use App\Http\Requests\PenggunaStoreRequest;
 use App\Http\Requests\PenggunaUpdateRequest;
@@ -69,12 +70,150 @@ class PenggunaController extends Controller
       ->latest('users.created_at')->paginate($perPage);
     $roles = Role::all();
 
+    // Hitung pengguna online (seluruh sesi yang tersimpan)
+    $onlineCount = DB::table('sessions')
+      ->whereNotNull('user_id')
+      ->distinct('user_id')
+      ->count('user_id');
+
     return view('sistem.pengguna.index', [
       'title' => 'Manajemen Pengguna',
       'pengguna' => $pengguna,
       'roles' => $roles,
+      'onlineCount' => $onlineCount,
     ]);
   }
+
+
+  /**
+   * Menampilkan daftar pengguna yang sedang online
+   */
+  public function onlineUsers(Request $request): View
+  {
+    $query = DB::table('sessions')
+      ->join('users', 'sessions.user_id', '=', 'users.user_id')
+      ->whereNotNull('sessions.user_id');
+
+    // Filter berdasarkan pencarian
+    if ($request->has('cari') && $request->cari != '') {
+      $search = $request->cari;
+      $query->where(function ($q) use ($search) {
+        $q->where('users.name', 'like', "%{$search}%")
+          ->orWhere('users.email', 'like', "%{$search}%")
+          ->orWhere('sessions.ip_address', 'like', "%{$search}%");
+      });
+    }
+
+    // Filter berdasarkan role
+    if ($request->has('role') && $request->role != '') {
+      $roleName = $request->role;
+      $query->whereExists(function ($q) use ($roleName) {
+        $q->select(DB::raw(1))
+          ->from('model_has_roles')
+          ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+          ->whereColumn('model_has_roles.model_id', 'users.user_id')
+          ->where('model_has_roles.model_type', User::class)
+          ->where('roles.name', $roleName);
+      });
+    }
+
+    // Filter berdasarkan status
+    if ($request->has('status') && $request->status != '') {
+      $query->where('users.status', $request->status);
+    }
+
+    // Filter jumlah data per halaman
+    $perPage = $request->get('per_page', 10);
+    if ($perPage === 'all') {
+      $perPage = $query->count();
+    }
+
+    $sessions = $query->select('sessions.*', 'users.name', 'users.email')
+      ->orderBy('sessions.last_activity', 'desc')
+      ->paginate($perPage === 'all' ? $query->count() : $perPage)
+      ->appends($request->all());
+
+    // Transformasi data untuk menyertakan is_me dan format activity
+    $sessions->getCollection()->transform(function ($session) {
+      $session->last_activity_human = Carbon::createFromTimestamp($session->last_activity)->diffForHumans();
+      $session->is_me = $session->id === session()->getId();
+      return $session;
+    });
+
+    $roles = Role::all();
+
+    return view('sistem.pengguna.online', [
+      'title' => 'Pengguna Online',
+      'onlineUsers' => $sessions,
+      'roles' => $roles,
+    ]);
+  }
+
+  /**
+   * Menghentikan sesi pengguna
+   */
+  public function revokeSession($id): JsonResponse
+  {
+    try {
+      $session = DB::table('sessions')->where('id', $id)->first();
+
+      if (!$session) {
+        return response()->json(['success' => false, 'message' => 'Sesi tidak ditemukan.'], 404);
+      }
+
+      // Opsional: cegah revoke sesi sendiri jika diinginkan, tapi biasanya admin bisa
+      if ($id === session()->getId()) {
+        return response()->json(['success' => false, 'message' => 'Anda tidak dapat menghentikan sesi Anda sendiri di sini.'], 400);
+      }
+
+      DB::table('sessions')->where('id', $id)->delete();
+
+      return response()->json(['success' => true, 'message' => 'Sesi berhasil dihentikan.']);
+    } catch (Exception $e) {
+      return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+  }
+
+  /**
+   * Menampilkan detail sesi pengguna secara rinci
+   */
+  public function showSession($id): View
+  {
+    $session = DB::table('sessions')->where('id', $id)->first();
+
+    if (!$session) {
+      abort(404, 'Sesi tidak ditemukan.');
+    }
+
+    $user = User::find($session->user_id);
+
+    // Parse User Agent menggunakan Jenssegers Agent
+    $agent = new Agent();
+    $agent->setUserAgent($session->user_agent);
+
+    $detail = (object) [
+      'id' => $session->id,
+      'user_id' => $session->user_id,
+      'name' => $user ? $user->name : 'Unknown',
+      'email' => $user ? $user->email : '-',
+      'avatar_url' => $user ? $user->avatar_url : asset('img/default.png'),
+      'ip_address' => $session->ip_address,
+      'user_agent_raw' => $session->user_agent,
+      'device' => $agent->device(),
+      'platform' => $agent->platform(),
+      'browser' => $agent->browser(),
+      'is_desktop' => $agent->isDesktop(),
+      'is_mobile' => $agent->isMobile(),
+      'last_activity' => Carbon::createFromTimestamp($session->last_activity)->translatedFormat('d F Y H:i:s') . ' (' . Carbon::createFromTimestamp($session->last_activity)->diffForHumans() . ')',
+      'is_me' => $session->id === session()->getId(),
+    ];
+
+    return view('sistem.pengguna.online-show', [
+      'title' => 'Detail Sesi - ' . ($user->name ?? 'Unknown'),
+      'session' => $detail,
+    ]);
+  }
+
 
   /**
    * Menampilkan form tambah pengguna

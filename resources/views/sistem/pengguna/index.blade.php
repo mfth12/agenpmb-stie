@@ -22,6 +22,25 @@
 
   <div class="page-body">
     <div class="container-xl">
+      <div class="row row-cards mb-4 mt-0">
+        <div class="col-sm-6 col-lg-3">
+          <a href="{{ route('pengguna.online') }}" class="card card-sm card-link">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <span class="bg-green text-white avatar">
+                    <i class="ti ti-users-group fs-1"></i>
+                  </span>
+                </div>
+                <div class="col">
+                  <div class="h2 mb-0">{{ $onlineCount }}</div>
+                  <div class="text-secondary">Pengguna Online</div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
       <div class="card">
         <div class="card-body my-2">
           {{-- Form filter --}}

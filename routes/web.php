@@ -43,6 +43,9 @@ Route::middleware(['auth'])->group(function () {
     // Manajemen Pengguna Routes - hanya untuk superadmin dan baak
     Route::prefix('pengguna')->middleware(['permission:user_view'])->group(function () {
         Route::get('/', [PenggunaController::class, 'index'])->name('pengguna.index');
+        Route::get('/online', [PenggunaController::class, 'onlineUsers'])->name('pengguna.online');
+        Route::get('/session/{id}', [PenggunaController::class, 'showSession'])->name('pengguna.session.show');
+        Route::delete('/session/{id}', [PenggunaController::class, 'revokeSession'])->name('pengguna.session.revoke');
         Route::get('/buat', [PenggunaController::class, 'create'])->name('pengguna.create')
             ->middleware('permission:user_create');
         Route::post('/', [PenggunaController::class, 'store'])->name('pengguna.store')
