@@ -172,7 +172,7 @@
             Profil Saya
           </a>
           <div class="dropdown-divider"></div>
-          <a href="{{ route('panduan.show') }}" target="_blank" class="dropdown-item">
+          <a href="{{ asset('panduan.pdf') }}" target="_blank" class="dropdown-item">
             <i class="ti ti-book-2 fs-2"></i>
             Panduan
           </a>
