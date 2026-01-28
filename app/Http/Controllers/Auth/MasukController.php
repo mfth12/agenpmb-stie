@@ -134,7 +134,7 @@ class MasukController extends Controller
       $userData     = $data['user'];
 
       // Validasi, status user harus aktif
-      if (!in_array($userData['status'], ['active', 1, '1'], true)) {
+      if (!in_array($userData['status'], [1, '1'], true)) {
         // Log login gagal karena status tidak aktif
         $this->logAction(
           'warning',
@@ -164,7 +164,7 @@ class MasukController extends Controller
             'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
             'theme'             => $userData['theme'] ?? 'default',
             'avatar'            => $userData['avatar'] ?? null,
-            'status'            => $userData['status'] ?? 'active',
+            'status'            => in_array($userData['status'], [1, '1']) ? 'active' : (in_array($userData['status'], [0, '0']) ? 'inactive' : 'unknown'),
             'status_login'      => 'online',
             'isdeleted'         => $userData['isdeleted'] ?? false,
             'last_logged_in'    => Carbon::now(),
@@ -298,7 +298,7 @@ class MasukController extends Controller
       $user = Auth::user();
 
       // Validasi ulang (antisipasi jika status berubah setelah attempt)
-      if (!in_array($user->status, ['active', 1, '1'], true)) {
+      if (!in_array($user->status, ['active'], true)) {
         Auth::logout();
         // Log logout karena status tidak aktif setelah login
         $this->logAction(
