@@ -161,7 +161,7 @@ class MasukController extends Controller
             'nomor_hp2'         => $userData['nomor_hp2'] ?? '',
             'email_verified_at' => $userData['email_verified_at'] ?? null,
             'about'             => $userData['about'] ?? null,
-            'default_role'      => $userData['default_role'] ?? 'mitra', // Ganti 'mitra' sesuai kebutuhan
+            'default_role'      => $userData['default_role'] ?? null, // Ganti 'mitra' sesuai kebutuhan
             'theme'             => $userData['theme'] ?? 'default',
             'avatar'            => $userData['avatar'] ?? null,
             'status'            => in_array($userData['status'], [1, '1']) ? 'active' : (in_array($userData['status'], [0, '0']) ? 'inactive' : 'unknown'),
