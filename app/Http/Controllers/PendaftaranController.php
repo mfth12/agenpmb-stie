@@ -235,9 +235,13 @@ class PendaftaranController extends Controller
       $jadwal = $infoPendaftaran['data']['jadwal'];
       $prodi = $infoPendaftaran['data']['prodi'][$request->prodi_id] ?? '';
       if ($jadwal['GELOMBANG'] == 1) {
-        // setiap gelombang pertama (1) akan mendapatkan diskon
+        // setiap gelombang pertama (1) mendapatkan diskon 100000 dari biaya
         $biaya_daftar = $jadwal['BIAYA'] - 100000;
+      } elseif ($request->kelas == 5) {
+        // jika kelas = 5 maka biayanya 500000
+        $biaya_daftar = 500000;
       } else {
+        // jika tidak ada diskon maka biayanya sesuai biaya pendaftaran
         $biaya_daftar = $jadwal['BIAYA'];
       }
 
