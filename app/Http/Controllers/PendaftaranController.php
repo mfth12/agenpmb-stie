@@ -295,6 +295,9 @@ class PendaftaranController extends Controller
 
       if ($jadwal['GELOMBANG'] == 1) {
         $pesan = " Diskon formulir pendaftaran berhasil diterapkan sebesar Rp 100.000.";
+      } // jika kelas =5
+      elseif ($request->kelas == 5) {
+        $pesan = " Kelas kemitraan.";
       } else {
         $pesan = "";
       }
