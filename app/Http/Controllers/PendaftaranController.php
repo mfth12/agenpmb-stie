@@ -234,12 +234,12 @@ class PendaftaranController extends Controller
 
       $jadwal = $infoPendaftaran['data']['jadwal'];
       $prodi = $infoPendaftaran['data']['prodi'][$request->prodi_id] ?? '';
-      if ($jadwal['GELOMBANG'] == 1) {
+      if ($request->kelas == 5) {
+        // jika kelas = 5 (kemitraan) maka biayanya 500000 (tidak dipengaruhi gelombang)
+        $biaya_daftar = 500000;
+      } elseif ($jadwal['GELOMBANG'] == 1) {
         // setiap gelombang pertama (1) mendapatkan diskon 100000 dari biaya
         $biaya_daftar = $jadwal['BIAYA'] - 100000;
-      } elseif ($request->kelas == 5) {
-        // jika kelas = 5 maka biayanya 500000
-        $biaya_daftar = 500000;
       } else {
         // jika tidak ada diskon maka biayanya sesuai biaya pendaftaran
         $biaya_daftar = $jadwal['BIAYA'];
@@ -277,7 +277,7 @@ class PendaftaranController extends Controller
           'prodi_nama' => $prodi,
           'tahun' => $jadwal['TAHUN'],
           'gelombang' => $jadwal['GELOMBANG'],
-          'biaya' => $jadwal['BIAYA'],
+          'biaya' => $biaya_daftar,
           'kelas' => $request->kelas,
           'nama_lengkap' => $request->nama_lengkap,
           'email' => $request->email,
@@ -294,9 +294,9 @@ class PendaftaranController extends Controller
       }
 
       if ($jadwal['GELOMBANG'] == 1) {
-        $pesan = "Diskon formulir pendaftaran berhasil diterapkan sebesar Rp 100.000.";
+        $pesan = " Diskon formulir pendaftaran berhasil diterapkan sebesar Rp 100.000.";
       } else {
-        $pesan = ".";
+        $pesan = "";
       }
 
       // Simpan sebagai pendaftaran berhasil - TAMBAHKAN password_text
@@ -318,7 +318,7 @@ class PendaftaranController extends Controller
         'nomor_hp2' => $request->nomor_hp2,
         'password_text' => $request->password, // SIMPAN PASSWORD PLAIN TEXT
         'status' => 'success',
-        'keterangan' => 'Pendaftaran berhasil via ' . konfigs('NAMA_SISTEM') . ". " . $pesan,
+        'keterangan' => 'Pendaftaran berhasil via ' . konfigs('NAMA_SISTEM') . "." . $pesan,
         'response_data' => $response,
         'synced_at' => now(),
       ]);

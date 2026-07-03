@@ -131,7 +131,7 @@
                     <div class="col-lg-6">
                       <div class="mb-3">
                         <label class="form-label required">Kelas</label>
-                        <select name="kelas" class="form-select @error('kelas') is-invalid @enderror" required>
+                        <select name="kelas" id="selectKelas" class="form-select @error('kelas') is-invalid @enderror" required>
                           <option value="" selected>- Pilih Kelas -</option>
                           @foreach ($kelasList as $id => $nama)
                             <option value="{{ $id }}" {{ old('kelas') == strval($id) ? 'selected' : '' }}>
@@ -221,17 +221,19 @@
                         <label class="form-label">Total Biaya Pendaftaran</label>
                         <div class="form-control-plaintext pt-0">
                           @php
-                            // setiap gelombang pertama (1) akan mendapatkan diskon
-                            $biaya_daftar = $jadwal['GELOMBANG'] == 1 ? $jadwal['BIAYA'] - 100000 : $jadwal['BIAYA'];
+                            $isKemitraan = old('kelas') == '5';
+                            if ($isKemitraan) {
+                              $biaya_daftar = 500000;
+                            } else {
+                              $biaya_daftar = $jadwal['GELOMBANG'] == 1 ? $jadwal['BIAYA'] - 100000 : $jadwal['BIAYA'];
+                            }
                           @endphp
-                          <span class="text-success fw-bold mt-0">Rp
+                          <span class="text-success fw-bold mt-0" id="biayaDaftarText">Rp
                             {{ number_format($biaya_daftar, 0, ',', '.') }}
                           </span>
-                          @if ($jadwal['GELOMBANG'] == 1)
-                            <span class="text-default mt-0">
-                              (Terpotong gratis formulir Rp 100.000)
-                            </span>
-                          @endif
+                          <span class="text-default mt-0 {{ $jadwal['GELOMBANG'] == 1 && !$isKemitraan ? '' : 'd-none' }}" id="diskonText">
+                            (Terpotong gratis formulir Rp 100.000)
+                          </span>
                           <small class="text-muted d-block">Biaya akan dikirim ke PMB SIAKAD2</small>
                         </div>
                       </div>
@@ -286,6 +288,36 @@
         form.addEventListener('submit', function(e) {
           btnSubmit.disabled = true;
           btnSubmit.innerHTML = '<i class="ti ti-loader-2 fs-2 spinner me-1"></i> Memproses...';
+        });
+      }
+
+      // Dynamic registration fee updates based on selected class
+      const selectKelas = document.getElementById('selectKelas');
+      const biayaDaftarText = document.getElementById('biayaDaftarText');
+      const diskonText = document.getElementById('diskonText');
+
+      if (selectKelas && biayaDaftarText) {
+        const biayaNormal = {{ $jadwal['BIAYA'] ?? 0 }};
+        const gelombang = {{ $jadwal['GELOMBANG'] ?? 0 }};
+        const biayaDefault = gelombang == 1 ? biayaNormal - 100000 : biayaNormal;
+        const biayaKemitraan = 500000;
+
+        function formatRupiah(number) {
+          return 'Rp ' + number.toLocaleString('id-ID');
+        }
+
+        selectKelas.addEventListener('change', function() {
+          if (this.value === '5') {
+            biayaDaftarText.textContent = formatRupiah(biayaKemitraan);
+            if (diskonText) {
+              diskonText.classList.add('d-none');
+            }
+          } else {
+            biayaDaftarText.textContent = formatRupiah(biayaDefault);
+            if (diskonText && gelombang == 1) {
+              diskonText.classList.remove('d-none');
+            }
+          }
         });
       }
     });
